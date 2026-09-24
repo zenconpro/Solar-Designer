@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Solar Designer — คำนวณขนาดระบบโซลาร์ ค่าไฟที่ประหยัด และระยะคืนทุน">
+<title>SPECTRA Solar Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF1EF; --sf:#FFFFFF; --sf2:#F4F6F5; --sf3:#E6EBE8; --bd:#D3DBD7; --bd2:#BCC7C2;
+  --tx:#14201B; --mu:#5B6B64; --fa:#8A9892;
+  --acc:#B86F00; --acc-bg:#FFF2D9; --acc-tx:#8A5200;
+  --pv:#E09A00; --ld:#2F5DA8; --ex:#17866B; --im:#B4432D; --bt:#7053B5;
+  --ok:#17866B; --ok-bg:#E1F3EC; --bad:#B4432D; --bad-bg:#FBE7E2;
+  --r:10px; --sans:'IBM Plex Sans Thai',system-ui,-apple-system,'Segoe UI',sans-serif; --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0C1311; --sf:#141D1A; --sf2:#18231F; --sf3:#1F2B27; --bd:#27352F; --bd2:#34453E;
+  --tx:#E1EAE6; --mu:#93A59D; --fa:#687A72;
+  --acc:#F0B02E; --acc-bg:#2B2410; --acc-tx:#F5C35A;
+  --pv:#F0B02E; --ld:#6F9BE6; --ex:#3CC29C; --im:#EC7B60; --bt:#A58CEB;
+  --ok:#3CC29C; --ok-bg:#12302A; --bad:#EC7B60; --bad-bg:#3A1C15; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#0C1311; --sf:#141D1A; --sf2:#18231F; --sf3:#1F2B27; --bd:#27352F; --bd2:#34453E;
+  --tx:#E1EAE6; --mu:#93A59D; --fa:#687A72;
+  --acc:#F0B02E; --acc-bg:#2B2410; --acc-tx:#F5C35A;
+  --pv:#F0B02E; --ld:#6F9BE6; --ex:#3CC29C; --im:#EC7B60; --bt:#A58CEB;
+  --ok:#3CC29C; --ok-bg:#12302A; --bad:#EC7B60; --bad-bg:#3A1C15; color-scheme:dark;}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+.num,.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+a{color:var(--acc-tx)}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+
+/* ── top bar ── */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--sf);border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;gap:12px;padding:8px 16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:9px;min-width:0}
+.brand .sun{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 50% 50%,var(--pv) 0 45%,transparent 47%),repeating-conic-gradient(var(--pv) 0 8deg,transparent 8deg 30deg);flex:none}
+.brand b{font-weight:700;letter-spacing:.01em}
+.brand small{color:var(--mu);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tabs{display:flex;gap:4px;background:var(--sf3);padding:3px;border-radius:9px;margin-left:auto}
+.tabs button{border:0;background:none;padding:5px 11px;border-radius:7px;cursor:pointer;color:var(--mu);font-size:13px;white-space:nowrap}
+.tabs button.on{background:var(--sf);color:var(--tx);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.ghost{border:1px solid var(--bd2);background:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--mu)}
+.ghost:hover{color:var(--tx);border-color:var(--mu)}
+
+/* ── home ── */
+#home{max-width:1080px;margin:0 auto;padding:40px 16px 48px}
+#home h1{font-size:28px;line-height:1.25;margin:0 0 6px;text-wrap:balance}
+#home .lead{color:var(--mu);margin:0 0 26px;max-width:62ch}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.mcard{text-align:left;background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:20px 20px 18px;cursor:pointer;display:flex;flex-direction:column;gap:10px;transition:border-color .15s,transform .15s}
+.mcard:hover{border-color:var(--acc);transform:translateY(-2px)}
+.mcard svg{width:40px;height:40px;color:var(--acc)}
+.mcard h2{margin:0;font-size:18px}
+.mcard p{margin:0;color:var(--mu);font-size:13.5px}
+.mcard .need{margin-top:auto;padding-top:10px;border-top:1px dashed var(--bd);font-size:12.5px;color:var(--mu)}
+.mcard .need b{color:var(--tx);font-weight:600}
+.mcard .lvl{font-family:var(--mono);font-size:11px;color:var(--acc-tx);background:var(--acc-bg);align-self:flex-start;padding:2px 8px;border-radius:20px}
+.home-foot{margin-top:22px;font-size:12.5px;color:var(--mu)}
+
+/* ── work layout ── */
+.grid{display:grid;grid-template-columns:1fr;gap:14px;padding:14px 16px 32px;max-width:1500px;margin:0 auto}
+@media(min-width:1020px){
+  body.work{display:flex;flex-direction:column;overflow:hidden}
+  body.work .grid{flex:1;min-height:0;grid-template-columns:minmax(380px,440px) 1fr;padding-block:0;max-width:none;width:100%}
+  .col-in,.col-out{overflow-y:auto;padding-block:14px 40px;scrollbar-width:thin}
+}
+.col-in{display:flex;flex-direction:column;gap:12px;min-width:0}
+.col-out{display:flex;flex-direction:column;gap:12px;min-width:0}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px}
+.card h3{margin:0 0 10px;font-size:14px;font-weight:600}
+.card h4{margin:14px 0 8px;font-size:11.5px;font-weight:600;color:var(--mu);letter-spacing:.06em;text-transform:uppercase}
+.card h4:first-child{margin-top:0}
+.modein{display:flex;flex-direction:column;gap:12px}
+.mode-title{display:flex;align-items:baseline;gap:10px}
+.mode-title h2{margin:0;font-size:18px}
+.mode-title span{color:var(--mu);font-size:12.5px}
+
+/* fields */
+.f{display:flex;flex-direction:column;gap:3px;min-width:0}
+.f>span{font-size:12px;color:var(--mu)}
+.f input,.f select{width:100%;background:var(--sf2);border:1px solid var(--bd);border-radius:7px;padding:6px 8px;outline:none;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px}
+.f select{font-family:var(--sans)}
+.f input:focus,.f select:focus{border-color:var(--acc)}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:8px}
+.row+.row,.row+.f,.f+.row,.f+.f,.row+.hint,.seg+.row,.row+.seg{margin-top:8px}
+.row>.f,.app-f>.f{margin-top:0}
+.hint{font-size:12px;color:var(--mu);margin:8px 0 0}
+.hint b{color:var(--tx);font-family:var(--mono);font-weight:600}
+.big{display:flex;align-items:baseline;gap:6px;margin-top:8px}
+.big b{font-family:var(--mono);font-size:22px;font-weight:600}
+.big span{color:var(--mu);font-size:12.5px}
+.seg{display:inline-flex;background:var(--sf3);border-radius:8px;padding:3px;gap:3px;flex-wrap:wrap}
+.seg button{border:0;background:none;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12.5px;color:var(--mu)}
+.seg button.on{background:var(--sf);color:var(--tx);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+input[type=range]{width:100%;accent-color:var(--acc);margin:6px 0 0}
+.sw{position:relative;width:34px;height:20px;flex:none;display:inline-block;cursor:pointer}
+.sw input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.sw i{position:absolute;inset:0;background:var(--bd2);border-radius:20px;transition:.15s}
+.sw i:before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.15s}
+.sw input:checked+i{background:var(--ok)}
+.sw input:checked+i:before{transform:translateX(14px)}
+.sw input:focus-visible+i{outline:2px solid var(--acc);outline-offset:2px}
+.tog{display:flex;align-items:center;gap:8px;font-size:13px}
+.btn{border:1px solid var(--acc);background:var(--acc-bg);color:var(--acc-tx);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px;font-weight:600}
+.btn:hover{filter:brightness(.97)}
+.btn.sm{padding:3px 9px;font-size:12px}
+.linkbtn{border:0;background:none;color:var(--acc-tx);cursor:pointer;font-size:12.5px;padding:0;text-decoration:underline;text-underline-offset:2px}
+
+/* system card */
+.sys .rec{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--acc-bg);border-radius:8px;padding:8px 10px}
+.sys .rec div{font-size:12.5px;color:var(--acc-tx)}
+.sys .rec b{font-family:var(--mono);font-size:15px}
+.sys .nrow{display:grid;grid-template-columns:1fr 90px;gap:10px;align-items:end;margin-top:10px}
+.sys .meta{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.sys .meta div{background:var(--sf2);border-radius:7px;padding:6px 8px}
+.sys .meta small{display:block;font-size:11px;color:var(--mu)}
+.sys .meta b{font-family:var(--mono);font-size:13px;font-weight:600}
+.battrow{display:flex;align-items:center;gap:10px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--bd)}
+.battrow .f{width:110px}
+
+/* common settings */
+details.card>summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+details.card>summary::-webkit-details-marker{display:none}
+details.card>summary b{font-size:14px}
+details.card>summary b::before{content:'▸ ';color:var(--mu)}
+details.card[open]>summary b::before{content:'▾ '}
+details.card>summary span{font-size:12px;color:var(--mu);font-family:var(--mono)}
+details.card[open]>summary{margin-bottom:10px}
+.fs{padding-top:4px}
+.fs+.fs{margin-top:12px;border-top:1px solid var(--bd);padding-top:12px}
+.danger{border:1px solid var(--bd2);background:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:12.5px;color:var(--mu);margin-top:14px}
+.danger.arm{border-color:var(--bad);color:var(--bad);background:var(--bad-bg)}
+
+/* appliances */
+.grp{padding:0}
+.grp>summary{padding:12px 14px;margin:0!important}
+.grp[open]>summary{border-bottom:1px solid var(--bd)}
+.grp .gsum{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--mu)}
+.grp .ginfo{padding:8px 14px;font-size:12px;color:var(--mu);background:var(--sf2);border-bottom:1px solid var(--bd)}
+.grp .ginfo b{font-family:var(--mono);color:var(--tx);font-weight:600}
+.grp .gfoot{padding:8px 14px 12px}
+.app{padding:10px 14px;border-bottom:1px solid var(--bd)}
+.app.off{opacity:.45}
+.app-h{display:flex;align-items:center;gap:8px}
+.app-h .nm{flex:1;min-width:0;border:1px solid transparent;background:none;border-radius:6px;padding:3px 6px;font-weight:500}
+.app-h .nm:hover,.app-h .nm:focus{border-color:var(--bd);background:var(--sf2);outline:none}
+.x{border:0;background:none;color:var(--fa);cursor:pointer;font-size:18px;line-height:1;padding:2px 6px;border-radius:6px}
+.x:hover{color:var(--bad);background:var(--bad-bg)}
+.app-f{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}
+.app-f .f>span{font-size:11px}
+.app-f .f input,.app-f .f select{padding:4px 6px;font-size:12.5px}
+.app-f .calc{align-self:end;font-size:11.5px;color:var(--mu);padding-bottom:6px;font-family:var(--mono)}
+.hrs{display:grid;grid-template-columns:repeat(24,1fr);gap:2px;margin-top:8px;touch-action:none;user-select:none;-webkit-user-select:none}
+.hrs b{height:18px;border-radius:3px;background:var(--sf3);cursor:pointer;position:relative}
+.hrs b.sun{background:color-mix(in srgb,var(--pv) 14%,var(--sf3))}
+.hrs b.on{background:var(--ld)}
+.hrs b.on.sun{background:color-mix(in srgb,var(--ld) 75%,var(--pv))}
+.hrs-ax{display:grid;grid-template-columns:repeat(24,1fr);font-family:var(--mono);font-size:9.5px;color:var(--fa);margin-top:1px}
+.hrs-ax span{grid-column:span 3}
+.app-m{margin-top:5px;font-size:11.5px;color:var(--mu);display:flex;gap:6px;flex-wrap:wrap}
+.app-m .kwh{font-family:var(--mono);color:var(--tx);font-weight:600}
+.app-m .src{color:var(--fa)}
+
+/* results */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:700px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:11px 13px}
+.kpi small{display:block;font-size:11.5px;color:var(--mu)}
+.kpi b{display:block;font-family:var(--mono);font-size:22px;font-weight:600;line-height:1.25;margin-top:2px}
+.kpi span{font-size:11.5px;color:var(--mu);font-family:var(--mono)}
+.kpi.hi{background:var(--acc-bg);border-color:color-mix(in srgb,var(--acc) 40%,var(--bd))}
+.kpi.hi b{color:var(--acc-tx)}
+.pill{display:flex;align-items:center;gap:10px;border-radius:var(--r);padding:9px 13px;font-size:13px;border:1px solid}
+.pill.ok{background:var(--ok-bg);border-color:color-mix(in srgb,var(--ok) 35%,transparent);color:var(--ok)}
+.pill.bad{background:var(--bad-bg);border-color:color-mix(in srgb,var(--bad) 35%,transparent);color:var(--bad)}
+.pill b{font-family:var(--mono)}
+.pill .bar2{flex:1;height:6px;border-radius:4px;background:color-mix(in srgb,currentColor 18%,transparent);overflow:hidden;min-width:60px}
+.pill .bar2 i{display:block;height:100%;background:currentColor;border-radius:4px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mu);margin:-4px 0 6px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.chart svg{width:100%;height:auto;display:block}
+.chart .ax{fill:var(--mu);font:10.5px var(--mono)}
+.chart .gl{stroke:var(--bd);stroke-width:1}
+.two{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:1300px){.two{grid-template-columns:1fr 1fr}}
+dl.kv{margin:0;display:grid;grid-template-columns:1fr auto;gap:0}
+dl.kv dt,dl.kv dd{padding:6px 0;border-bottom:1px solid var(--bd);margin:0;font-size:13px}
+dl.kv dt{color:var(--mu)}
+dl.kv dd{text-align:right;font-family:var(--mono);font-weight:500}
+dl.kv dt.t,dl.kv dd.t{border-bottom:0;font-weight:700;color:var(--tx);padding-top:9px}
+dl.kv dd.t{font-size:15px}
+dl.kv .ex{color:var(--ex)} dl.kv .im{color:var(--im)} dl.kv .bt{color:var(--bt)} dl.kv .pv{color:var(--acc-tx)}
+.tblwrap{overflow-x:auto}
+table.ht{width:100%;border-collapse:collapse;font-size:12.5px}
+table.ht th{font-weight:600;color:var(--mu);font-size:11.5px;text-align:right;padding:5px 6px;border-bottom:1px solid var(--bd2);position:sticky;top:0;background:var(--sf)}
+table.ht th:first-child,table.ht td:first-child{text-align:left}
+table.ht td{padding:4px 6px;border-bottom:1px solid var(--bd);text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+table.ht tr.sun td:first-child{box-shadow:inset 3px 0 0 var(--pv)}
+table.ht td.net{text-align:left;font-size:11.5px;white-space:normal}
+table.ht td.net span{display:inline-block;margin-right:8px}
+table.ht tfoot td{font-weight:700;border-top:1px solid var(--bd2);border-bottom:0}
+.c-ex{color:var(--ex)} .c-im{color:var(--im)} .c-bt{color:var(--bt)} .c-mu{color:var(--fa)} .c-pv{color:var(--acc-tx)}
+.brk{display:flex;flex-direction:column;gap:7px}
+.brk .r{display:grid;grid-template-columns:130px 1fr 70px;gap:8px;align-items:center;font-size:12.5px}
+.brk .r i{display:block;height:8px;border-radius:4px;background:var(--ld)}
+.brk .r b{font-family:var(--mono);font-weight:500;text-align:right}
+.note{font-size:12px;color:var(--mu);padding:0 2px}
+.note p{margin:0 0 4px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ── v7 additions ── */
+#home{max-width:1240px}
+#home h2.sec{font-size:20px;margin:34px 0 4px}
+#home .sub{color:var(--mu);margin:0 0 16px;font-size:13.5px}
+.setgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;align-items:start}
+.setgrid .card h3{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.setgrid .card h3 small{font-weight:400;color:var(--mu);font-size:12px}
+.chips{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.chip{display:flex;gap:8px;align-items:flex-start;border-radius:8px;padding:7px 10px;font-size:12.5px;line-height:1.45;border:1px solid}
+.chip b{font-family:var(--mono)}
+.chip .ic{flex:none;font-weight:700;width:14px;text-align:center}
+.chip.ok{background:var(--ok-bg);color:var(--ok);border-color:color-mix(in srgb,var(--ok) 30%,transparent)}
+.chip.bad{background:var(--bad-bg);color:var(--bad);border-color:color-mix(in srgb,var(--bad) 30%,transparent)}
+.chip.warn{background:var(--acc-bg);color:var(--acc-tx);border-color:color-mix(in srgb,var(--acc) 35%,transparent)}
+.chip.info{background:var(--sf2);color:var(--mu);border-color:var(--bd)}
+.chip.info b{color:var(--tx)}
+dl.kv.sm dt,dl.kv.sm dd{padding:4px 0;font-size:12.5px}
+.sub3{font-size:11.5px;color:var(--mu);font-weight:500;letter-spacing:.05em;text-transform:uppercase;margin:14px 0 6px}
+/* checklist */
+.ck{display:flex;flex-direction:column;gap:2px}
+.ck label{display:grid;grid-template-columns:18px 1fr auto;gap:8px;align-items:center;padding:6px 4px;border-radius:6px;cursor:pointer;font-size:13px}
+.ck label:hover{background:var(--sf2)}
+.ck input{accent-color:var(--ok);width:16px;height:16px;margin:0}
+.ck small{font-family:var(--mono);color:var(--mu);font-size:11.5px}
+.ckres{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--acc-bg);color:var(--acc-tx)}
+.ckres b{font-family:var(--mono);font-size:20px}
+/* EV cars */
+.car{border:1px solid var(--bd);border-radius:9px;padding:10px;margin-top:10px;background:var(--sf2)}
+.car-h{display:flex;gap:8px;align-items:center}
+.car-h select{flex:1;min-width:0}
+.car .f input,.car .f select{background:var(--sf)}
+.car .meta2{font-size:11.5px;color:var(--mu);margin-top:6px}
+.car .meta2 b{font-family:var(--mono);color:var(--tx);font-weight:600}
+.ai{display:flex;gap:6px;align-items:end;margin-top:8px}
+.ai .f{flex:1}
+.aitag{font-size:10.5px;font-family:var(--mono);background:var(--acc-bg);color:var(--acc-tx);padding:1px 6px;border-radius:10px;margin-left:4px}
+.aistat{font-size:12px;color:var(--mu);margin-top:6px}
+/* LC check */
+.lcsum{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+.lcsum span{font-family:var(--mono);font-size:11.5px;padding:2px 8px;border-radius:10px}
+.s-ok{background:var(--ok-bg);color:var(--ok)} .s-bad{background:var(--bad-bg);color:var(--bad)} .s-warn{background:var(--acc-bg);color:var(--acc-tx)} .s-mu{background:var(--sf3);color:var(--mu)}
+.lcl{display:flex;flex-direction:column}
+.lcr{display:grid;grid-template-columns:22px 1fr auto;gap:8px;padding:7px 14px;border-bottom:1px solid var(--bd);font-size:12.5px;align-items:start}
+.lcr .st{font-weight:700;text-align:center;border-radius:5px;line-height:20px;font-size:12px}
+.lcr .nm2{min-width:0}
+.lcr .nm2 small{display:block;color:var(--mu);font-size:11.5px}
+.lcr .va{font-family:var(--mono);font-size:11.5px;color:var(--mu);text-align:right;white-space:nowrap}
+.lced{padding:10px 14px}
+.lced table{width:100%;border-collapse:collapse;font-size:12px}
+.lced td{padding:2px 3px}
+.lced input{width:100%;background:var(--sf2);border:1px solid var(--bd);border-radius:5px;padding:3px 5px;font:12px var(--mono)}
+.lced input.t{font-family:var(--sans)}
+.app-f .f select.lcsel{font-size:11.5px}
+.app-lc{display:grid;grid-template-columns:1fr;margin-top:6px}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="brand"><span class="sun" aria-hidden="true"></span><b>Solar Designer</b><small id="siteLbl"></small></div>
+  <nav class="tabs" id="tabs">
+    <button data-go="home">ตั้งค่าเบื้องต้น</button>
+    <button data-go="roof">หลังคา</button>
+    <button data-go="bill">ค่าไฟ</button>
+    <button data-go="load">เครื่องใช้ไฟฟ้า</button>
+  </nav>
+</header>
+
+<!-- ═════════ HOME : settings + mode chooser ═════════ -->
+<section id="home">
+  <h1>ตั้งค่าเบื้องต้น</h1>
+  <p class="lead">กรอกข้อมูลบ้านและค่าพื้นฐานก่อน ทุกวิธีคำนวณใช้ค่าชุดนี้ร่วมกัน แล้วเลือกวิธีคำนวณด้านล่าง</p>
+  <div class="setgrid">
+    <div class="card">
+      <h3>ข้อมูลบ้าน</h3>
+      <label class="f"><span>ชื่อบ้าน / โครงการ</span><input type="text" id="hname" data-k="house.name" style="font-family:var(--sans)"></label>
+      <div class="sub3">ระบบไฟ</div>
+      <div class="seg" data-seg="house.phase" data-num><button data-v="1">1 เฟส</button><button data-v="3">3 เฟส</button></div>
+      <div class="row">
+        <label class="f"><span>ขนาดมิเตอร์</span><select id="hmeter" data-k="house.meter" data-num></select></label>
+      </div>
+      <div class="chips" id="houseChips"></div>
+    </div>
+
+    <div class="card">
+      <h3>ที่ตั้งและแดด</h3>
+      <label class="f"><span>ที่ตั้ง</span><select id="sitePreset"></select></label>
+      <div class="row">
+        <label class="f"><span>ละติจูด</span><input type="number" id="lat" data-k="site.lat" step="0.0001"></label>
+        <label class="f"><span>ลองจิจูด</span><input type="number" id="lon" data-k="site.lon" step="0.0001"></label>
+      </div>
+      <div class="row">
+        <label class="f"><span>PSH (kWh/ม²/วัน)</span><input type="number" id="psh" data-k="site.psh" step="0.1" min="1" max="8"></label>
+        <label class="f"><span>PR ประสิทธิภาพระบบ</span><input type="number" id="pr" data-k="site.pr" step="0.01" min="0.5" max="1"></label>
+      </div>
+      <div class="seg" id="season" style="margin-top:8px"><button data-psh="5.6">หน้าร้อน 5.6</button><button data-psh="5.0">เฉลี่ยทั้งปี 5.0</button><button data-psh="4.0">หน้าฝน 4.0</button></div>
+      <p class="hint">ผลผลิต = PSH × PR = <b id="yieldTxt"></b> kWh/kWp/วัน · <a href="https://re.jrc.ec.europa.eu/pvg_tools/en/" target="_blank" rel="noopener">เช็กกับ PVGIS</a> (ค่า E_d)</p>
+    </div>
+
+    <div class="card">
+      <h3>แผงโซลาร์</h3>
+      <div class="row">
+        <label class="f"><span>วัตต์/แผง</span><input type="number" id="pw" data-k="panel.w" step="5" min="100"></label>
+        <label class="f"><span>ยาว (ม.)</span><input type="number" id="plen" data-k="panel.len" step="0.001" min="0.5"></label>
+        <label class="f"><span>กว้าง (ม.)</span><input type="number" id="pwid" data-k="panel.wid" step="0.001" min="0.5"></label>
+      </div>
+      <div class="row">
+        <label class="f"><span>น้ำหนัก (กก./แผง)</span><input type="number" id="pkg" data-k="panel.kg" step="0.5" min="1"></label>
+        <label class="f"><span>เผื่อช่องว่าง/ราง (%)</span><input type="number" id="pgap" data-k="panel.gap" step="1" min="0" max="50"></label>
+      </div>
+      <p class="hint">1 แผง = <b id="pInfo"></b></p>
+    </div>
+
+    <div class="card">
+      <h3>ค่าไฟ</h3>
+      <label class="tog"><span class="sw"><input type="checkbox" id="ttier" data-k="tariff.tier"><i></i></span>คิดแบบขั้นบันได PEA 1.2 + Ft + VAT</label>
+      <div class="row" style="margin-top:8px">
+        <label class="f"><span>Ft (บาท/หน่วย)</span><input type="number" id="tft" data-k="tariff.ft" step="0.0001"></label>
+        <label class="f"><span>อัตราคงที่ (บาท/หน่วย)</span><input type="number" id="tbuy" data-k="tariff.buy" step="0.01"></label>
+      </div>
+      <label class="tog" style="margin-top:10px"><span class="sw"><input type="checkbox" id="tnet" data-k="tariff.net"><i></i></span>ขายไฟคืน (Net Billing)</label>
+      <div class="row" style="margin-top:8px">
+        <label class="f"><span>ราคาขายคืน (บาท)</span><input type="number" id="tsell" data-k="tariff.sell" step="0.01"></label>
+        <label class="f"><span>เพดานขาย (kW)</span><input type="number" id="tlim" data-k="tariff.lim" step="0.5" min="0"></label>
+      </div>
+      <p class="hint">อัตราคงที่ใช้เมื่อปิดขั้นบันได และเป็นมูลค่าไฟในวิธีหลังคา</p>
+    </div>
+
+    <div class="card">
+      <h3>ราคาระบบ</h3>
+      <div class="row">
+        <label class="f"><span>แผง+ติดตั้ง (บาท/W)</span><input type="number" id="cw" data-k="price.w" step="0.5"></label>
+        <label class="f"><span>แบตเตอรี่ (บาท/kWh)</span><input type="number" id="cb" data-k="price.batt" step="500"></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>เกณฑ์แนะนำขนาด</h3>
+      <label class="f"><span>ไฟโซลาร์ต้องถูกใช้เองในบ้านอย่างน้อย (%)</span><input type="number" id="thr" data-k="thr" min="50" max="100" step="1"></label>
+      <p class="hint">ระบบจะแนะนำจำนวนแผง<b style="font-family:var(--sans)">มากที่สุด</b>ที่ยังใช้ไฟเองได้ตามเกณฑ์นี้ ไฟที่ใช้เองมีค่า <b id="thrBuy"></b> บ./หน่วย แต่ไฟที่ขายคืนได้แค่ <b id="thrSell"></b> บ. ถ้าติดแผงมากเกินจนต้องขายไฟเยอะ ระบบจะคืนทุนช้าลง</p>
+    </div>
+  </div>
+  <button class="danger" id="btnReset">คืนค่าเริ่มต้นทั้งหมด</button>
+
+  <h2 class="sec">เลือกวิธีคำนวณ</h2>
+  <p class="sub">แต่ละวิธีแยกหน้าจอและแยกผลกัน</p>
+  <div class="modes">
+    <button class="mcard" data-go="roof">
+      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22 20 8l16 14"/><path d="M9 18v16h22V18"/><path d="M13 17l5-4h10l-5 4z" fill="currentColor" opacity=".25"/></svg>
+      <span class="lvl">หยาบ · เร็ว</span>
+      <h2>จากพื้นที่หลังคา</h2>
+      <p>ไม่รู้โหลด ไม่รู้ค่าไฟ อยากรู้ว่าหลังคาติดได้กี่แผง ผลิตไฟได้เท่าไร น้ำหนักผ่านเกณฑ์ไหม</p>
+      <div class="need">ต้องมี: <b>พื้นที่หลังคา (ม²)</b></div>
+    </button>
+    <button class="mcard" data-go="bill">
+      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4h22v32l-4-3-3 3-4-3-4 3-3-3-4 3z"/><path d="M14 13h12M14 19h12M14 25h7"/></svg>
+      <span class="lvl">กลาง</span>
+      <h2>จากค่าไฟรายเดือน</h2>
+      <p>รู้ค่าไฟหรือหน่วยต่อเดือน ระบบแนะนำขนาด แล้วเช็กว่าจำนวนแผงลงหลังคาได้พอไหม</p>
+      <div class="need">ต้องมี: <b>บิลค่าไฟ</b> + สัดส่วนที่ใช้ตอนกลางวัน</div>
+    </button>
+    <button class="mcard" data-go="load">
+      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 4v8M25 4v8"/><path d="M10 12h20v7a10 10 0 0 1-20 0z"/><path d="M20 29v7"/></svg>
+      <span class="lvl">ละเอียด</span>
+      <h2>จากเครื่องใช้ไฟฟ้า</h2>
+      <p>กรอกแอร์ ไฟ ปลั๊ก ปั๊ม รถไฟฟ้า ทีละรายการ ตั้งเวลาใช้จริง และตรวจกับตารางโหลดว่ากรอกครบไหม</p>
+      <div class="need">มี<b>รายการตัวอย่าง</b>ให้แก้ได้ทุกช่อง</div>
+    </button>
+  </div>
+  <p class="home-foot">ค่าที่กรอกบันทึกไว้ในเบราว์เซอร์นี้อัตโนมัติ</p>
+</section>
+
+<!-- ═════════ WORK ═════════ -->
+<div class="grid" id="work" hidden>
+  <div class="col-in">
+
+    <div class="modein" id="in-roof" hidden>
+      <div class="mode-title"><h2>จากพื้นที่หลังคา</h2><span>ติดเต็มพื้นที่ที่วางได้</span></div>
+      <div class="slot-sys"></div>
+      <div class="card">
+        <h3>ใช้ไฟโซลาร์เองได้กี่ %</h3>
+        <div class="seg" data-seg="m1.smode"><button data-v="check">ประเมินจากรายการ</button><button data-v="manual">กำหนดเอง</button></div>
+        <div id="ckBox">
+          <p class="hint">ติ๊กสิ่งที่เกิดขึ้นช่วงมีแดด (07–17 น.) ตัวเลขด้านขวาคือไฟที่ใช้ช่วงนั้นต่อวัน</p>
+          <div class="ck" id="ckList"></div>
+          <div class="sub3">แอร์ช่วงกลางวัน</div>
+          <div class="seg" data-seg="m1.ac"><button data-v="none">ไม่เปิด</button><button data-v="r2">1–2 ห้อง</button><button data-v="f1">ทั้งชั้นล่าง</button><button data-v="all">ทุกห้อง</button></div>
+          <p class="hint" id="ckAcHint"></p>
+        </div>
+        <div id="manBox">
+          <div class="row"><label class="f"><span>ใช้เอง (%) — ที่เหลือขายคืน/ทิ้ง</span><input type="number" id="m1self" data-k="m1.self" min="0" max="100" step="5"></label></div>
+          <input type="range" id="m1selfR" data-k="m1.self" min="0" max="100" step="5" aria-label="สัดส่วนใช้เอง">
+        </div>
+        <div class="ckres"><span>ใช้ไฟโซลาร์เองได้ประมาณ</span><b id="ckRes"></b></div>
+      </div>
+    </div>
+
+    <div class="modein" id="in-bill" hidden>
+      <div class="mode-title"><h2>จากค่าไฟรายเดือน</h2><span>PEA ประเภท 1.2</span></div>
+      <div class="card">
+        <h3>ค่าไฟต่อเดือน</h3>
+        <div class="seg" data-seg="m2.by"><button data-v="bill">กรอกเป็นบาท</button><button data-v="units">กรอกเป็นหน่วย</button></div>
+        <div class="row">
+          <label class="f" id="m2billF"><span>ค่าไฟ (บาท/เดือน)</span><input type="number" id="m2bill" data-k="m2.bill" step="100" min="0"></label>
+          <label class="f" id="m2unitsF"><span>หน่วยไฟ (kWh/เดือน)</span><input type="number" id="m2units" data-k="m2.units" step="50" min="0"></label>
+        </div>
+        <p class="hint" id="m2derived"></p>
+      </div>
+      <div class="card">
+        <h3>ใช้ไฟช่วงกลางวัน (07–17 น.) กี่ %</h3>
+        <label class="f"><span>ลักษณะการใช้</span>
+          <select id="m2prof" data-k="m2.prof">
+            <option value="home">มีคนอยู่บ้าน · แอร์ชั้นล่างเปิดกลางวัน (≈31%)</option>
+            <option value="work">ออกทำงานกลางวัน บ้านว่าง (≈15%)</option>
+            <option value="show">บ้านตัวอย่าง / สำนักงาน เปิดกลางวัน (≈80%)</option>
+            <option value="custom">กำหนดเอง</option>
+          </select></label>
+        <div class="row"><label class="f"><span>สัดส่วนกลางวัน (%)</span><input type="number" id="m2day" data-k="m2.day" min="5" max="95" step="1"></label></div>
+        <input type="range" id="m2dayR" data-k="m2.day" min="5" max="95" step="1" aria-label="สัดส่วนกลางวัน">
+      </div>
+      <div class="slot-sys"></div>
+    </div>
+
+    <div class="modein" id="in-load" hidden>
+      <div class="mode-title"><h2>จากเครื่องใช้ไฟฟ้า</h2><span id="m3tot"></span></div>
+      <div class="slot-sys"></div>
+
+      <details class="card grp" open id="lcCard">
+        <summary><b>ตรวจกับตารางโหลด</b><span class="lcsum" id="lcSum"></span></summary>
+        <div class="ginfo">เทียบรายการที่กรอกกับวงจรในตารางโหลด (Panel Schedule) · เลือกวงจรของแต่ละเครื่องได้ที่ช่อง "วงจรในตารางโหลด"</div>
+        <div class="lcl" id="lcList"></div>
+        <details class="lced"><summary class="linkbtn" style="list-style:none;cursor:pointer">แก้ไขตารางโหลด</summary>
+          <table><thead><tr><td class="c-mu">CKT</td><td class="c-mu">รายการ</td><td class="c-mu" style="width:52px">จุด</td><td class="c-mu" style="width:72px">VA</td><td style="width:24px"></td></tr></thead><tbody id="lcEd"></tbody></table>
+          <button class="btn sm" id="lcAdd" style="margin-top:8px">+ เพิ่มวงจร</button>
+        </details>
+      </details>
+
+      <details class="card grp" open data-grp="ac">
+        <summary><b>แอร์</b><span class="gsum" id="gs-ac"></span></summary>
+        <div class="ginfo">
+          <div class="row">
+            <label class="f"><span>kW ต่อ 1,000 BTU</span><input type="number" id="ack" data-k="ac.k" step="0.005" min="0.05" max="0.2"></label>
+            <label class="f"><span>ภาระขณะเดิน</span><select id="acplf" data-k="ac.plf"><option value="tou">ตามเวลา PLF</option><option value="const">คงที่</option></select></label>
+            <label class="f" id="accF"><span>ค่าคงที่ (0–1)</span><input type="number" id="acc" data-k="ac.c" step="0.05" min="0.1" max="1"></label>
+          </div>
+          <p class="hint" id="acFloors"></p>
+        </div>
+        <div class="glist" id="g-ac"></div>
+        <div class="gfoot"><button class="btn sm" data-add="ac">+ เพิ่มแอร์</button></div>
+      </details>
+
+      <details class="card grp" open data-grp="light">
+        <summary><b>แสงสว่าง</b><span class="gsum" id="gs-light"></span></summary>
+        <div class="ginfo"><b>% เปิดพร้อมกัน</b> = ไม่ได้เปิดทุกห้องพร้อมกัน</div>
+        <div class="glist" id="g-light"></div>
+        <div class="gfoot"><button class="btn sm" data-add="light">+ เพิ่มดวงโคม</button></div>
+      </details>
+
+      <details class="card grp" open data-grp="plug">
+        <summary><b>เครื่องใช้ไฟฟ้า (เสียบเต้ารับ)</b><span class="gsum" id="gs-plug"></span></summary>
+        <div class="ginfo">คิดตามเครื่องที่เสียบจริง ไม่ใช่จำนวนเต้ารับ · <b>% เวลาทำงาน</b> = สัดส่วนที่กินไฟเต็มพิกัดในชั่วโมงนั้น</div>
+        <div class="glist" id="g-plug"></div>
+        <div class="gfoot"><button class="btn sm" data-add="plug">+ เพิ่มเครื่องใช้ไฟฟ้า</button></div>
+      </details>
+
+      <details class="card grp" open data-grp="fixed">
+        <summary><b>อุปกรณ์ติดตั้งประจำ</b><span class="gsum" id="gs-fixed"></span></summary>
+        <div class="ginfo">ค่า VA ในตารางโหลดใช้เลือกเบรกเกอร์ ไม่ใช่กำลังใช้งานจริง</div>
+        <div class="glist" id="g-fixed"></div>
+        <div class="gfoot"><button class="btn sm" data-add="fixed">+ เพิ่มอุปกรณ์</button></div>
+      </details>
+
+      <details class="card grp" open data-grp="ev">
+        <summary><b>ชาร์จรถไฟฟ้า (EV)</b><span class="gsum" id="gs-ev"></span></summary>
+        <div class="app" style="border-bottom:0">
+          <label class="tog"><span class="sw"><input type="checkbox" id="evon" data-k="ev.on"><i></i></span>ใช้โซลาร์ชาร์จรถด้วย</label>
+          <div class="row" style="margin-top:10px">
+            <label class="f"><span>เครื่องชาร์จที่บ้าน (Wallbox)</span><select id="evwb" data-k="ev.wb" data-num></select></label>
+            <label class="f"><span>ประสิทธิภาพชาร์จ (%)</span><input type="number" id="evce" data-k="ev.ce" min="70" max="100" step="1"></label>
+          </div>
+          <div id="cars"></div>
+          <button class="btn sm" id="carAdd" style="margin-top:10px">+ เพิ่มรถ</button>
+          <div class="sub3">วิธีชาร์จ</div>
+          <div class="seg" data-seg="ev.mode"><button data-v="solar">ตามแดดส่วนเกิน 09–16 น.</button><button data-v="fixed">ตั้งเวลา</button></div>
+          <div class="row">
+            <label class="f"><span id="evstartL">เริ่มชาร์จ (น.)</span><select id="evstart" data-k="ev.start" data-num></select></label>
+          </div>
+          <p class="hint" id="evInfo"></p>
+        </div>
+      </details>
+      <button class="danger" id="btnAppsReset" style="align-self:flex-start">คืนค่ารายการตัวอย่าง</button>
+    </div>
+
+    <!-- roof + system (moved into the active mode) -->
+    <div class="card sys" id="sysBox">
+      <h3>หลังคาและขนาดระบบ</h3>
+      <div class="row">
+        <label class="f"><span>พื้นที่หลังคารวม (ม²)</span><input type="number" id="rArea" data-k="roof.area" step="0.1" min="0"></label>
+        <label class="f"><span>ใช้วางแผงได้ (%)</span><input type="number" id="rPct" data-k="roof.pct" step="0.5" min="5" max="100"></label>
+      </div>
+      <dl class="kv sm" style="margin-top:8px" id="roofKv"></dl>
+      <div class="chips" id="roofChips"></div>
+      <div class="rec" style="margin-top:12px"><div id="recTxt"></div><button class="btn sm" id="btnRec">ใช้ค่าแนะนำ</button></div>
+      <div class="nrow">
+        <label class="f"><span id="nLbl">จำนวนแผง</span><input type="range" id="nR" min="1" max="40" step="1" aria-label="จำนวนแผง"></label>
+        <label class="f"><span>แผง</span><input type="number" id="nN" min="1" step="1"></label>
+      </div>
+      <div class="meta">
+        <div><small>กำลังติดตั้ง</small><b id="sKwp"></b></div>
+        <div><small>พื้นที่แผง</small><b id="sArea"></b></div>
+        <div><small>น้ำหนักรวม</small><b id="sKg"></b></div>
+      </div>
+      <div class="sub3">ตรวจน้ำหนักบนหลังคา</div>
+      <div class="row">
+        <label class="f"><span>โครงยึด/ราง (กก./ม²)</span><input type="number" id="rMount" data-k="roof.mount" step="0.5" min="0"></label>
+        <label class="f"><span>น้ำหนักบรรทุกจรหลังคา (กก./ม²)</span><input type="number" id="rLL" data-k="roof.ll" step="5" min="0"></label>
+      </div>
+      <div class="chips" id="wChips"></div>
+      <div class="battrow" id="battRow">
+        <label class="tog"><span class="sw"><input type="checkbox" id="bon" data-k="batt.on"><i></i></span>แบตเตอรี่</label>
+        <label class="f"><span>ความจุ (kWh)</span><input type="number" id="bkwh" data-k="batt.kwh" min="1" step="1"></label>
+        <span class="hint" style="margin:0" id="battHint"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-out" id="results">
+    <div class="kpis">
+      <div class="kpi"><small>ขนาดระบบ</small><b id="kKwp"></b><span id="kN"></span></div>
+      <div class="kpi"><small>ผลิตไฟ</small><b id="kGen"></b><span id="kGenM"></span></div>
+      <div class="kpi hi"><small>ประหยัดต่อเดือน</small><b id="kSave"></b><span id="kSaveY"></span></div>
+      <div class="kpi"><small>คืนทุน</small><b id="kPay"></b><span id="kCost"></span></div>
+    </div>
+    <div class="pill" id="roofPill"></div>
+    <div class="card chart">
+      <h3>ใช้ vs ผลิต รายชั่วโมง <span class="c-mu" style="font-weight:400;font-size:12px">(วันเฉลี่ย)</span></h3>
+      <div class="legend" id="legend"></div>
+      <div id="chart"></div>
+    </div>
+    <div class="two">
+      <div class="card"><h3>พลังงานต่อวัน</h3><dl class="kv" id="flow"></dl></div>
+      <div class="card"><h3>ค่าไฟและความคุ้มค่า</h3><dl class="kv" id="money"></dl></div>
+    </div>
+    <div class="two">
+      <div class="card"><h3>ตารางรายชั่วโมง</h3><div class="tblwrap"><table class="ht" id="htbl"></table></div></div>
+      <div class="card" id="brkCard"><h3>ใช้ไฟแยกตามหมวด</h3><div class="brk" id="brk"></div></div>
+    </div>
+    <div class="note" id="notes"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const LS='solar-v7';
+const rng=(a,b)=>{const r=[];for(let i=a;i<b;i++)r.push(i%24);return r;};
+const clone=o=>JSON.parse(JSON.stringify(o));
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const SITES={
+  mab:{t:'มาบประชัน บางละมุง',lat:12.9446,lon:100.9589,psh:5.0},
+  pty:{t:'พัทยา',lat:12.9236,lon:100.8825,psh:5.0},
+  cbr:{t:'ชลบุรี (อ.เมือง)',lat:13.3611,lon:100.9847,psh:5.0},
+  ryg:{t:'ระยอง',lat:12.6814,lon:101.2816,psh:5.0},
+  bkk:{t:'กรุงเทพฯ',lat:13.7563,lon:100.5018,psh:4.9},
+  nkr:{t:'นครราชสีมา',lat:14.9799,lon:102.0977,psh:5.2},
+  cnx:{t:'เชียงใหม่',lat:18.7883,lon:98.9853,psh:5.0},
+  hkt:{t:'ภูเก็ต',lat:7.8804,lon:98.3923,psh:4.8},
+  custom:{t:'กำหนดเอง'}
+};
+const METERS={1:[[15,'5(15) A'],[45,'15(45) A'],[100,'30(100) A']],3:[[45,'15(45) A × 3'],[100,'30(100) A × 3'],[150,'50(150) A × 3'],[200,'200 A × 3 (CT)']]};
+const PEA_LIM={1:5,3:10};
+
+/* EV database — ค่าประมาณจากสเปกผู้ผลิต: [key, รุ่น, แบต kWh, kWh/100กม., AC สูงสุด kW] */
+const EVDB=[
+  ['BYD',[['byd-dolphin','Dolphin (Extended)',60.5,15,7],['byd-atto2','Atto 2',45.1,15,7],['byd-atto3','Atto 3 (Extended)',60.5,16,7],['byd-seal','Seal',82.5,17,7],['byd-sealion7','Sealion 7',82.5,21,7],['byd-m6','M6 (Extended)',71.8,19,7]]],
+  ['MG',[['mg4','MG4 Electric',64,16,6.6],['mgzs','ZS EV',50.3,17,7]]],
+  ['GWM ORA',[['ora-gc','Good Cat',63.1,15.5,6.6]]],
+  ['NETA',[['neta-v','NETA V-II',38.5,14,6.6]]],
+  ['AION',[['aion-y','AION Y Plus',63.2,15,7]]],
+  ['Deepal',[['deepal-s07','S07',66.8,17.5,7]]],
+  ['Zeekr',[['zeekr-x','Zeekr X',66,17,7]]],
+  ['Tesla',[['tesla-3','Model 3 (Long Range)',75,14,11],['tesla-y','Model Y (Long Range)',75,16,11]]],
+  ['Volvo',[['volvo-ex30','EX30',69,17,11]]],
+  ['Toyota',[['toyota-bz4x','bZ4X',71.4,17,6.6]]],
+  ['Hyundai',[['ioniq5','IONIQ 5',77.4,17.5,10.5]]],
+  ['BMW',[['bmw-ix1','iX1',64.7,17,11]]]
+];
+const EVMAP={}; EVDB.forEach(([b,ms])=>ms.forEach(m=>EVMAP[m[0]]={brand:b,t:m[1],bat:m[2],eff:m[3],ac:m[4]}));
+
+/* ตารางโหลดเริ่มต้น (Panel Schedule) */
+function defLC(){ return [
+  {id:'lt',ckt:'1–17',name:'ไฟฟ้าแสงสว่าง',pts:9,va:3600},
+  {id:'rc',ckt:'2–14',name:'เต้ารับทั่วไป',pts:7,va:4250},
+  {id:'hd',ckt:'19, 23',name:'Hood',pts:2,va:1000},
+  {id:'hb',ckt:'21, 25',name:'เตาไฟฟ้า HOB',pts:2,va:12000},
+  {id:'wh',ckt:'27, 29, 31–35, 37',name:'เครื่องทำน้ำร้อน',pts:4,va:26001},
+  {id:'sw',ckt:'39',name:'ปั๊มสระว่ายน้ำ',pts:1,va:3000},
+  {id:'c11',ckt:'16',name:'แอร์ CDU 1-1',pts:1,va:2250},
+  {id:'c12',ckt:'18',name:'แอร์ CDU 1-2',pts:1,va:5500},
+  {id:'c13',ckt:'20',name:'แอร์ CDU 1-3',pts:1,va:1450},
+  {id:'c21',ckt:'22',name:'แอร์ CDU 2-1',pts:1,va:2450},
+  {id:'c22',ckt:'24',name:'แอร์ CDU 2-2',pts:1,va:2450},
+  {id:'c23',ckt:'26',name:'แอร์ CDU 2-3',pts:1,va:4200},
+  {id:'c24',ckt:'28',name:'แอร์ CDU 2-4',pts:1,va:5500},
+  {id:'pb',ckt:'30',name:'ปั๊มน้ำ',pts:1,va:500},
+  {id:'pr',ckt:'38',name:'ประตูรั้วอัตโนมัติ',pts:1,va:300},
+  {id:'sp',ckt:'32, 34, 36',name:'สำรอง Solar Inverter',pts:1,va:5001},
+  {id:'sx',ckt:'40–42',name:'สำรอง',pts:3,va:1700}
+];}
+const lcKind=r=>/แสงสว่าง/.test(r.name)?'light':/เต้ารับ/.test(r.name)?'recept':/สำรอง|spare/i.test(r.name)?'spare':'count';
+
+function defApps(){
+  let i=0; const A=(g,o)=>Object.assign({id:'d'+(++i),g,on:true,qty:1,w:0,btu:0,duty:100,fl:1,src:'',lc:''},o);
+  return [
+    A('ac',{name:'CDU 1-1 ห้องนั่งเล่น 1 (Wall)',fl:1,btu:18000,hrs:rng(9,18),lc:'c11'}),
+    A('ac',{name:'CDU 1-2 ห้องทานอาหาร (Cassette)',fl:1,btu:48000,hrs:rng(9,18),lc:'c12'}),
+    A('ac',{name:'CDU 1-3 ห้องนอน 1 (Wall)',fl:1,btu:12000,hrs:rng(9,18),lc:'c13'}),
+    A('ac',{name:'CDU 2-1 ห้องนอน 2 (Wall)',fl:2,btu:24000,hrs:rng(19,31),lc:'c21'}),
+    A('ac',{name:'CDU 2-2 ห้องนอน 3 (Wall)',fl:2,btu:24000,hrs:rng(19,31),lc:'c22'}),
+    A('ac',{name:'CDU 2-3 ห้องนั่งเล่น 2 (Wall)',fl:2,btu:36000,hrs:rng(19,31),lc:'c23'}),
+    A('ac',{name:'CDU 2-4 ห้องนอน Master (Cassette)',fl:2,btu:48000,hrs:rng(19,31),lc:'c24'}),
+    A('ac',{name:'CDU 2-5 ห้องนอน Master (Wall)',fl:2,btu:24000,hrs:rng(19,31),lc:''}),
+    A('light',{name:'ดาวน์ไลท์ LED 7W ชั้น 1',qty:36,w:7,duty:50,hrs:[6].concat(rng(18,23)),lc:'lt',src:'นับจากแปลนไฟฟ้าแสงสว่าง'}),
+    A('light',{name:'ดาวน์ไลท์ LED 7W ชั้น 2',qty:27,w:7,duty:50,hrs:[6].concat(rng(19,24)),lc:'lt',src:'นับจากแปลนไฟฟ้าแสงสว่าง'}),
+    A('light',{name:'โคมผนัง/หัวเตียง LED 11W',qty:10,w:11,duty:60,hrs:rng(19,23),lc:'lt'}),
+    A('light',{name:'โคมห้อยตกแต่ง',qty:4,w:20,duty:100,hrs:rng(19,22),lc:'lt',src:'ใส่วัตต์หลอด LED จริง'}),
+    A('light',{name:'ไฟสนาม ปักดิน / ภายนอก',qty:12,w:6,duty:100,hrs:rng(18,24),lc:'lt'}),
+    A('light',{name:'LED Strip 6W/ม. (จำนวน = เมตร)',qty:10,w:6,duty:100,hrs:rng(18,23),lc:'lt'}),
+    A('plug',{name:'ตู้เย็น 2 ประตู Inverter',qty:1,w:150,duty:35,hrs:rng(0,24),lc:'rc',src:'ฉลากเบอร์ 5: kWh/ปี ÷ 365 = kWh/วัน'}),
+    A('plug',{name:'ทีวี LED 55"',qty:2,w:110,duty:100,hrs:rng(19,23),lc:'rc'}),
+    A('plug',{name:'Wi-Fi / Router / Standby',qty:1,w:40,duty:100,hrs:rng(0,24),lc:'rc'}),
+    A('plug',{name:'คอมพิวเตอร์ / โน้ตบุ๊ก',qty:2,w:65,duty:100,hrs:[20,21],lc:'rc'}),
+    A('plug',{name:'เครื่องซักผ้า (น้ำเย็น)',qty:1,w:500,duty:70,hrs:[9,10],lc:'rc'}),
+    A('plug',{name:'เตารีดไอน้ำ',qty:1,w:2000,duty:40,hrs:[20],lc:'rc'}),
+    A('plug',{name:'ไมโครเวฟ',qty:1,w:1200,duty:25,hrs:[7,18],lc:'rc'}),
+    A('plug',{name:'หม้อหุงข้าว',qty:1,w:700,duty:50,hrs:[17],lc:'rc'}),
+    A('fixed',{name:'เตาไฟฟ้า HOB',qty:2,w:2000,duty:25,hrs:[7,18],lc:'hb'}),
+    A('fixed',{name:'เครื่องดูดควัน Hood',qty:2,w:150,duty:50,hrs:[18],lc:'hd'}),
+    A('fixed',{name:'เครื่องทำน้ำร้อน ห้องน้ำทั่วไป',qty:3,w:4500,duty:12,hrs:[6,7,20,21],lc:'wh'}),
+    A('fixed',{name:'เครื่องทำน้ำร้อน ห้องน้ำ Master (3 เฟส)',qty:1,w:8000,duty:15,hrs:[7,21],lc:'wh'}),
+    A('fixed',{name:'ปั๊มน้ำใช้',qty:1,w:300,duty:30,hrs:[6,7,8,18,19,20,21],lc:'pb'}),
+    A('fixed',{name:'ปั๊มสระว่ายน้ำ',qty:1,w:1500,duty:100,hrs:rng(9,17),on:false,lc:'sw',src:'เปิดถ้ามีสระ'}),
+    A('fixed',{name:'ประตูรั้วอัตโนมัติ',qty:1,w:300,duty:5,hrs:[7,8,17,18],lc:'pr'}),
+    A('fixed',{name:'พัดลมดูดอากาศห้องน้ำ',qty:4,w:25,duty:50,hrs:[6,7,20,21,22],lc:'rc'})
+  ];
+}
+
+const DEF={
+  v:7, mode:null,
+  house:{name:'SPECTRA · มาบประชัน',phase:3,meter:100},
+  site:{preset:'mab',lat:12.9446,lon:100.9589,psh:5.0,pr:0.78},
+  panel:{w:640,len:2.278,wid:1.134,kg:28,gap:7},
+  roof:{area:177.9,pct:63.5,mount:3,ll:50},
+  tariff:{tier:true,ft:0.1623,buy:4.90,net:true,sell:2.20,lim:5},
+  price:{w:28.5,batt:12000},
+  batt:{on:false,kwh:14},
+  thr:90,
+  m1:{n:null,smode:'check',self:70,ac:'f1',ck:{base:true,home:true,wfh:false,wash:true,pool:false,ev:false}},
+  m2:{by:'bill',bill:21657,units:4456,prof:'home',day:31,n:null},
+  m3:{n:null},
+  ac:{k:0.095,plf:'tou',c:0.65},
+  ev:{on:true,wb:7.4,mode:'solar',start:22,ce:90,cars:[{id:'car1',model:'byd-atto3',name:'',km:40,eff:16,bat:60.5,ac:7,src:'db'}]},
+  lc:defLC(),
+  apps:defApps()
+};
+function merge(d,s){ if(d===null||typeof d!=='object'||Array.isArray(d)) return s===undefined?d:s; if(s==null||typeof s!=='object') return d;
+  const o={}; for(const k in d) o[k]=(k in s)? merge(d[k],s[k]) : d[k]; return o; }
+let S=clone(DEF);
+try{ const raw=localStorage.getItem(LS); if(raw){ const s=JSON.parse(raw); if(s&&s.v===7) S=merge(clone(DEF),s); } }catch(e){}
+let saveT=null; function save(){ clearTimeout(saveT); saveT=setTimeout(()=>{ try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){} },250); }
+const get=p=>p.split('.').reduce((o,k)=>o==null?o:o[k],S);
+const set=(p,v)=>{const ks=p.split('.');let o=S;for(let i=0;i<ks.length-1;i++)o=o[ks[i]];o[ks[ks.length-1]]=v;};
+
+const nf=(n,d=0)=>(isFinite(n)?n:0).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const f1=n=>nf(n,1), f2=n=>nf(n,2);
+
+/* ── physics ── */
+const SH=(()=>{const a=Array(24).fill(0);let s=0;for(let h=6;h<18;h++){a[h]=Math.sin(Math.PI*(h+.5-6)/12);s+=a[h];}return a.map(v=>v/s);})();
+const yieldK=()=>S.site.psh*S.site.pr;
+const pArea=()=>S.panel.len*S.panel.wid;
+const roofUse=()=>S.roof.area*S.roof.pct/100;
+const roofMax=()=>Math.max(0,Math.floor(roofUse()/(pArea()*(1+S.panel.gap/100))));
+const kwpOf=n=>n*S.panel.w/1000;
+const meterKVA=()=> S.house.phase==1? .23*S.house.meter : .4*Math.sqrt(3)*S.house.meter;
+const PLF=h=> (h>=23||h<6)?.30 : h<9?.45 : h<11?.55 : h<17?.65 : h<20?.55 : .42;
+function appKW(a,h){
+  if(!a.on||!a.hrs.includes(h)) return 0;
+  if(a.g==='ac'){
+    const rated=a.btu*S.ac.k/1000*a.qty;
+    if(S.ac.plf==='const') return rated*S.ac.c;
+    return rated*(!a.hrs.includes((h+23)%24)?.95:PLF(h));
+  }
+  return a.qty*a.w/1000*a.duty/100;
+}
+const appDay=a=>{let s=0;for(let h=0;h<24;h++)s+=appKW(a,h);return s;};
+const appRatedW=a=> a.g==='ac'? a.btu*S.ac.k*a.qty : a.qty*a.w;
+
+function tiered(u){ u=Math.max(0,u);
+  const e=Math.min(u,150)*3.2484+Math.max(0,Math.min(u,400)-150)*4.2218+Math.max(0,u-400)*4.4217;
+  return (38.22+e+u*S.tariff.ft)*1.07; }
+const billOf=u=> S.tariff.tier? tiered(u) : u*S.tariff.buy;
+function unitsOfBill(b){ if(!S.tariff.tier) return b/S.tariff.buy; let lo=0,hi=200000; for(let i=0;i<60;i++){const m=(lo+hi)/2; if(tiered(m)<b) lo=m; else hi=m;} return (lo+hi)/2; }
+const marginal=()=> S.tariff.tier? (4.4217+S.tariff.ft)*1.07 : S.tariff.buy;
+
+function simulate(load,kWp){
+  const pv=SH.map(f=>kWp*yieldK()*f);
+  const bOn=S.batt.on && S.mode!=='roof';
+  const cap=bOn? S.batt.kwh*0.9 : 0, pmax=bOn? Math.max(2.5,S.batt.kwh*0.5):0, ce=.95, de=.97;
+  const lim=S.tariff.net? S.tariff.lim : 0;
+  let soc=0, R;
+  for(let pass=0;pass<3;pass++){
+    R={pv,load,direct:[],chg:[],dis:[],exp:[],cur:[],imp:[]};
+    for(let h=0;h<24;h++){
+      const d=Math.min(pv[h],load[h]); let sur=pv[h]-d, def=load[h]-d, c=0,x=0,e=0,cu=0;
+      if(sur>0 && cap>0){ c=Math.max(0,Math.min(sur,pmax,(cap-soc)/ce)); soc+=c*ce; sur-=c; }
+      if(sur>0){ e=Math.min(sur,lim); cu=sur-e; }
+      if(def>0 && cap>0){ x=Math.min(def,pmax,soc*de); soc-=x/de; def-=x; }
+      R.direct.push(d);R.chg.push(c);R.dis.push(x);R.exp.push(e);R.cur.push(cu);R.imp.push(def);
+    }
+  }
+  const sum=a=>a.reduce((s,v)=>s+v,0);
+  R.T={pv:sum(pv),load:sum(load),direct:sum(R.direct),chg:sum(R.chg),dis:sum(R.dis),exp:sum(R.exp),cur:sum(R.cur),imp:sum(R.imp)};
+  R.T.self=R.T.pv>0?(R.T.pv-R.T.exp-R.T.cur)/R.T.pv:0;
+  return R;
+}
+
+/* ── roof-mode checklist ── */
+const CK=[
+  {k:'base',t:'ตู้เย็น + อุปกรณ์ standby',p:h=>.12},
+  {k:'home',t:'มีคนอยู่บ้านกลางวัน (ไฟ ทีวี คอม ทำอาหาร)',p:h=>(h>=7&&h<17? .45:0)+(h===11?.8:0)},
+  {k:'wfh',t:'ทำงานที่บ้าน / ออฟฟิศในบ้าน',p:h=>(h>=8&&h<17?.3:0)},
+  {k:'wash',t:'ซักผ้า รีดผ้า ทำความสะอาดตอนกลางวัน',p:h=>(h===9||h===10?.8:0)},
+  {k:'pool',t:'ปั๊มสระว่ายน้ำเดินกลางวัน',p:h=>(h>=9&&h<16?1.5:0)},
+  {k:'ev',t:'ชาร์จรถไฟฟ้าตอนกลางวัน',p:h=>(h===10||h===11?3.5:0)}
+];
+const CKAC={none:{t:'',p:h=>0},
+  r2:{t:'≈1.6 kW ช่วง 10–17 น.',p:h=>(h>=10&&h<17?(h===10?2.4:1.6):0)},
+  f1:{t:'≈5 kW ช่วง 09–17 น. (แอร์รวม ~78,000 BTU)',p:h=>(h>=9&&h<17?(h===9?7:4.9):0)},
+  all:{t:'≈14.5 kW ช่วง 09–17 น. (แบบบ้านตัวอย่าง/ออฟฟิศ)',p:h=>(h>=9&&h<17?(h===9?21:14.5):0)}};
+const dayKwh=p=>{let s=0;for(let h=7;h<17;h++)s+=p(h);return s;};
+function ckLoad(){ return Array.from({length:24},(_,h)=> CK.reduce((s,c)=>s+(S.m1.ck[c.k]?c.p(h):0),0) + CKAC[S.m1.ac].p(h)); }
+
+/* ── load builders ── */
+function loadBill(){
+  const u=S.m2.by==='bill'? unitsOfBill(S.m2.bill) : S.m2.units;
+  const D=u/30.4, p=S.m2.day/100, wd=[],wn=[]; let sd=0,sn=0;
+  for(let h=0;h<24;h++){
+    if(h>=7&&h<17){const w=.6+.4*Math.sin(Math.PI*(h-7+.5)/10); wd[h]=w; wn[h]=0; sd+=w;}
+    else {const w=(h>=17&&h<23)?1.6:(h===6?1.2:1.0); wn[h]=w; wd[h]=0; sn+=w;}
+  }
+  return {u, load:wd.map((w,h)=>D*p*w/sd + D*(1-p)*wn[h]/sn)};
+}
+const carCap=c=>Math.min(S.ev.wb, c.ac||S.ev.wb);
+const carNeed=c=>c.km*c.eff/100/(S.ev.ce/100);
+function loadApps(kWp){
+  const house=Array(24).fill(0), grp={ac:0,light:0,plug:0,fixed:0};
+  for(const a of S.apps){ for(let h=0;h<24;h++){ const k=appKW(a,h); house[h]+=k; grp[a.g]+=k; } }
+  const ev=Array(24).fill(0); let need=0, fromSun=0;
+  if(S.ev.on){
+    const avail=Array(24).fill(0).map((_,h)=>kWp*yieldK()*SH[h]-house[h]);
+    for(const c of S.ev.cars){
+      const cap=carCap(c); let rem=carNeed(c); need+=rem;
+      const mine=Array(24).fill(0);
+      if(S.ev.mode==='solar'){
+        for(let h=9;h<16&&rem>1e-6;h++){ const sur=avail[h]; if(sur>=1.4){ const x=Math.min(cap,sur,rem); mine[h]+=x; avail[h]-=x; rem-=x; fromSun+=x; } }
+      }
+      for(let k=0;k<24&&rem>1e-6;k++){ const h=(S.ev.start+k)%24; const x=Math.min(cap-mine[h],rem); if(x>0){mine[h]+=x;rem-=x;} }
+      mine.forEach((v,h)=>ev[h]+=v);
+    }
+  }
+  return {load:house.map((v,h)=>v+ev[h]), house, ev, need, fromSun, grp};
+}
+function buildLoad(kWp){
+  if(S.mode==='bill') return loadBill().load;
+  if(S.mode==='load') return loadApps(kWp).load;
+  return S.m1.smode==='check'? ckLoad() : SH.map(f=>kWp*yieldK()*f*S.m1.self/100);
+}
+function recommend(){
+  const mx=roofMax();
+  if(S.mode==='roof') return Math.max(1,mx);
+  let best=1; const top=Math.max(60,Math.ceil(mx*1.5));
+  for(let n=1;n<=top;n++){ const k=kwpOf(n); if(simulate(buildLoad(k),k).T.self>=S.thr/100) best=n; }
+  return best;
+}
+
+/* ── bindings ── */
+function bindAll(){
+  $$('[data-k]').forEach(el=>{
+    const p=el.dataset.k, ev=(el.type==='checkbox'||el.tagName==='SELECT')?'change':'input';
+    el.addEventListener(ev,()=>{
+      let v;
+      if(el.type==='checkbox') v=el.checked;
+      else if(el.type==='number'||el.type==='range'||'num' in el.dataset){ v=parseFloat(el.value); if(!isFinite(v)) return; }
+      else v=el.value;
+      set(p,v); onChange(p,el);
+    });
+  });
+  $$('[data-seg]').forEach(seg=>{
+    seg.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return; const v='num' in seg.dataset? parseFloat(b.dataset.v): b.dataset.v; set(seg.dataset.seg,v); onChange(seg.dataset.seg); });
+  });
+}
+function syncInputs(skip){
+  $$('[data-k]').forEach(el=>{
+    if(el===skip) return; const v=get(el.dataset.k);
+    if(el.type==='checkbox') el.checked=!!v; else if(document.activeElement!==el||el.type==='range') el.value=v;
+  });
+  $$('[data-seg]').forEach(seg=>{ const v=String(get(seg.dataset.seg)); seg.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===v)); });
+}
+function onChange(p,el){
+  const PR={home:31,work:15,show:80};
+  if(p==='m2.prof'&&PR[S.m2.prof]) S.m2.day=PR[S.m2.prof];
+  if(p==='m2.day'&&PR[S.m2.prof]!==S.m2.day) S.m2.prof='custom';
+  if(p==='m2.bill') S.m2.units=Math.round(unitsOfBill(S.m2.bill));
+  if(p==='m2.units') S.m2.bill=Math.round(billOf(S.m2.units));
+  if(p==='site.lat'||p==='site.lon') S.site.preset='custom';
+  if(p==='house.phase'){ fillMeters(); fillWallbox(); }
+  if(p.startsWith('ac.')) renderApps();
+  syncInputs(el); recalc();
+}
+function fillMeters(){
+  const opts=METERS[S.house.phase]; if(!opts.some(o=>o[0]==S.house.meter)) S.house.meter=opts[1]?opts[1][0]:opts[0][0];
+  $('#hmeter').innerHTML=opts.map(([a,t])=>`<option value="${a}">${t}</option>`).join(''); $('#hmeter').value=S.house.meter;
+}
+function fillWallbox(){
+  const o=[[3.7,'3.7 kW (1 เฟส 16A)'],[7.4,'7.4 kW (1 เฟส 32A)']]; if(S.house.phase==3) o.push([11,'11 kW (3 เฟส 16A)'],[22,'22 kW (3 เฟส 32A)']);
+  if(!o.some(x=>x[0]==S.ev.wb)) S.ev.wb=7.4;
+  $('#evwb').innerHTML=o.map(([v,t])=>`<option value="${v}">${t}</option>`).join(''); $('#evwb').value=S.ev.wb;
+}
+function initStatic(){
+  const sel=$('#sitePreset');
+  sel.innerHTML=Object.entries(SITES).map(([k,s])=>`<option value="${k}">${s.t}${s.psh?' · PSH '+s.psh.toFixed(1):''}</option>`).join('');
+  sel.addEventListener('change',()=>{ const s=SITES[sel.value]; S.site.preset=sel.value; if(s.lat!=null){S.site.lat=s.lat;S.site.lon=s.lon;S.site.psh=s.psh;} syncInputs(); recalc(); });
+  $('#season').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.site.psh=parseFloat(b.dataset.psh);syncInputs();recalc();});
+  $('#evstart').innerHTML=Array.from({length:24},(_,h)=>`<option value="${h}">${String(h).padStart(2,'0')}:00</option>`).join('');
+  fillMeters(); fillWallbox();
+  // checklist
+  $('#ckList').innerHTML=CK.map(c=>`<label><input type="checkbox" data-ck="${c.k}"><span>${c.t}</span><small>${f1(dayKwh(c.p))} kWh</small></label>`).join('');
+  $('#ckList').addEventListener('change',e=>{const k=e.target.dataset.ck; if(!k)return; S.m1.ck[k]=e.target.checked; recalc();});
+}
+function syncCk(){ $$('#ckList input').forEach(i=>i.checked=!!S.m1.ck[i.dataset.ck]); }
+
+/* ── appliances ── */
+const GROUPS=['ac','light','plug','fixed'];
+const BTUS=[9000,12000,15000,18000,24000,30000,36000,48000,60000];
+function lcOptions(sel){ return `<option value="">— ไม่มีในตาราง —</option>`+S.lc.map(r=>`<option value="${r.id}"${r.id===sel?' selected':''}>${esc(r.ckt)} · ${esc(r.name)}</option>`).join(''); }
+function hrsHTML(a){
+  let s='<div class="hrs" data-id="'+a.id+'">';
+  for(let h=0;h<24;h++) s+=`<b data-h="${h}" class="${a.hrs.includes(h)?'on':''}${SH[h]>0?' sun':''}" title="${String(h).padStart(2,'0')}:00"></b>`;
+  return s+'</div><div class="hrs-ax"><span>00</span><span>03</span><span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span></div>';
+}
+function appHTML(a){
+  const fields = a.g==='ac'
+    ? `<label class="f"><span>ชั้น</span><select data-f="fl"><option value="1"${a.fl==1?' selected':''}>1</option><option value="2"${a.fl==2?' selected':''}>2</option></select></label>
+       <label class="f"><span>จำนวน</span><input type="number" data-f="qty" min="0" step="1" value="${a.qty}"></label>
+       <label class="f"><span>BTU/เครื่อง</span><input type="number" data-f="btu" min="0" step="1000" list="btuList" value="${a.btu}"></label>
+       <span class="calc" data-calc></span>`
+    : `<label class="f"><span>${/Strip/.test(a.name)?'เมตร':'จำนวน'}</span><input type="number" data-f="qty" min="0" step="1" value="${a.qty}"></label>
+       <label class="f"><span>วัตต์/ชิ้น</span><input type="number" data-f="w" min="0" step="1" value="${a.w}"></label>
+       <label class="f"><span>${a.g==='light'?'% เปิดพร้อมกัน':'% เวลาทำงาน'}</span><input type="number" data-f="duty" min="0" max="100" step="5" value="${a.duty}"></label>
+       <span class="calc" data-calc></span>`;
+  return `<div class="app${a.on?'':' off'}" data-id="${a.id}">
+    <div class="app-h"><label class="sw" title="เปิด/ปิด"><input type="checkbox" data-f="on"${a.on?' checked':''} aria-label="ใช้งาน"><i></i></label>
+      <input class="nm" data-f="name" value="${esc(a.name)}" aria-label="ชื่อ">
+      <button class="x" data-del aria-label="ลบ">×</button></div>
+    <div class="app-f">${fields}</div>
+    <div class="app-lc"><label class="f"><span>วงจรในตารางโหลด</span><select class="lcsel" data-f="lc">${lcOptions(a.lc)}</select></label></div>
+    ${hrsHTML(a)}
+    <div class="app-m"><span class="kwh" data-kwh></span><span data-hn></span>${a.src?`<span class="src">· ${esc(a.src)}</span>`:''}</div>
+  </div>`;
+}
+function renderApps(){ for(const g of GROUPS){ $('#g-'+g).innerHTML=S.apps.filter(a=>a.g===g).map(appHTML).join(''); } $$('.app[data-id]').forEach(r=>{const a=findApp(r.dataset.id); if(a) refreshRow(r,a);}); }
+const findApp=id=>S.apps.find(a=>a.id===id);
+function refreshRow(row,a){
+  row.classList.toggle('off',!a.on);
+  row.querySelector('[data-kwh]').textContent=f2(appDay(a))+' kWh/วัน';
+  const c=row.querySelector('[data-calc]'); if(c) c.textContent= a.g==='ac'? f2(a.btu*S.ac.k/1000)+' kW' : f2(a.qty*a.w/1000)+' kW';
+  row.querySelector('[data-hn]').textContent='· '+a.hrs.length+' ชม.';
+}
+function initApps(){
+  const box=$('#in-load');
+  box.addEventListener('input',e=>{
+    const el=e.target, f=el.dataset.f; if(!f) return;
+    const row=el.closest('.app[data-id]'), a=row&&findApp(row.dataset.id); if(!a) return;
+    if(f==='on') a.on=el.checked; else if(f==='name') a.name=el.value; else if(f==='lc') a.lc=el.value;
+    else { const v=parseFloat(el.value); if(!isFinite(v)) return; a[f]=v; }
+    refreshRow(row,a); recalc();
+  });
+  box.addEventListener('change',e=>{ const f=e.target.dataset.f; if(f==='fl'||f==='lc'){ const a=findApp(e.target.closest('.app').dataset.id); if(f==='fl')a.fl=+e.target.value; else a.lc=e.target.value; recalc(); }});
+  box.addEventListener('click',e=>{
+    const d=e.target.closest('[data-del]'); if(d){ const id=d.closest('.app').dataset.id; S.apps=S.apps.filter(a=>a.id!==id); renderApps(); recalc(); return; }
+    const add=e.target.closest('[data-add]'); if(add){
+      const g=add.dataset.add, id='u'+Date.now().toString(36);
+      const base={ac:{name:'แอร์ใหม่',btu:12000,fl:1,hrs:rng(20,30),lc:''},light:{name:'ดวงโคมใหม่',qty:1,w:10,duty:100,hrs:rng(18,23),lc:'lt'},plug:{name:'เครื่องใช้ไฟฟ้าใหม่',qty:1,w:100,duty:100,hrs:rng(18,22),lc:'rc'},fixed:{name:'อุปกรณ์ใหม่',qty:1,w:500,duty:100,hrs:[8,9],lc:''}}[g];
+      S.apps.push(Object.assign({id,g,on:true,qty:1,w:0,btu:0,duty:100,fl:1,src:'เพิ่มเอง'},base));
+      renderApps(); recalc();
+      const rows=$('#g-'+g).querySelectorAll('.app'); const nm=rows[rows.length-1]?.querySelector('.nm'); if(nm){nm.focus();nm.select();}
+    }
+  });
+  let paint=null;
+  const hit=(x,y)=>{const el=document.elementFromPoint(x,y);return el&&el.matches('.hrs b')?el:null;};
+  const apply=b=>{ if(!b||!paint) return; const strip=b.parentElement; if(strip.dataset.id!==paint.id) return;
+    const h=+b.dataset.h, a=paint.a, has=a.hrs.includes(h);
+    if(paint.on&&!has){a.hrs.push(h);a.hrs.sort((x,y)=>x-y);} else if(!paint.on&&has){a.hrs=a.hrs.filter(x=>x!==h);} else return;
+    b.classList.toggle('on',paint.on); refreshRow(strip.closest('.app'),a); recalc(); };
+  box.addEventListener('pointerdown',e=>{ const b=e.target.closest('.hrs b'); if(!b) return; e.preventDefault();
+    const strip=b.parentElement, a=findApp(strip.dataset.id); if(!a) return; paint={id:strip.dataset.id,a,on:!a.hrs.includes(+b.dataset.h)}; apply(b); });
+  window.addEventListener('pointermove',e=>{ if(paint) apply(hit(e.clientX,e.clientY)); });
+  window.addEventListener('pointerup',()=>{paint=null;}); window.addEventListener('pointercancel',()=>{paint=null;});
+  const dl=document.createElement('datalist'); dl.id='btuList'; dl.innerHTML=BTUS.map(b=>`<option value="${b}">`).join(''); document.body.appendChild(dl);
+  $('#btnAppsReset').addEventListener('click',function(){ armed(this,()=>{ S.apps=defApps(); S.lc=defLC(); renderApps(); renderLCEd(); recalc(); },'กดอีกครั้งเพื่อแทนที่รายการทั้งหมด'); });
+  // LC editor
+  $('#lcEd').addEventListener('input',e=>{ const tr=e.target.closest('tr'); const r=S.lc.find(x=>x.id===tr.dataset.id); if(!r)return; const f=e.target.dataset.lf;
+    r[f]= (f==='pts'||f==='va')? (parseFloat(e.target.value)||0) : e.target.value; recalc(); });
+  $('#lcEd').addEventListener('change',()=>renderApps());
+  $('#lcEd').addEventListener('click',e=>{ const x=e.target.closest('[data-lcdel]'); if(!x)return; const id=x.closest('tr').dataset.id; S.lc=S.lc.filter(r=>r.id!==id); S.apps.forEach(a=>{if(a.lc===id)a.lc='';}); renderLCEd(); renderApps(); recalc(); });
+  $('#lcAdd').addEventListener('click',()=>{ S.lc.push({id:'l'+Date.now().toString(36),ckt:'',name:'วงจรใหม่',pts:1,va:0}); renderLCEd(); renderApps(); recalc(); });
+}
+function renderLCEd(){
+  $('#lcEd').innerHTML=S.lc.map(r=>`<tr data-id="${r.id}"><td style="width:92px"><input data-lf="ckt" value="${esc(r.ckt)}"></td><td><input class="t" data-lf="name" value="${esc(r.name)}"></td><td><input type="number" data-lf="pts" value="${r.pts}"></td><td><input type="number" data-lf="va" value="${r.va}"></td><td><button class="x" data-lcdel aria-label="ลบวงจร">×</button></td></tr>`).join('');
+}
+function armed(btn,fn,msg){
+  if(btn.classList.contains('arm')){ btn.classList.remove('arm'); btn.textContent=btn.dataset.t; fn(); return; }
+  btn.dataset.t=btn.textContent; btn.textContent=msg; btn.classList.add('arm');
+  setTimeout(()=>{ if(btn.classList.contains('arm')){btn.classList.remove('arm');btn.textContent=btn.dataset.t;} },3500);
+}
+
+/* ── EV cars ── */
+let sampleFn=null;
+function carOptions(sel){
+  return EVDB.map(([b,ms])=>`<optgroup label="${b}">${ms.map(m=>`<option value="${m[0]}"${m[0]===sel?' selected':''}>${b} ${m[1]}</option>`).join('')}</optgroup>`).join('')
+    + `<option value="custom"${sel==='custom'?' selected':''}>รุ่นอื่น — กรอกเอง</option>`;
+}
+function renderCars(){
+  $('#cars').innerHTML=S.ev.cars.map((c,i)=>`
+    <div class="car" data-car="${c.id}">
+      <div class="car-h"><label class="f" style="flex:1"><span>รถคันที่ ${i+1}${c.src==='ai'?'<span class="aitag">ข้อมูลจาก AI</span>':''}</span><select data-cf="model">${carOptions(c.model)}</select></label>
+        ${S.ev.cars.length>1?'<button class="x" data-cardel aria-label="ลบรถ" style="align-self:end">×</button>':''}</div>
+      ${c.model==='custom'?`<div class="ai"><label class="f"><span>ยี่ห้อ / รุ่น</span><input type="text" data-cf="name" value="${esc(c.name)}" placeholder="เช่น Xpeng G6" style="font-family:var(--sans)"></label><button class="btn sm" data-ai ${sampleFn?'':'hidden'}>หาข้อมูลอัตโนมัติ</button></div><div class="aistat" data-aistat>${sampleFn?'':'กรอกค่าจากสเปกผู้ผลิต'}</div>`:''}
+      <div class="row" style="margin-top:8px">
+        <label class="f"><span>กม./วัน</span><input type="number" data-cf="km" min="0" step="5" value="${c.km}"></label>
+        <label class="f"><span>kWh/100 กม.</span><input type="number" data-cf="eff" min="5" max="40" step="0.5" value="${c.eff}"></label>
+        <label class="f"><span>ชาร์จ AC สูงสุด (kW)</span><input type="number" data-cf="ac" min="1" max="22" step="0.1" value="${c.ac}"></label>
+        <label class="f"><span>แบต (kWh)</span><input type="number" data-cf="bat" min="5" max="200" step="0.1" value="${c.bat}"></label>
+      </div>
+      <div class="meta2" data-cmeta></div>
+    </div>`).join('');
+  refreshCars();
+}
+function refreshCars(){
+  $$('#cars .car').forEach(el=>{ const c=S.ev.cars.find(x=>x.id===el.dataset.car); if(!c) return;
+    const need=carNeed(c), cap=carCap(c);
+    el.querySelector('[data-cmeta]').innerHTML=`ชาร์จวันละ <b>${f1(need)}</b> kWh · <b>${f1(need/cap)}</b> ชม. ที่ <b>${f1(cap)}</b> kW${c.ac<S.ev.wb?' (รถรับได้แค่นี้)':''} · วิ่งได้ ≈ <b>${nf(c.bat/c.eff*100)}</b> กม./ชาร์จเต็ม`;
+  });
+}
+function initCars(){
+  const box=$('#cars');
+  box.addEventListener('input',e=>{ const f=e.target.dataset.cf; if(!f||f==='model') return; const c=S.ev.cars.find(x=>x.id===e.target.closest('.car').dataset.car);
+    if(f==='name') c.name=e.target.value; else { const v=parseFloat(e.target.value); if(!isFinite(v))return; c[f]=v; if(c.src!=='ai') c.src='user'; }
+    refreshCars(); recalc(); });
+  box.addEventListener('change',e=>{ if(e.target.dataset.cf!=='model') return; const c=S.ev.cars.find(x=>x.id===e.target.closest('.car').dataset.car);
+    c.model=e.target.value; const m=EVMAP[c.model]; if(m){ c.bat=m.bat; c.eff=m.eff; c.ac=m.ac; c.src='db'; } renderCars(); recalc(); });
+  box.addEventListener('click',async e=>{
+    if(e.target.closest('[data-cardel]')){ const id=e.target.closest('.car').dataset.car; S.ev.cars=S.ev.cars.filter(x=>x.id!==id); renderCars(); recalc(); return; }
+    const b=e.target.closest('[data-ai]'); if(!b||!sampleFn) return;
+    const el=b.closest('.car'), c=S.ev.cars.find(x=>x.id===el.dataset.car), st=el.querySelector('[data-aistat]');
+    const q=(c.name||'').trim(); if(!q){ st.textContent='พิมพ์ยี่ห้อและรุ่นก่อน'; return; }
+    b.disabled=true; st.textContent='กำลังค้นหา...';
+    try{
+      const r=await sampleFn.json(`You are an EV spec lookup. For the electric car "${q}" (as sold in Thailand if possible), reply with ONLY this JSON: {"found":true|false,"model":"<brand model/variant you used>","battery_kwh":number,"kwh_per_100km":number,"ac_max_kw":number,"note":"<short Thai note: which variant/assumption>"}. battery_kwh = usable battery capacity. kwh_per_100km = typical real-world consumption (WLTP-like). ac_max_kw = on-board AC charger maximum. If you do not know this model or it is not a battery EV, set found=false and other numbers to 0.`,{modelTier:'default'});
+      const ok=r&&r.found&&r.battery_kwh>=10&&r.battery_kwh<=200&&r.kwh_per_100km>=8&&r.kwh_per_100km<=40&&r.ac_max_kw>=2&&r.ac_max_kw<=22.1;
+      if(!ok){ st.textContent='ไม่พบข้อมูลรุ่นนี้ — กรอกค่าจากสเปกผู้ผลิตเอง'; }
+      else { c.bat=+r.battery_kwh; c.eff=+r.kwh_per_100km; c.ac=+r.ac_max_kw; c.src='ai'; c.name=q; renderCars(); recalc();
+        const st2=$(`.car[data-car="${c.id}"] [data-aistat]`); if(st2) st2.textContent=`${r.model||q}${r.note?' · '+r.note:''} — ค่าประมาณ ควรตรวจกับสเปกผู้ผลิต`; return; }
+    }catch(err){
+      const m={not_granted:'ไม่ได้รับอนุญาตให้ถาม Claude — กรอกค่าเอง',rate_limited:'ถามบ่อยเกินไป ลองใหม่ภายหลัง',invalid_json:'อ่านคำตอบไม่ได้ ลองกดอีกครั้ง'};
+      st.textContent=m[err&&err.code]||'ค้นหาไม่สำเร็จ ลองใหม่ หรือกรอกค่าเอง';
+      if(err&&(err.code==='not_granted'||err.code==='sampling_disabled')){ sampleFn=null; }
+    }
+    b.disabled=false;
+  });
+  $('#carAdd').addEventListener('click',()=>{ if(S.ev.cars.length>=4) return; const m=EVMAP['byd-dolphin']; S.ev.cars.push({id:'c'+Date.now().toString(36),model:'byd-dolphin',name:'',km:30,eff:m.eff,bat:m.bat,ac:m.ac,src:'db'}); renderCars(); recalc(); });
+  try{ if(window.claude&&window.claude.use){ window.claude.use('sample').then(fn=>{ if(fn){ sampleFn=fn; renderCars(); } }).catch(()=>{}); } }catch(e){}
+}
+
+/* ── mode switching ── */
+function go(m){
+  if(m==='home') m=null;
+  S.mode=m; save();
+  $('#home').hidden=!!m; $('#work').hidden=!m;
+  document.body.classList.toggle('work',!!m);
+  $$('#tabs button').forEach(b=>b.classList.toggle('on',(b.dataset.go==='home'&&!m)||b.dataset.go===m));
+  if(!m){ recalc(); window.scrollTo(0,0); return; }
+  $$('.modein').forEach(el=>el.hidden=el.id!=='in-'+m);
+  $('#in-'+m+' .slot-sys').appendChild($('#sysBox'));
+  $('#battRow').hidden= m==='roof';
+  $('#brkCard').hidden= m!=='load';
+  recalc();
+}
+const mk=()=>({roof:'m1',bill:'m2',load:'m3'})[S.mode];
+function initSys(){
+  const setN=v=>{ if(!isFinite(v))return; v=Math.max(1,Math.min(Math.max(1,roofMax()),Math.round(v))); S[mk()].n=v; recalc(); };
+  $('#nR').addEventListener('input',e=>setN(+e.target.value));
+  $('#nN').addEventListener('change',e=>setN(+e.target.value));
+  $('#btnRec').addEventListener('click',()=>{ S[mk()].n=null; recalc(); });
+}
+
+/* ── chart ── */
+function niceMax(v){ if(v<=0) return 1; const p=Math.pow(10,Math.floor(Math.log10(v))); for(const m of [1,1.5,2,2.5,3,4,5,6,8,10]) if(m*p>=v) return m*p; return 10*p; }
+function drawChart(R,roof){
+  const W=720,H=230,pl=40,pr=10,pt=10,pb=26, iw=W-pl-pr, ih=H-pt-pb, bw=iw/24;
+  const mx=niceMax(Math.max(...R.pv,...R.load));
+  const y=v=>pt+ih-(v/mx)*ih;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="กราฟใช้ไฟและผลิตไฟรายชั่วโมง">`;
+  const dv=[4,5,3,6].find(k=>Math.abs(mx/k*2-Math.round(mx/k*2))<1e-9)||4;
+  for(let i=0;i<=dv;i++){ const v=mx*i/dv, yy=y(v); s+=`<line class="gl" x1="${pl}" x2="${W-pr}" y1="${yy}" y2="${yy}"/><text class="ax" x="${pl-6}" y="${yy+3.5}" text-anchor="end">${v%1?v.toFixed(1):v}</text>`; }
+  s+=`<text class="ax" x="4" y="${pt+8}">kW</text><rect x="${pl+6*bw}" y="${pt}" width="${12*bw}" height="${ih}" fill="var(--pv)" opacity=".06"/>`;
+  for(let h=0;h<24;h++){
+    const x=pl+h*bw+bw*.14, w=bw*.72, self=R.direct[h]+R.dis[h], imp=roof?0:R.imp[h];
+    if(imp>0) s+=`<rect x="${x}" y="${y(self+imp)}" width="${w}" height="${y(self)-y(self+imp)}" fill="var(--ld)" opacity=".55" rx="2"/>`;
+    if(self>0) s+=`<rect x="${x}" y="${y(self)}" width="${w}" height="${y(0)-y(self)}" fill="var(--ex)" opacity=".8" rx="2"/>`;
+  }
+  let d=`M${pl} ${y(0)}`; for(let h=0;h<24;h++) d+=` L${pl+h*bw+bw/2} ${y(R.pv[h])}`; d+=` L${pl+iw} ${y(0)} Z`;
+  s+=`<path d="${d}" fill="var(--pv)" opacity=".22"/>`;
+  let l=''; for(let h=0;h<24;h++) l+=(h?' L':'M')+(pl+h*bw+bw/2)+' '+y(R.pv[h]);
+  s+=`<path d="${l}" fill="none" stroke="var(--pv)" stroke-width="2.2" stroke-linejoin="round"/>`;
+  for(let h=0;h<=24;h+=3) s+=`<text class="ax" x="${pl+h*bw}" y="${H-8}" text-anchor="middle">${String(h%24).padStart(2,'0')}</text>`;
+  $('#chart').innerHTML=s+'</svg>';
+  $('#legend').innerHTML=`<span><i style="background:var(--pv)"></i>ผลิตไฟ</span><span><i style="background:var(--ex)"></i>ใช้ไฟจากโซลาร์${S.batt.on&&!roof?'/แบต':''}</span>`+(roof?'':`<span><i style="background:var(--ld);opacity:.55"></i>ซื้อจากการไฟฟ้า</span>`);
+}
+const chip=(k,ic,html)=>`<div class="chip ${k}"><span class="ic">${ic}</span><span>${html}</span></div>`;
+
+/* ── LC check ── */
+function renderLC(){
+  let ok=0,bad=0,warn=0; const rows=[];
+  const ids=new Set(S.lc.map(r=>r.id));
+  for(const r of S.lc){
+    const kind=lcKind(r), L=S.apps.filter(a=>a.lc===r.id), q=L.reduce((s,a)=>s+a.qty,0), W=L.reduce((s,a)=>s+appRatedW(a),0);
+    let st,cls,msg;
+    if(kind==='spare'){ st='–';cls='s-mu';msg='วงจรสำรอง'; }
+    else if(!L.length){ st='✗';cls='s-bad';msg='ยังไม่ได้กรอก'; bad++; }
+    else if(kind==='light'||kind==='recept'){ st='✓';cls='s-ok';msg=`${L.length} รายการ`; ok++; }
+    else if(q<r.pts){ st='!';cls='s-warn';msg=`กรอก ${q} จาก ${r.pts} จุด`; warn++; }
+    else if(q>r.pts){ st='!';cls='s-warn';msg=`กรอก ${q} เกินตาราง ${r.pts} จุด`; warn++; }
+    else { st='✓';cls='s-ok';msg=`ครบ ${q}/${r.pts} จุด`; ok++; }
+    if(kind!=='spare'&&kind!=='light'&&kind!=='recept'&&W>r.va&&r.va>0){ if(cls==='s-ok'){cls='s-warn';st='!';ok--;warn++;} msg+=` · พิกัดที่กรอก ${nf(W)} W > ${nf(r.va)} VA`; }
+    const off=L.filter(a=>!a.on).length;
+    if(off) msg+=` · ปิดอยู่ ${off}`;
+    rows.push(`<div class="lcr"><span class="st ${cls}">${st}</span><span class="nm2">${esc(r.name)} <small>CKT ${esc(r.ckt)} · ${msg}</small></span><span class="va">${nf(r.va)} VA${L.length?`<br>กรอก ${nf(W)} W`:''}</span></div>`);
+  }
+  const orphan=S.apps.filter(a=>!a.lc||!ids.has(a.lc));
+  for(const a of orphan){ bad++; rows.push(`<div class="lcr"><span class="st s-bad">?</span><span class="nm2">${esc(a.name)} <small>ไม่มีวงจรในตารางโหลด — ตรวจกับผู้ออกแบบไฟฟ้า หรือเลือกวงจรให้ถูก</small></span><span class="va">${nf(appRatedW(a))} W</span></div>`); }
+  if(S.ev.on) rows.push(`<div class="lcr"><span class="st s-mu">i</span><span class="nm2">เครื่องชาร์จรถไฟฟ้า <small>ถ้าใช้มิเตอร์แยก จะไม่อยู่ในตารางนี้ — ต้องต่ออยู่หลังมิเตอร์เดียวกับอินเวอร์เตอร์จึงจะใช้ไฟโซลาร์ได้</small></span><span class="va">${f1(S.ev.wb)} kW</span></div>`);
+  $('#lcList').innerHTML=rows.join('');
+  $('#lcSum').innerHTML=`<span class="s-ok">✓ ${ok}</span>${warn?`<span class="s-warn">! ${warn}</span>`:''}${bad?`<span class="s-bad">✗ ${bad}</span>`:''}`;
+}
+
+/* ── main recalc ── */
+function recalc(){
+  const m=S.mode, Y=yieldK(), rmx=roofMax(), kva=meterKVA(), lim=PEA_LIM[S.house.phase];
+  // header + home
+  $('#siteLbl').textContent=S.house.name||'';
+  $('#sitePreset').value=S.site.preset;
+  $('#yieldTxt').textContent=f2(Y);
+  $$('#season button').forEach(b=>b.classList.toggle('on',Math.abs(+b.dataset.psh-S.site.psh)<.01));
+  $('#pInfo').textContent=`${f2(pArea())} ม² · ${f1(S.panel.kg/pArea())} กก./ม²`;
+  $('#thrBuy').textContent=f2(marginal()); $('#thrSell').textContent=f2(S.tariff.sell);
+  $('#houseChips').innerHTML=chip('info','i',`มิเตอร์รับโหลดได้ ≈ <b>${nf(kva,1)}</b> kVA`)+chip('info','i',`เกณฑ์ทั่วไป กฟภ. บ้าน ${S.house.phase} เฟส ติดโซลาร์ได้ไม่เกิน <b>${lim}</b> kW`);
+  if(!m){ save(); return; }
+  $('#accF').style.visibility= S.ac.plf==='const'?'visible':'hidden';
+
+  let bill=null;
+  if(m==='roof'){
+    $('#ckBox').hidden=S.m1.smode!=='check'; $('#manBox').hidden=S.m1.smode!=='manual';
+    $('#ckAcHint').textContent=CKAC[S.m1.ac].t; syncCk();
+  }
+  if(m==='bill'){
+    bill=loadBill();
+    $('#m2billF').hidden=S.m2.by!=='bill'; $('#m2unitsF').hidden=S.m2.by!=='units';
+    const b=S.m2.by==='bill'?S.m2.bill:billOf(S.m2.units);
+    $('#m2derived').innerHTML= S.m2.by==='bill'
+      ? `= <b>${nf(bill.u)}</b> หน่วย/เดือน · <b>${f1(bill.u/30.4)}</b> kWh/วัน · เฉลี่ย <b>${f2(b/Math.max(1,bill.u))}</b> บ./หน่วย`
+      : `= ค่าไฟ <b>${nf(b)}</b> บาท/เดือน · <b>${f1(bill.u/30.4)}</b> kWh/วัน`;
+  }
+
+  const rec=recommend(), cap=Math.max(1,rmx);
+  let n=S[mk()].n ?? Math.min(rec,cap); n=Math.max(1,Math.min(n,cap));
+  const kWp=kwpOf(n);
+  let A=null, L;
+  if(m==='load'){ A=loadApps(kWp); L=A.load; } else L=buildLoad(kWp);
+  const R=simulate(L,kWp), T=R.T;
+
+  // roof + system card
+  const res=S.roof.area-roofUse();
+  $('#roofKv').innerHTML=`<dt>หลังคารวม</dt><dd>${f1(S.roof.area)} ม²</dd><dt>พื้นที่วางแผงได้ (${nf(S.roof.pct,1)}%)</dt><dd>${f1(roofUse())} ม²</dd><dt>เว้นว่าง ขอบ ทางเดิน ซ่อมบำรุง (${nf(100-S.roof.pct,1)}%)</dt><dd>${f1(res)} ม²</dd><dt class="t">วางแผงได้สูงสุด</dt><dd class="t">${rmx} แผง · ${f2(kwpOf(rmx))} kWp</dd>`;
+  $('#roofChips').innerHTML= S.roof.pct>80
+    ? chip('bad','!',`เหลือพื้นที่ว่าง ${nf(100-S.roof.pct,1)}% — น้อยกว่า 20% ที่ควรเผื่อไว้ซ่อมบำรุงและความปลอดภัย`)
+    : chip('ok','✓',`เหลือพื้นที่ว่าง ${nf(100-S.roof.pct,1)}% (≥ 20%)`);
+  $('#recTxt').innerHTML= m==='roof'
+    ? `เต็มพื้นที่ <b>${rec} แผง</b> · ${f2(kwpOf(rec))} kWp`
+    : (rec>rmx ? `แนะนำ <b>${rec} แผง</b> (${f2(kwpOf(rec))} kWp)<br><span style="opacity:.85">แต่หลังคาวางได้ ${rmx} แผง</span>` : `แนะนำ <b>${rec} แผง</b> · ${f2(kwpOf(rec))} kWp<br><span style="opacity:.85">ใหญ่สุดที่ยังใช้ไฟเองได้ ≥ ${S.thr}%</span>`);
+  $('#btnRec').hidden= S[mk()].n==null;
+  const nR=$('#nR'); nR.max=cap; nR.value=n; $('#nN').max=cap;
+  if(document.activeElement!==$('#nN')) $('#nN').value=n;
+  $('#nLbl').textContent=`จำนวนแผง (สูงสุด ${cap})`;
+  const usedA=n*pArea()*(1+S.panel.gap/100), totKg=n*S.panel.kg+usedA*S.roof.mount;
+  $('#sKwp').textContent=f2(kWp)+' kWp'; $('#sArea').textContent=f1(usedA)+' ม²'; $('#sKg').textContent=nf(totKg)+' กก.';
+  const wLocal=S.panel.kg/pArea()+S.roof.mount, wAvg=totKg/Math.max(1,S.roof.area);
+  $('#wChips').innerHTML=
+    (wLocal<=20 ? chip('ok','✓',`แผง+โครงยึด <b>${f1(wLocal)}</b> กก./ม² ไม่เกิน 20 กก./ม² → ไม่ถือเป็นการดัดแปลงอาคาร (กฎกระทรวง ฉบับที่ 72 พ.ศ. 2568) แต่ต้องแจ้งเจ้าพนักงานท้องถิ่นก่อนติดตั้ง`)
+                : chip('bad','✗',`แผง+โครงยึด <b>${f1(wLocal)}</b> กก./ม² เกิน 20 กก./ม² → ถือเป็นการดัดแปลงอาคาร ต้องขออนุญาตและมีวิศวกรรับรอง`))
+    + chip('info','i',`เฉลี่ยทั้งหลังคา <b>${f1(wAvg)}</b> กก./ม² = <b>${nf(wAvg/Math.max(1,S.roof.ll)*100)}%</b> ของน้ำหนักบรรทุกจร ${nf(S.roof.ll)} กก./ม² — แผงเป็นน้ำหนักคงที่เพิ่มถาวร ให้วิศวกรโครงสร้างตรวจโครงหลังคาและแรงลมยก`)
+    + (kWp>lim ? chip('warn','!',`${f2(kWp)} kWp เกินเกณฑ์ทั่วไป กฟภ. บ้าน ${S.house.phase} เฟส (${lim} kW) — ต้องหารือ กฟภ. เขต หรือใช้ Zero Export`) : chip('ok','✓',`${f2(kWp)} kWp อยู่ในเกณฑ์ทั่วไป กฟภ. บ้าน ${S.house.phase} เฟส (≤ ${lim} kW)`));
+  $('#battHint').textContent= S.batt.on? `ลงทุนเพิ่ม ${nf(S.batt.kwh*S.price.batt)} บ.`:'';
+  if(m==='roof') $('#ckRes').textContent=nf(T.self*100)+'%';
+
+  if(m==='load'){
+    const fl={1:{r:0,avg:0,e:0,n:0,b:0},2:{r:0,avg:0,e:0,n:0,b:0}};
+    for(const a of S.apps) if(a.g==='ac'&&a.on){ const F=fl[a.fl]||fl[1], e=appDay(a); F.r+=a.btu*S.ac.k/1000*a.qty; F.e+=e; F.avg+=a.hrs.length?e/a.hrs.length:0; F.n+=a.qty; F.b+=a.btu*a.qty; }
+    $('#acFloors').innerHTML=[1,2].map(k=>`ชั้น ${k}: ${fl[k].n} เครื่อง ${nf(fl[k].b)} BTU · พิกัด <b>${f2(fl[k].r)}</b> kW · เฉลี่ยขณะเปิด <b>${f2(fl[k].avg)}</b> kW · <b>${f1(fl[k].e)}</b> kWh/วัน`).join('<br>');
+    const gs={ac:0,light:0,plug:0,fixed:0}; let nac=0;
+    for(const a of S.apps) if(a.on){ gs[a.g]+=appDay(a); if(a.g==='ac') nac+=a.qty; }
+    $('#gs-ac').textContent=`${nac} เครื่อง · ${f1(gs.ac)} kWh/วัน`;
+    $('#gs-light').textContent=`${f1(gs.light)} kWh/วัน`; $('#gs-plug').textContent=`${f1(gs.plug)} kWh/วัน`; $('#gs-fixed').textContent=`${f1(gs.fixed)} kWh/วัน`;
+    $('#gs-ev').textContent= S.ev.on? `${S.ev.cars.length} คัน · ${f1(A.need)} kWh/วัน`:'ปิด';
+    $('#m3tot').textContent=`รวม ${f1(T.load)} kWh/วัน · ${nf(T.load*30.4)} หน่วย/เดือน`;
+    $('#evstartL').textContent= S.ev.mode==='solar'?'ส่วนที่แดดไม่พอ ชาร์จต่อเวลา':'เริ่มชาร์จ (น.)';
+    $('#evInfo').innerHTML= S.ev.on ? `รวม <b>${f1(A.need)}</b> kWh/วัน · จากโซลาร์ <b>${f1(A.fromSun)}</b> · จากการไฟฟ้า <b>${f1(A.need-A.fromSun)}</b> kWh` : 'ปิดอยู่';
+    refreshCars();
+    const items=[['แอร์',gs.ac],['แสงสว่าง',gs.light],['เครื่องใช้ไฟฟ้า',gs.plug],['อุปกรณ์ประจำ',gs.fixed],['รถไฟฟ้า',A.need]].filter(x=>x[1]>0);
+    const mxb=Math.max(...items.map(x=>x[1]),1), tot=items.reduce((s,x)=>s+x[1],0);
+    $('#brk').innerHTML=items.map(([t,v])=>`<div class="r"><span>${t}</span><i style="width:${Math.max(2,v/mxb*100)}%"></i><b>${f1(v)} <span class="c-mu">${nf(v/tot*100)}%</span></b></div>`).join('')+`<p class="hint">หน่วยเป็น kWh/วัน</p>`;
+    renderLC();
+  }
+
+  // KPIs & money
+  const D=30.4, bOn=S.batt.on&&m!=='roof';
+  const cost=kWp*1000*S.price.w + (bOn? S.batt.kwh*S.price.batt:0);
+  let before=null, after=null, saveM;
+  if(m==='roof') saveM=(T.direct*marginal()+T.exp*S.tariff.sell)*D;
+  else { before=billOf(T.load*D); after=billOf(T.imp*D)-T.exp*D*S.tariff.sell; saveM=before-after; }
+  const saveY=saveM*12, pay=saveY>0? cost/saveY : Infinity;
+  let life=-cost; for(let yy=1;yy<=25;yy++){ life+=saveY*Math.pow(.995,yy-1); if(bOn&&yy===11) life-=S.batt.kwh*S.price.batt; }
+  $('#kKwp').textContent=f2(kWp)+' kWp'; $('#kN').textContent=`${n} แผง × ${S.panel.w}W`;
+  $('#kGen').textContent=f1(T.pv)+' kWh/วัน'; $('#kGenM').textContent=nf(T.pv*D)+' หน่วย/เดือน';
+  $('#kSave').textContent=nf(saveM)+' บ.'; $('#kSaveY').textContent=nf(saveY)+' บ./ปี';
+  $('#kPay').textContent= isFinite(pay)? f1(pay)+' ปี':'—'; $('#kCost').textContent='ลงทุน '+nf(cost)+' บ.';
+
+  const pill=$('#roofPill'), okR=rec<=rmx||m==='roof', pct=rmx>0?Math.min(100,n/rmx*100):100;
+  pill.className='pill '+(okR?'ok':'bad');
+  pill.innerHTML= okR
+    ? `<span>หลังคาพอ ใช้ <b>${n}/${rmx}</b> แผง · ${f1(usedA)} จาก ${f1(roofUse())} ม²</span><span class="bar2"><i style="width:${pct}%"></i></span>`
+    : `<span>หลังคาไม่พอ ขนาดแนะนำ <b>${rec}</b> แผง วางได้ <b>${rmx}</b> แผง · ขาด ${rec-rmx} แผง</span><span class="bar2"><i style="width:100%"></i></span>`;
+
+  drawChart(R,m==='roof');
+
+  let fl=`<dt>ผลิตได้</dt><dd class="pv">${f1(T.pv)} kWh</dd>`;
+  fl+= m==='roof'? `<dt>ใช้ช่วงมีแดด (ประเมิน)</dt><dd>${f1(T.direct)} kWh</dd>` : `<dt>ใช้ไฟทั้งวัน</dt><dd>${f1(T.load)} kWh</dd><dt>ใช้โซลาร์ทันที</dt><dd class="ex">${f1(T.direct)} kWh</dd>`;
+  if(bOn) fl+=`<dt>เก็บเข้าแบต → ใช้กลางคืน</dt><dd class="bt">${f1(T.chg)} → ${f1(T.dis)} kWh</dd>`;
+  fl+=`<dt>ขายคืน${S.tariff.net?'':' (ปิดอยู่)'}</dt><dd class="ex">${f1(T.exp)} kWh</dd>`;
+  if(T.cur>0.05) fl+=`<dt>ทิ้ง (เกินเพดานขาย)</dt><dd class="im">${f1(T.cur)} kWh</dd>`;
+  if(m!=='roof') fl+=`<dt>ซื้อจากการไฟฟ้า</dt><dd class="im">${f1(T.imp)} kWh</dd>`;
+  fl+=`<dt class="t">ใช้ไฟโซลาร์เอง</dt><dd class="t">${nf(T.self*100)}%</dd>`;
+  if(m!=='roof') fl+=`<dt class="t" style="padding-top:2px">โซลาร์แทนไฟบ้าน</dt><dd class="t" style="padding-top:2px">${nf(T.load>0?(T.load-T.imp)/T.load*100:0)}%</dd>`;
+  if(m==='load'){ let pk=0,ph=0; L.forEach((v,h)=>{if(v>pk){pk=v;ph=h;}}); fl+=`<dt>โหลดสูงสุด (เฉลี่ยรายชั่วโมง)</dt><dd class="${pk>kva*.8?'im':''}">${f1(pk)} kW @ ${String(ph).padStart(2,'0')}:00 · มิเตอร์ ${nf(kva)} kVA</dd>`; }
+  $('#flow').innerHTML=fl;
+
+  let mo= m!=='roof'
+    ? `<dt>ค่าไฟเดิม / เดือน</dt><dd>${nf(before)} บ.</dd><dt>ค่าไฟหลังติด / เดือน</dt><dd>${nf(after)} บ.</dd>`
+    : `<dt>มูลค่าไฟที่ใช้เอง (${f2(marginal())} บ./หน่วย)</dt><dd>${nf(T.direct*marginal()*D)} บ.</dd><dt>ขายคืน (${f2(S.tariff.sell)} บ.)</dt><dd>${nf(T.exp*S.tariff.sell*D)} บ.</dd>`;
+  mo+=`<dt class="t">ประหยัด / เดือน</dt><dd class="t pv">${nf(saveM)} บ.</dd><dt>ประหยัด / ปี</dt><dd>${nf(saveY)} บ.</dd>`;
+  mo+=`<dt>ลงทุนแผง+ติดตั้ง (${nf(S.price.w,2)} บ./W)</dt><dd>${nf(kWp*1000*S.price.w)} บ.</dd>`;
+  if(bOn) mo+=`<dt>แบตเตอรี่ ${S.batt.kwh} kWh</dt><dd>${nf(S.batt.kwh*S.price.batt)} บ.</dd>`;
+  mo+=`<dt class="t">คืนทุน</dt><dd class="t">${isFinite(pay)?f1(pay)+' ปี':'—'}</dd>`;
+  mo+=`<dt>สุทธิ 25 ปี (แผงเสื่อม 0.5%/ปี${bOn?', เปลี่ยนแบตปีที่ 11':''})</dt><dd class="${life>=0?'ex':'im'}">${nf(life)} บ.</dd>`;
+  $('#money').innerHTML=mo;
+
+  let tb=`<thead><tr><th>เวลา</th><th>${m==='roof'?'ใช้ (ประเมิน)':'ใช้'}</th><th>ผลิต</th><th style="text-align:left">ไฟไปไหน (kWh)</th></tr></thead><tbody>`;
+  for(let h=0;h<24;h++){
+    const bits=[];
+    if(m!=='roof'&&R.imp[h]>.005) bits.push(`<span class="c-im">ซื้อ ${f2(R.imp[h])}</span>`);
+    if(R.dis[h]>.005) bits.push(`<span class="c-bt">ใช้แบต ${f2(R.dis[h])}</span>`);
+    if(R.chg[h]>.005) bits.push(`<span class="c-bt">เข้าแบต ${f2(R.chg[h])}</span>`);
+    if(R.exp[h]>.005) bits.push(`<span class="c-ex">ขาย ${f2(R.exp[h])}</span>`);
+    if(R.cur[h]>.005) bits.push(`<span class="c-mu">ทิ้ง ${f2(R.cur[h])}</span>`);
+    if(!bits.length) bits.push(`<span class="c-ex">${R.pv[h]>0?'ใช้โซลาร์หมด':'—'}</span>`);
+    tb+=`<tr class="${R.pv[h]>0?'sun':''}"><td>${String(h).padStart(2,'0')}–${String((h+1)%24).padStart(2,'0')}</td><td>${f2(L[h])}</td><td class="c-pv">${R.pv[h]>0?f2(R.pv[h]):'—'}</td><td class="net">${bits.join('')}</td></tr>`;
+  }
+  tb+=`</tbody><tfoot><tr><td>รวม</td><td>${f1(T.load)}</td><td class="c-pv">${f1(T.pv)}</td><td class="net">${m!=='roof'?`<span class="c-im">ซื้อ ${f1(T.imp)}</span>`:''}<span class="c-ex">ขาย ${f1(T.exp)}</span></td></tr></tfoot>`;
+  $('#htbl').innerHTML=tb;
+
+  const notes=[];
+  if(m==='roof') notes.push('วิธีหลังคาไม่รู้โหลดกลางคืน จึงไม่คำนวณค่าไฟเดิม/หลังติด — ตัวเลขประหยัดคือมูลค่าไฟที่ใช้เองช่วงมีแดด + รายได้ขายคืน');
+  if(kWp>10 && m!=='roof') notes.push(`ระบบ ${f1(kWp)} kWp เกิน 10 kW — ไม่เข้าเงื่อนไขลดหย่อนภาษีบุคคลธรรมดา 200,000 บ.`);
+  $('#notes').innerHTML=notes.map(t=>`<p>${t}</p>`).join('');
+  save();
+}
+
+/* ── init ── */
+function init(){
+  initStatic(); bindAll(); initApps(); initCars(); initSys(); renderApps(); renderLCEd(); renderCars(); syncInputs();
+  $$('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
+  $('#btnReset').addEventListener('click',function(){ armed(this,()=>{ S=clone(DEF); S.apps=defApps(); S.lc=defLC(); fillMeters(); fillWallbox(); renderApps(); renderLCEd(); renderCars(); syncInputs(); go(null); },'กดอีกครั้งเพื่อยืนยันล้างทุกค่า'); });
+  go(S.mode);
+}
+init();
+})();
+</script>
+</body>
+</html>

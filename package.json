@@ -1,0 +1,11 @@
+{
+  "name": "solar-designer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Solar Designer — static web app (HTML/CSS/JS, no framework)",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "start": "npx --yes serve dist -l 3000"
+  },
+  "engines": { "node": ">=18" }
+}
