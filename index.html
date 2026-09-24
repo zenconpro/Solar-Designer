@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Solar Designer — คำนวณขนาดระบบโซลาร์ On-Grid ค่าไฟที่ประหยัด และระยะคืนทุน">
-<title>Solar Designer — Version 1.4</title>
+<title>Solar Designer — Version 1.5</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -470,7 +470,8 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
 .ckbadge{font-size:12.5px;color:var(--acc-tx);background:var(--acc-bg);padding:1px 10px;border-radius:12px;white-space:nowrap;font-weight:500}
 .ckbadge b{font:700 16px var(--mono)}
 .ck.ck2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 6px}
-.ck.ck2 label{padding:3px 4px;font-size:12.5px;gap:6px}
+.ck.ck2 label{padding:2px 4px;font-size:12.5px;gap:6px}
+.selfcard .sub3{margin:9px 0 5px;padding-top:7px}
 .ck.ck2 label span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:420px){.ck.ck2{grid-template-columns:1fr}}
 /* ช่วงคืนทุน + สิทธิภาษี */
@@ -485,6 +486,30 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
 .kpi .rng{font-family:var(--mono)}
 .eqf{margin-top:6px}
 .scgrid>span{white-space:nowrap}
+/* v1.5: เลือกวิธีคำนวณ · กล่องอัตราค่าไฟ · ช่องกรอกแนวเดียวกัน · ระยะตัวเลขตัวหนา */
+#home .mcard.on{border-color:var(--acc);background:var(--acc-bg);box-shadow:inset 0 0 0 1px var(--acc)}
+#home .mcard.on .mt b::after{content:"✓ เลือกอยู่";margin-left:8px;font-size:11px;font-weight:600;color:var(--acc-tx)}
+.tbox{margin-top:8px}
+.tbox .ttl{font-size:12px;color:var(--mu)}
+.tbox .tl{margin-top:3px;line-height:1.5}
+.tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:4px 0 5px}
+.tiers.t2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.tiers>div{background:var(--sf2);border:1px solid var(--bd);border-radius:7px;padding:3px 8px 4px;display:flex;flex-direction:column;line-height:1.35;min-width:0}
+.tiers small{font-size:11px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tiers b{font:600 14px var(--mono);color:var(--tx);margin:0}
+.inl{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--mu);white-space:nowrap}
+.inl input{width:64px;background:var(--sf2);border:1px solid var(--bd);border-radius:7px;padding:4px 7px;outline:none;font:13px var(--mono);color:var(--tx)}
+.inl input:focus{border-color:var(--acc)}
+.battrow{min-height:30px;gap:8px 14px}
+.optgrid{display:grid;grid-template-columns:max-content max-content;column-gap:16px;row-gap:7px;align-items:center;margin-top:8px}
+.optrow{display:contents}
+.optgrid .inl{display:grid;grid-template-columns:38px 56px auto;gap:6px;align-items:center}
+.optgrid .inl.c2{grid-column:2}
+.optgrid .ohint{grid-column:1/-1;margin:-2px 0 0}
+.optgrid .inl.off{opacity:.5}
+.hint b,.chip b,.stats b,.pill b,.thrlbl b,.sys .rec b{margin:0 .15em}
+.sys .rec b{font-weight:600;font-size:14px}
+.ckbadge b{font-weight:600}
 /* battery breakdown */
 .bbox{margin-top:8px;border:1px solid var(--bd);border-left:3px solid var(--bt);border-radius:8px;padding:5px 10px 6px}
 .bbox h4{margin:0;font-size:12px;font-weight:600;color:var(--bt)}
@@ -502,12 +527,12 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
 </head>
 <body>
 <header class="bar">
-  <div class="brand"><span class="sun" aria-hidden="true"></span><div class="bt"><b>Solar Designer <span class="ver">Version 1.4</span></b><small>Publish by Zenconpro · <span class="case" id="siteLbl"></span></small></div></div>
+  <div class="brand"><span class="sun" aria-hidden="true"></span><div class="bt"><b>Solar Designer <span class="ver">Version 1.5</span></b><small>Publish by Zenconpro · <span class="case" id="siteLbl"></span></small></div></div>
   <nav class="tabs" id="tabs">
     <button data-go="home">ตั้งค่า</button>
-    <button data-go="roof">หลังคา</button>
-    <button data-go="bill">ค่าไฟ</button>
-    <button data-go="load">เครื่องใช้ไฟฟ้า</button>
+    <button data-go="roof" hidden>คำนวณจากหลังคา</button>
+    <button data-go="bill" hidden>คำนวณจากค่าไฟ</button>
+    <button data-go="load" hidden>คำนวณจากเครื่องใช้ไฟฟ้า</button>
   </nav>
   <div class="acts">
     <button class="ghost ib" id="btnShare" title="สร้างลิงก์ที่มีค่าของบ้านหลังนี้ทั้งหมด" aria-label="แชร์ลิงก์"><svg viewBox="0 0 20 20"><circle cx="15" cy="4.5" r="2.2"/><circle cx="5" cy="10" r="2.2"/><circle cx="15" cy="15.5" r="2.2"/><path d="M7 9l6-3.4M7 11l6 3.4"/></svg><span>แชร์ลิงก์</span></button>
@@ -534,10 +559,10 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
         <label class="f"><span>เริ่มจากแบบ</span><select id="cnTpl"></select></label>
         <div class="cbb"><button class="btn sm" id="cnOk">บันทึกหลังใหม่</button><button class="linkbtn" id="cnCancel">ยกเลิก</button></div>
       </div>
-      <p class="hint">บันทึกให้อัตโนมัติทุกครั้งที่แก้ (เก็บในเบราว์เซอร์นี้) · <button class="linkbtn" id="bkExp">สำรองทุกหลังเป็นไฟล์</button> · <button class="linkbtn" id="bkImp">เปิดจากไฟล์สำรอง</button><input type="file" id="bkFile" accept=".json,application/json" hidden></p>
+      <p class="hint"><span class="nw">บันทึกให้อัตโนมัติทุกครั้งที่แก้</span> <span class="nw">(เก็บในเบราว์เซอร์นี้)</span><br><button class="linkbtn" id="bkExp">สำรองทุกหลังเป็นไฟล์</button> · <button class="linkbtn" id="bkImp">เปิดจากไฟล์สำรอง</button><input type="file" id="bkFile" accept=".json,application/json" hidden></p>
     </div>
     <div class="card">
-      <h3>เลือกวิธีคำนวณ</h3>
+      <h3>เลือกวิธีคำนวณ <small>เลือก 1 วิธี</small></h3>
       <div class="modes">
         <button class="mcard" data-go="roof">
           <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22 20 8l16 14"/><path d="M9 18v16h22V18"/><path d="M13 17l5-4h10l-5 4z" fill="currentColor" opacity=".25"/></svg>
@@ -552,7 +577,7 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
           <span class="mt"><b>จากเครื่องใช้ไฟฟ้า</b><small>กรอกเครื่องใช้และเวลาใช้จริง · ตรวจกับตารางโหลด</small></span><span class="lvl">ละเอียด</span>
         </button>
       </div>
-      <p class="hint">ระบบคิดเป็น <b>On-Grid</b> และเพิ่มแบตเตอรี่ได้ (Hybrid) · ส่งบ้านหลังนี้ให้คนอื่นด้วยปุ่ม "แชร์ลิงก์"</p>
+      <p class="hint" id="mHint"></p>
     </div>
   </div>
 
@@ -578,7 +603,7 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
         <label class="f"><span>Ft (บาท/หน่วย)</span><input type="number" id="tft" data-k="tariff.ft" step="0.0001"></label>
         <label class="f" id="tbuyF"><span>ค่าไฟเฉลี่ย (บ./หน่วย)</span><input type="number" id="tbuy" data-k="tariff.buy" step="0.01"></label>
       </div>
-      <p class="hint" id="tHint"></p>
+      <div class="hint tbox" id="tHint"></div>
     </div>
 
   </div>
@@ -862,15 +887,17 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
         <label class="f"><span>อินเวอร์เตอร์ (kW AC)</span><select id="invSel" data-k="inv.kw" data-num></select></label>
         <div class="f"><span>DC/AC · ปกติ 1.1–1.3</span><div class="ro" id="dcac"></div></div>
       </div>
-      <div class="battrow" id="battRow">
-        <label class="tog"><span class="sw"><input type="checkbox" id="bon" data-k="batt.on"><i></i></span>เพิ่มแบตเตอรี่</label>
-        <label class="f"><span>ความจุ (kWh)</span><input type="number" id="bkwh" data-k="batt.kwh" min="1" step="1"></label>
-        <span class="hint" style="margin:0" id="battHint"></span>
-      </div>
-      <div class="battrow">
-        <label class="tog"><span class="sw"><input type="checkbox" id="tnet" data-k="tariff.net"><i></i></span>ขายไฟคืน</label>
-        <label class="f" id="tsellF"><span>ราคาขาย (บ./หน่วย)</span><input type="number" id="tsell" data-k="tariff.sell" step="0.01"></label>
-        <label class="f" id="tlimF"><span>เพดานขาย (kW)</span><input type="number" id="tlim" data-k="tariff.lim" step="0.5" min="0"></label>
+      <div class="optgrid">
+        <div class="optrow" id="battRow">
+          <label class="tog"><span class="sw"><input type="checkbox" id="bon" data-k="batt.on"><i></i></span>เพิ่มแบตเตอรี่</label>
+          <label class="inl" id="bkwhF"><span>ความจุ</span><input type="number" id="bkwh" data-k="batt.kwh" min="1" step="1"><span>kWh</span></label>
+          <span class="hint ohint" id="battHint" hidden></span>
+        </div>
+        <div class="optrow">
+          <label class="tog"><span class="sw"><input type="checkbox" id="tnet" data-k="tariff.net"><i></i></span>ขายไฟคืน</label>
+          <label class="inl" id="tsellF"><span>ราคา</span><input type="number" id="tsell" data-k="tariff.sell" step="0.01"><span>บ./หน่วย</span></label>
+          <label class="inl c2" id="tlimF"><span>เพดาน</span><input type="number" id="tlim" data-k="tariff.lim" step="0.5" min="0"><span>kW</span></label>
+        </div>
       </div>
       <div class="chips" id="invChips"></div>
     </div>
@@ -921,7 +948,7 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
 (function(){
 'use strict';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const VER='1.4', LS_CASES='solar-cases-v1', LS_V8='solar-v8', LS_V7='solar-v7';
+const VER='1.5', LS_CASES='solar-cases-v1', LS_V8='solar-v8', LS_V7='solar-v7';
 const rng=(a,b)=>{const r=[];for(let i=a;i<b;i++)r.push(i%24);return r;};
 const clone=o=>JSON.parse(JSON.stringify(o));
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1219,7 +1246,7 @@ function blankApps(){ return [DBA('ตู้เย็น 2 ประตู Inver
 
 /* ── เคสตั้งต้น (รูปแบบอาคาร) ── */
 function baseState(){ return {
-  v:9, mode:null, tpl:'blank', bt:'house', upd:0, last:null,
+  v:9, mode:null, calc:null, tpl:'blank', bt:'house', upd:0, last:null,
   house:{name:'เคสใหม่',phase:1,meter:45},
   site:{preset:'mab',lat:12.9446,lon:100.9589,psh:5.0,pr:0.78,shape:normShape(MREG.E)},
   panel:{w:720,len:2.384,wid:1.303,kg:38.2,gap:7},
@@ -1298,6 +1325,7 @@ function sanitize(o){
   if(!BILLP[o.m2.prof]) o.m2.prof='custom';
   if(!MOUNT[o.roof.mtype]) o.roof.mtype='custom';
   if(!(o.mode in {roof:1,bill:1,load:1})) o.mode=null;
+  if(!(o.calc in {roof:1,bill:1,load:1})) o.calc= (o.last&&o.last.m in {roof:1,bill:1,load:1})? o.last.m : o.mode;
   o.apps.forEach(a=>{ if(!Array.isArray(a.hrs)) a.hrs=[]; if(a.code==null) a.code=''; });
   return o;
 }
@@ -1816,12 +1844,20 @@ function renderLC(){
 
 /* ── mode switching ── */
 const MODE_T={roof:'จากพื้นที่หลังคา',bill:'จากค่าไฟรายเดือน',load:'จากเครื่องใช้ไฟฟ้า'};
+const MODES={roof:'จากพื้นที่หลังคา',bill:'จากค่าไฟรายเดือน',load:'จากเครื่องใช้ไฟฟ้า'};
+function updateTabs(){ // แท็บบนแสดงเฉพาะ "ตั้งค่า" + วิธีที่เลือก
+  $$('#tabs button').forEach(b=>{ const g=b.dataset.go; b.hidden= g!=='home'&&g!==S.calc; b.classList.toggle('on',(g==='home'&&!S.mode)||g===S.mode); });
+  $$('#home .mcard').forEach(c=>c.classList.toggle('on',c.dataset.go===S.calc));
+  $('#mHint').innerHTML= S.calc? `<span class="nw">แท็บด้านบนแสดงเฉพาะวิธีที่เลือก</span> <span class="nw">— เปลี่ยนวิธีได้ที่นี่</span><br><span class="nw">ระบบคิดเป็น <b>On-Grid</b></span> <span class="nw">เพิ่มแบตเตอรี่ได้ (Hybrid)</span>`
+    : `<span class="nw">กดเลือก 1 วิธี แล้วแท็บคำนวณจะแสดงด้านบน</span><br><span class="nw">ระบบคิดเป็น <b>On-Grid</b></span> <span class="nw">เพิ่มแบตเตอรี่ได้ (Hybrid)</span>`;
+}
 function go(m){
-  if(m==='home') m=null;
+  if(m==='home'||!(m in MODES)) m=null;
+  if(m) S.calc=m;
   S.mode=m; save();
   $('#home').hidden=!!m; $('#work').hidden=!m;
   document.body.classList.toggle('work',!!m);
-  $$('#tabs button').forEach(b=>b.classList.toggle('on',(b.dataset.go==='home'&&!m)||b.dataset.go===m));
+  updateTabs();
   comboClose();
   if(!m){ renderCaseSel(); recalc(); window.scrollTo(0,0); return; }
   $$('.modein').forEach(el=>el.hidden=el.id!=='in-'+m);
@@ -1905,13 +1941,14 @@ function recalc(){
     (res? `<span class="nw">เกณฑ์ กฟภ.: ติดได้ ≤ <b>${lim}</b> kW</span> <span class="nw">· ขายคืน ≤ <b>5</b> kW</span>`
          : `<span class="nw">อาคารกิจการ:</span> <span class="nw">ขนาดที่ขนานไฟได้ ตรวจกับ กฟภ. เขต</span>`));
   $('#tbuyF').hidden=!tt.flat;
-  const tAdd=`<span class="nw">+ Ft + ค่าบริการ ${f2(tt.svc)} บ./เดือน + VAT 7%</span>`, tCode=`<span class="nw c-mu">· ในบิล กฟภ. = ประเภท ${tt.code}</span>`;
-  $('#tHint').innerHTML= tt.flat? '<span class="nw">ค่าไฟเฉลี่ย = ยอดเงินในบิล ÷ จำนวนหน่วย</span> <span class="nw">(รวม Ft และ VAT แล้ว)</span>'
-    : tt.tou? `<b>ราคาตามช่วงเวลา:</b> <span class="nw">จ.–ศ. 09–22 น. <b>5.80</b></span> <span class="nw">· ช่วงอื่น/เสาร์-อาทิตย์ <b>2.64</b> บ./หน่วย</span> ${tAdd} <span class="nw">· ต้องขอติดมิเตอร์ TOU กับ กฟภ.</span> ${tCode}`
-    : `<b>ยิ่งใช้มาก หน่วยยิ่งแพง:</b> ${tt.tier.map((x,i)=>`<span class="nw">${i===0? x[0]+' หน่วยแรก' : x[0]>=1e8? 'เกิน '+tt.tier[i-1][0] : (tt.tier[i-1][0]+1)+'–'+x[0]} <b>${f2(x[1])}</b></span>`).join(' · ')} บ./หน่วย ${tAdd}${tt.cat==='res'?' <span class="nw">· บ้านส่วนใหญ่ใช้แบบนี้</span>':' <span class="nw">· ใช้ไฟสูงสุดไม่เกิน 30 kW</span>'} ${tCode}`;
+  const tAdd=`<div class="tl"><span class="nw">บวก Ft ${nf(S.tariff.ft,4)}</span> <span class="nw">+ ค่าบริการ ${f2(tt.svc)} บ./เดือน</span> <span class="nw">+ VAT 7%</span></div>`;
+  const cell=(l,v)=>`<div><small>${l}</small><b>${f2(v)}</b></div>`;
+  $('#tHint').innerHTML= tt.flat? '<div class="tl"><span class="nw">ค่าไฟเฉลี่ย = ยอดเงินในบิล ÷ จำนวนหน่วย</span> <span class="nw">(รวม Ft และ VAT แล้ว)</span></div>'
+    : tt.tou? `<div class="ttl">ราคาตามช่วงเวลา (บาท/หน่วย)</div><div class="tiers t2">${cell('จ.–ศ. 09:00–22:00',TOU_ON)}${cell('ช่วงอื่น และ ส.–อา.',TOU_OFF)}</div>${tAdd}<div class="tl c-mu"><span class="nw">ต้องขอติดมิเตอร์ TOU กับ กฟภ.</span> <span class="nw">(ในบิลเขียนว่า ประเภท ${tt.code})</span></div>`
+    : `<div class="ttl">ยิ่งใช้มาก หน่วยยิ่งแพง (บาท/หน่วย)</div><div class="tiers">${tt.tier.map((x,i)=>cell(i===0? `1–${x[0]} หน่วย` : x[0]>=1e8? `${tt.tier[i-1][0]+1} ขึ้นไป` : `${tt.tier[i-1][0]+1}–${x[0]}`, x[1])).join('')}</div>${tAdd}<div class="tl c-mu"><span class="nw">${tt.cat==='res'?'บ้านส่วนใหญ่ใช้แบบนี้':'ใช้ไฟสูงสุดไม่เกิน 30 kW'}</span> <span class="nw">(ในบิลเขียนว่า ประเภท ${tt.code})</span></div>`;
   $('#thrI').style.width=S.thr+'%'; $('#thrA').textContent=nf(S.thr)+'%'; $('#thrB').textContent=nf(100-S.thr)+'%';
   $('#thrDesc').innerHTML=(THR[S.thr]||'กำหนดสัดส่วนเอง')+` · <span class="nw">ไฟที่ใช้เองคุ้ม ≈ <b>${f2(dayRate())}</b> บ./หน่วย</span> <span class="nw">ขายคืนได้ <b>${f2(S.tariff.sell)}</b> บ.</span>`;
-  const tm=S.fin.taxMode, sg=v=>(v>0?'+':'')+nf(v,v%1?1:0);
+  const tm=S.fin.taxMode, sg=v=>(v>0?'+':v<0?'−':'')+nf(Math.abs(v),v%1?1:0);
   $('#eqF').hidden= tm!=='corp';
   $('#taxHint').innerHTML= tm==='person'? `<span class="nw">ลดหย่อน ≤ 200,000 บ. · แผง ≤ 10 kWp · บ้านอยู่อาศัย</span> <span class="nw">· e-Tax Invoice · ขนานไฟแล้ว · ถึง 31 ธ.ค. 71</span>`
     : tm==='corp'? `<span class="nw">พ.ร.ฎ. 805 · ภาษีลดเพิ่ม = 50% × ค่าอุปกรณ์ × อัตราภาษี</span> <span class="nw">· อุปกรณ์ใหม่เข้าเกณฑ์ พพ. ไม่รวมค่าแรง/แบต</span> <span class="nw">· ห้ามซ้ำ BOI · ถึง 31 ธ.ค. 71</span>`
@@ -1958,8 +1995,8 @@ function recalc(){
     : pct>=60? chip('ok','✓',`ใช้ ${nf(pct,1)}% อยู่ในช่วงแนะนำ 60–70%`)
     : chip('info','i',`ใช้ ${nf(pct,1)}% — ต่ำกว่าช่วงแนะนำ (เผื่อพื้นที่มาก)`);
   $('#recTxt').innerHTML= m==='roof'
-    ? `เต็มพื้นที่ <b>${rec} แผง</b> · ${f2(kwpOf(rec))} kWp`
-    : (rec>rmx ? `แนะนำ <b>${rec} แผง</b> (${f2(kwpOf(rec))} kWp) · หลังคาวางได้ ${rmx}` : `แนะนำ <b>${rec} แผง</b> · ${f2(kwpOf(rec))} kWp · ใช้เอง ≥ ${S.thr}%`);
+    ? `<span class="nw">เต็มพื้นที่ <b>${rec}</b> แผง</span> <span class="nw">· ${f2(kwpOf(rec))} kWp</span>`
+    : (rec>rmx ? `<span class="nw">แนะนำ <b>${rec}</b> แผง</span> <span class="nw">(${f2(kwpOf(rec))} kWp)</span> <span class="nw">· หลังคาวางได้ ${rmx} แผง</span>` : `<span class="nw">แนะนำ <b>${rec}</b> แผง</span> <span class="nw">· ${f2(kwpOf(rec))} kWp</span> <span class="nw">· ใช้เอง ≥ ${S.thr}%</span>`);
   $('#btnRec').hidden= S[mk()].n==null;
   const nR=$('#nR'); nR.max=cap; nR.value=n; $('#nN').max=cap;
   if(document.activeElement!==$('#nN')) $('#nN').value=n;
@@ -1979,16 +2016,17 @@ function recalc(){
   const ic=[];
   if(ratio>DCAC_MAX) ic.push(chip(ratio>1.5?'bad':'warn','!',`DC/AC ${f2(ratio)} — แผงถูกตัดยอดช่วงแดดจัด${T.clip>0.05?` ≈ ${f1(T.clip)} kWh/วัน`:''}`));
   else if(ratio<0.9) ic.push(chip('warn','!',`DC/AC ${f2(ratio)} — อินเวอร์เตอร์ใหญ่เกินแผง`));
-  if(S.house.phase==1&&(kWp>5||inv>5)) ic.push(chip('bad','✗',`<span class="nw">ไฟ 1 เฟส ติดโซลาร์ได้ ≤ 5 kW</span> <span class="nw">— ระบบนี้ต้องใช้ไฟ 3 เฟส</span>`));
-  else if(res) ic.push(kWp>lim ? chip('warn','!',`<span class="nw">${f2(kWp)} kWp เกินเกณฑ์ทั่วไป กฟภ. (${lim} kW)</span> <span class="nw">— หารือ กฟภ. เขต หรือตั้ง Zero Export</span>`)
-                              : chip('ok','✓',`<span class="nw">${f2(kWp)} kWp อยู่ในเกณฑ์ทั่วไป กฟภ.</span> <span class="nw">(บ้าน ${S.house.phase} เฟส ≤ ${lim} kW)</span>`));
-  if(S.tariff.net){
-    if(!res) ic.push(chip('warn','!',`<span class="nw">โซลาร์ภาคประชาชนรับซื้อเฉพาะบ้านอยู่อาศัย</span> <span class="nw">— อาคารกิจการตรวจเงื่อนไขกับ กฟภ.</span>`));
-    else if(inv>5) ic.push(chip('warn','!',`<span class="nw">ภาคประชาชนเสนอขายได้ ≤ 5 kW ต่อมิเตอร์</span> <span class="nw">— อินเวอร์เตอร์ ${fkw(inv)} kW ต้องจำกัดกำลังส่งออก/ยืนยันกับ กฟภ.</span>`));
-    else ic.push(chip('ok','✓',`<span class="nw">เข้าเงื่อนไขขายไฟภาคประชาชน</span> <span class="nw">(≤ 5 kW · ${f2(S.tariff.sell)} บ./หน่วย · ${nf(S.fin.sellYrs)} ปี)</span>`));
-  }
+  // เกณฑ์ กฟภ. + ขายไฟภาคประชาชน (รวมเป็นกล่องเดียวเมื่อเตือนเรื่องเดียวกัน เพื่อไม่ให้ต้องเลื่อนจอ)
+  const one=S.house.phase==1&&(kWp>5||inv>5), over=!one&&res&&kWp>lim, netOn=S.tariff.net, netBig=netOn&&res&&inv>5, netOk=netOn&&res&&inv<=5;
+  if(one) ic.push(chip('bad','✗',`<span class="nw">ไฟ 1 เฟส ติดโซลาร์ได้ ≤ 5 kW</span> <span class="nw">— ระบบนี้ต้องใช้ไฟ 3 เฟส</span>`));
+  else if(over&&netBig) ic.push(chip('warn','!',`<span class="nw">${f2(kWp)} kWp เกินเกณฑ์ กฟภ. ${lim} kW / ขายคืน 5 kW</span> <span class="nw">— หารือ กฟภ. เขต หรือจำกัดกำลังส่งออก</span>`));
+  else if(over) ic.push(chip('warn','!',`<span class="nw">${f2(kWp)} kWp เกินเกณฑ์ทั่วไป กฟภ. (${lim} kW)</span> <span class="nw">— หารือ กฟภ. เขต หรือตั้ง Zero Export</span>`));
+  else if(res&&netOk) ic.push(chip('ok','✓',`<span class="nw">${f2(kWp)} kWp อยู่ในเกณฑ์ กฟภ. (≤ ${lim} kW)</span> <span class="nw">และเข้าเงื่อนไขขายไฟภาคประชาชน</span> <span class="nw">(≤ 5 kW · ${f2(S.tariff.sell)} บ./หน่วย · ${nf(S.fin.sellYrs)} ปี)</span>`));
+  else if(res) ic.push(chip('ok','✓',`<span class="nw">${f2(kWp)} kWp อยู่ในเกณฑ์ทั่วไป กฟภ.</span> <span class="nw">(บ้าน ${S.house.phase} เฟส ≤ ${lim} kW)</span>`));
+  if(netOn&&!res) ic.push(chip('warn','!',`<span class="nw">โซลาร์ภาคประชาชนรับซื้อเฉพาะบ้านอยู่อาศัย</span> <span class="nw">— อาคารกิจการตรวจเงื่อนไขกับ กฟภ.</span>`));
+  else if(netBig&&!over) ic.push(chip('warn','!',`<span class="nw">ภาคประชาชนเสนอขายได้ ≤ 5 kW ต่อมิเตอร์</span> <span class="nw">— อินเวอร์เตอร์ ${fkw(inv)} kW ต้องจำกัดกำลังส่งออก/ยืนยันกับ กฟภ.</span>`));
   $('#invChips').innerHTML=ic.join('');
-  $('#battHint').textContent= S.batt.on? `ลงทุนเพิ่ม ${nf(S.batt.kwh*S.price.batt)} บ.`:'';
+  $('#battHint').hidden=!S.batt.on; $('#battHint').innerHTML= S.batt.on? `<span class="nw">ลงทุนแบตเพิ่ม ≈ <b>${nf(S.batt.kwh*S.price.batt)}</b> บ.</span> <span class="nw">(${nf(S.price.batt)} บ./kWh)</span>`:''; $('#bkwhF').classList.toggle('off',!S.batt.on);
   if(m==='roof') $('#ckRes').textContent=nf(T.self*100)+'%';
 
   if(m==='load'){
@@ -2092,7 +2130,7 @@ function recalc(){
   drawCF(F,F0,FR);
   $('#cfSub').textContent=`(ค่าไฟขึ้น ${nf(S.fin.esc,1)}%/ปี · แถบ = ดี–แย่)`;
   const repl=[]; if(S.fin.invYr>0) repl.push(`เปลี่ยนอินเวอร์เตอร์ปีที่ ${S.fin.invYr} ≈ ${nf(S.fin.invCost*inv)} บ.`); if(bOn) repl.push(`เปลี่ยนแบตปีที่ 11`);
-  $('#cfStats').innerHTML=`<span class="nw">เงินสะสมปีที่ 25 <b class="${F.total>=0?'ex':'im'}">${nf(F.total)} บ.</b></span>`+repl.map(t=>`<span class="nw">${t}</span>`).join('')+`<span class="nw">ค่าดูแล ${nf(S.fin.om*n)} บ./ปี</span>`+(F0?`<span class="nw" style="color:var(--bt)">- - เส้นประ = ไม่มีแบต (${nf(F0.total)} บ.)</span>`:'');
+  $('#cfStats').innerHTML=`<span class="nw">เงินสะสมปีที่ 25 <b class="${F.total>=0?'ex':'im'}">${nf(F.total)}</b> บ.</span>`+repl.map(t=>`<span class="nw">${t}</span>`).join('')+`<span class="nw">ค่าดูแล ${nf(S.fin.om*n)} บ./ปี</span>`+(F0?`<span class="nw" style="color:var(--bt)">- - เส้นประ = ไม่มีแบต (${nf(F0.total)} บ.)</span>`:'');
 
   let mt=`<thead><tr><th>เดือน</th><th>ผลิต (kWh)</th><th>ประหยัด (บ.)</th></tr></thead><tbody>`;
   M.forEach((o,i)=>{ mt+=`<tr><td>${MNAME[i]}</td><td class="c-pv">${nf(o.pv)}</td><td>${nf(o.save)}</td></tr>`; });
@@ -2371,7 +2409,7 @@ async function checkHash(){
   try{
     const o=await decState(mm[1]); const s=fromSaved(o&&o.c?o.c:o); if(!s) throw new Error('bad');
     const nm=(s.house.name||'บ้าน')+' (จากลิงก์)'; const mode=s.mode;
-    addCase(s,nm); if(mode) go(mode);
+    addCase(s,nm); const cm=s.calc||mode; if(cm) go(cm);
     $('#shareMsg').textContent=`เพิ่มบ้าน "${nm}" จากลิงก์แล้ว · บ้านเดิมในเครื่องนี้ยังอยู่ครบ`; $('#shareBanner').hidden=false;
   }catch(e){ toast('ลิงก์แชร์ไม่สมบูรณ์ — เปิดด้วยค่าเดิม',4000); }
 }
@@ -2391,6 +2429,7 @@ function init(){
   initStatic(); bindAll(); initApps(); initCombo(); initCars(); initSys(); initLC(); initShare(); initCases();
   $$('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
   $('#btnReset').addEventListener('click',function(){ armed(this,()=>{ const nm=S.house.name; const t=tplState(S.tpl); t.house.name=nm; applyState(t); go(null); },'กดอีกครั้งเพื่อคืนค่าหลังนี้'); });
+  S.mode=null; // เปิดเว็บเริ่มที่หน้าตั้งค่าเสมอ
   applyState(S);
   loadDoc();
   checkHash();
