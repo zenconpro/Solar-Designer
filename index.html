@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Solar Designer — คำนวณขนาดระบบโซลาร์ On-Grid ค่าไฟที่ประหยัด และระยะคืนทุน">
-<title>Solar Designer — Version 1.3</title>
+<title>Solar Designer — Version 1.4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -473,6 +473,18 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
 .ck.ck2 label{padding:3px 4px;font-size:12.5px;gap:6px}
 .ck.ck2 label span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:420px){.ck.ck2{grid-template-columns:1fr}}
+/* ช่วงคืนทุน + สิทธิภาษี */
+.scen>summary{font-size:12px}
+.scen>summary span{color:var(--mu)}
+.scgrid{display:grid;grid-template-columns:auto 1fr 1fr;gap:5px 8px;align-items:center;margin-top:8px}
+.scgrid>span{color:var(--mu);font-size:11.5px}
+.scgrid b{font-weight:500;font-size:12.5px}
+.scgrid input{width:100%;background:var(--sf2);border:1px solid var(--bd);border-radius:7px;padding:4px 8px;outline:none;font:13px var(--mono)}
+.scgrid input:focus{border-color:var(--acc)}
+.ghost.arm{border-color:var(--bad);color:var(--bad);background:var(--bad-bg)}
+.kpi .rng{font-family:var(--mono)}
+.eqf{margin-top:6px}
+.scgrid>span{white-space:nowrap}
 /* battery breakdown */
 .bbox{margin-top:8px;border:1px solid var(--bd);border-left:3px solid var(--bt);border-radius:8px;padding:5px 10px 6px}
 .bbox h4{margin:0;font-size:12px;font-weight:600;color:var(--bt)}
@@ -490,7 +502,7 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
 </head>
 <body>
 <header class="bar">
-  <div class="brand"><span class="sun" aria-hidden="true"></span><div class="bt"><b>Solar Designer <span class="ver">Version 1.3</span></b><small>Publish by Zenconpro · <span class="case" id="siteLbl"></span></small></div></div>
+  <div class="brand"><span class="sun" aria-hidden="true"></span><div class="bt"><b>Solar Designer <span class="ver">Version 1.4</span></b><small>Publish by Zenconpro · <span class="case" id="siteLbl"></span></small></div></div>
   <nav class="tabs" id="tabs">
     <button data-go="home">ตั้งค่า</button>
     <button data-go="roof">หลังคา</button>
@@ -515,6 +527,7 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
         <button class="btn sm" id="caseNew">+ เพิ่มบ้านหลังใหม่</button>
         <button class="ghost" id="caseDup">ทำสำเนาหลังนี้</button>
         <button class="ghost" id="caseDel">ลบหลังนี้</button>
+        <button class="ghost" id="btnReset">คืนค่าเริ่มต้น</button>
       </div>
       <div class="cnew" id="cnBox" hidden>
         <label class="f"><span>ชื่อบ้าน / ลูกค้า</span><input type="text" class="tx" id="cnName" placeholder="เช่น บ้านคุณสมชาย แปลง A-12"></label>
@@ -633,12 +646,19 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
         <label class="f"><span>สัญญาขายไฟ (ปี)</span><input type="number" data-k="fin.sellYrs" step="1" min="0" max="25"></label>
         <label class="f"><span>แผงเสื่อมปีแรก (%)</span><input type="number" data-k="fin.deg1" step="0.1" min="0" max="5"></label>
         <label class="f"><span>เสื่อมต่อปี (%)</span><input type="number" data-k="fin.deg" step="0.05" min="0" max="2"></label>
-        <label class="f"><span>ภาษีเจ้าของ (%)</span><input type="number" data-k="fin.taxRate" step="5" min="0" max="35"></label>
+        <label class="f"><span>อัตราภาษี (%)</span><input type="number" data-k="fin.taxRate" step="1" min="0" max="35"></label>
       </div>
-      <label class="tog" style="margin-top:8px"><span class="sw"><input type="checkbox" data-k="fin.tax"><i></i></span>ใช้สิทธิลดหย่อนภาษีโซลาร์ (≤ 200,000 บ.)</label>
-      <p class="hint">ลดหย่อนได้เมื่อแผง ≤ 10 kW · มี e-Tax Invoice · ขนานไฟแล้ว · ถึง 31 ธ.ค. 2571 · ค่าอื่นเป็นค่าประมาณ แก้ได้</p>
+      <details class="msub scen"><summary title="ผลิตไฟ (%) / ค่าไฟขึ้น (%/ปี)">ช่วงคืนทุน ดี–แย่ <span id="scSum"></span></summary>
+        <div class="scgrid">
+          <span></span><span>ผลิตไฟ (%)</span><span>ค่าไฟขึ้น (%/ปี)</span>
+          <b>กรณีแย่</b><input type="number" data-k="fin.scYlo" step="1" min="-40" max="0" aria-label="กรณีแย่ ผลิตไฟ"><input type="number" data-k="fin.scElo" step="0.5" min="-5" max="10" aria-label="กรณีแย่ ค่าไฟขึ้น">
+          <b>กรณีดี</b><input type="number" data-k="fin.scYhi" step="1" min="0" max="30" aria-label="กรณีดี ผลิตไฟ"><input type="number" data-k="fin.scEhi" step="0.5" min="-5" max="10" aria-label="กรณีดี ค่าไฟขึ้น">
+        </div>
+      </details>
+      <div class="f" style="margin-top:8px"><span>สิทธิภาษี</span><div class="seg sm" data-seg="fin.taxMode"><button data-v="none">ไม่ใช้</button><button data-v="person">บุคคล ≤ 200,000</button><button data-v="corp">นิติบุคคล 1.5 เท่า</button></div></div>
+      <label class="f eqf" id="eqF"><span>ค่าอุปกรณ์เข้าเกณฑ์ (% ของราคาแผง+Inv.+ติดตั้ง)</span><input type="number" data-k="fin.eqPct" step="5" min="0" max="100"></label>
+      <p class="hint" id="taxHint"></p>
     </div>
-    <button class="danger" id="btnReset">คืนค่าเริ่มต้นของหลังนี้</button>
   </div>
 </section>
 
@@ -901,7 +921,7 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
 (function(){
 'use strict';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const VER='1.3', LS_CASES='solar-cases-v1', LS_V8='solar-v8', LS_V7='solar-v7';
+const VER='1.4', LS_CASES='solar-cases-v1', LS_V8='solar-v8', LS_V7='solar-v7';
 const rng=(a,b)=>{const r=[];for(let i=a;i<b;i++)r.push(i%24);return r;};
 const clone=o=>JSON.parse(JSON.stringify(o));
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1207,7 +1227,7 @@ function baseState(){ return {
   inv:{kw:0},
   tariff:{type:'r12',ft:0.1623,buy:4.50,net:false,sell:2.20,lim:5},
   price:{w:28.5,batt:12000},
-  fin:{esc:1.5,om:80,disc:4,invYr:12,invCost:3500,sellYrs:20,deg1:1.0,deg:0.4,taxRate:20,tax:false},
+  fin:{esc:1.5,om:80,disc:4,invYr:12,invCost:3500,sellYrs:20,deg1:1.0,deg:0.4,taxRate:20,tax:false,taxMode:'none',eqPct:70,scYlo:-10,scElo:0,scYhi:5,scEhi:3},
   batt:{on:false,kwh:10},
   thr:90,
   m1:{n:null,smode:'check',self:50,prof:'house_home',ck:{base:true,cook:false,wfh:false,wash:false,dryer:false,pump:false,pool:false,fridge2:false,heat:false,ev:false},acN:1,acBtu:12000,acS:9,acE:17},
@@ -1271,6 +1291,8 @@ function sanitize(o){
   if(!Array.isArray(o.ev.cars)||!o.ev.cars.length) o.ev.cars=clone(baseState().ev.cars);
   if(!Array.isArray(o.roof.planes)||!o.roof.planes.length) o.roof.planes=[{w:8,l:10}];
   if(!TARIFF[o.tariff.type]) o.tariff.type='r12';
+  if(o.fin.tax===true){ if(o.fin.taxMode==='none') o.fin.taxMode='person'; o.fin.tax=false; }
+  if(!['none','person','corp'].includes(o.fin.taxMode)) o.fin.taxMode='none';
   if(!BT[o.bt]) o.bt='house';
   if(!DAYP[o.m1.prof]) o.m1.prof=BT[o.bt].dp;
   if(!BILLP[o.m2.prof]) o.m2.prof='custom';
@@ -1436,8 +1458,13 @@ function monthly(kWp){
 }
 /* ความคุ้มค่า 25 ปี */
 function finance(o){
-  const F=S.fin, N=25, r=F.disc/100, g=F.esc/100;
-  const taxOk=!!F.tax && o.kWp<=10 && !!BT[S.bt].res, tax=taxOk? Math.min(o.cost,200000)*F.taxRate/100 : 0;
+  const F=S.fin, N=25, r=F.disc/100, g=(o.esc??F.esc)/100, pv=o.pvCost??o.cost, tm=F.taxMode;
+  // สิทธิภาษี (ไม่รวมแบตเตอรี่ในฐานคำนวณ):
+  //  บุคคล: ลดหย่อน ≤ 200,000 บ. (แผง ≤ 10 kWp, บ้านอยู่อาศัย) × อัตราภาษี
+  //  นิติบุคคล (พ.ร.ฎ. 805): หักรายจ่ายค่าอุปกรณ์ 1.5 เท่า → ส่วนเพิ่ม 0.5 × ค่าอุปกรณ์ที่เข้าเกณฑ์ × อัตราภาษี (ไม่นับค่าเสื่อมปกติ 1.0 เท่า)
+  let taxOk=false, tax=0;
+  if(tm==='person'){ taxOk= o.kWp<=10 && !!BT[S.bt].res; tax= taxOk? Math.min(pv,200000)*F.taxRate/100 : 0; }
+  else if(tm==='corp'){ taxOk=true; tax= pv*F.eqPct/100*0.5*F.taxRate/100; }
   const cf=[-o.cost];
   for(let y=1;y<=N;y++){
     const deg=(1-F.deg1/100)*Math.pow(1-F.deg/100,y-1);
@@ -1849,13 +1876,14 @@ function drawMonthly(M,roof){
   $('#mChart').innerHTML=s+'</svg>';
   $('#mLegend').innerHTML=`<span><i style="background:var(--pv)"></i>ผลิตไฟ</span>`+(roof?'':`<span><i style="background:var(--ld)"></i>ใช้ไฟ</span>`);
 }
-function drawCF(F,F0){
+function drawCF(F,F0,FR){
   const W=cw('#cfChart'),H=140,pl=44,pr=6,pt=14,pb=18, iw=W-pl-pr, ih=H-pt-pb, n=F.cum.length, bw=iw/n;
-  const all=F0? F.cum.concat(F0.cum):F.cum, hi=Math.max(0,...all), lo=Math.min(0,...all), top=niceMax(hi||1), bot=-niceMax(-lo||1), span=top-bot;
+  const all=F.cum.concat(F0?F0.cum:[],FR?FR.lo.cum.concat(FR.hi.cum):[]), hi=Math.max(0,...all), lo=Math.min(0,...all), top=niceMax(hi||1), bot=-niceMax(-lo||1), span=top-bot;
   const y=v=>pt+(top-v)/span*ih;
   let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="กราฟเงินสะสม 25 ปี">`;
   [bot,0,top/2,top].filter((v,i)=>i!==0||-bot>span*.12).forEach(v=>{ const yy=y(v); s+=`<line class="gl" x1="${pl}" x2="${W-pr}" y1="${yy}" y2="${yy}"${v===0?' style="stroke:var(--mu)"':''}/><text class="ax" x="${pl-6}" y="${yy+3.5}" text-anchor="end">${tick(v)}</text>`; });
   s+=`<text class="ax" x="4" y="${pt-6}">บาท</text>`;
+  if(FR){ const cx=i=>(pl+i*bw+bw/2).toFixed(1); s+=`<polygon fill="var(--acc)" opacity=".13" points="${FR.hi.cum.map((v,i)=>cx(i)+','+y(v).toFixed(1)).concat(FR.lo.cum.map((v,i)=>[i,v]).reverse().map(([i,v])=>cx(i)+','+y(v).toFixed(1))).join(' ')}"><title>ช่วงกรณีดี–แย่</title></polygon>`; }
   F.cum.forEach((v,i)=>{ const x=pl+i*bw+bw*.15, w=bw*.7, y0=y(0), yv=y(v); s+=`<rect x="${x}" y="${Math.min(y0,yv)}" width="${w}" height="${Math.max(1,Math.abs(yv-y0))}" fill="${v>=0?'var(--ex)':'var(--im)'}" opacity=".8" rx="1.5"><title>ปีที่ ${i}: ${nf(v)} บ.</title></rect>`; });
   if(F0){ s+=`<polyline fill="none" stroke="var(--bt)" stroke-width="1.6" stroke-dasharray="4 3" points="${F0.cum.map((v,i)=>`${(pl+i*bw+bw/2).toFixed(1)},${y(v).toFixed(1)}`).join(' ')}"><title>ถ้าไม่มีแบต</title></polyline>`; }
   for(let i=0;i<n;i+=5) s+=`<text class="ax" x="${pl+i*bw+bw/2}" y="${H-4}" text-anchor="middle">${i}</text>`;
@@ -1883,6 +1911,12 @@ function recalc(){
     : `<b>ยิ่งใช้มาก หน่วยยิ่งแพง:</b> ${tt.tier.map((x,i)=>`<span class="nw">${i===0? x[0]+' หน่วยแรก' : x[0]>=1e8? 'เกิน '+tt.tier[i-1][0] : (tt.tier[i-1][0]+1)+'–'+x[0]} <b>${f2(x[1])}</b></span>`).join(' · ')} บ./หน่วย ${tAdd}${tt.cat==='res'?' <span class="nw">· บ้านส่วนใหญ่ใช้แบบนี้</span>':' <span class="nw">· ใช้ไฟสูงสุดไม่เกิน 30 kW</span>'} ${tCode}`;
   $('#thrI').style.width=S.thr+'%'; $('#thrA').textContent=nf(S.thr)+'%'; $('#thrB').textContent=nf(100-S.thr)+'%';
   $('#thrDesc').innerHTML=(THR[S.thr]||'กำหนดสัดส่วนเอง')+` · <span class="nw">ไฟที่ใช้เองคุ้ม ≈ <b>${f2(dayRate())}</b> บ./หน่วย</span> <span class="nw">ขายคืนได้ <b>${f2(S.tariff.sell)}</b> บ.</span>`;
+  const tm=S.fin.taxMode, sg=v=>(v>0?'+':'')+nf(v,v%1?1:0);
+  $('#eqF').hidden= tm!=='corp';
+  $('#taxHint').innerHTML= tm==='person'? `<span class="nw">ลดหย่อน ≤ 200,000 บ. · แผง ≤ 10 kWp · บ้านอยู่อาศัย</span> <span class="nw">· e-Tax Invoice · ขนานไฟแล้ว · ถึง 31 ธ.ค. 71</span>`
+    : tm==='corp'? `<span class="nw">พ.ร.ฎ. 805 · ภาษีลดเพิ่ม = 50% × ค่าอุปกรณ์ × อัตราภาษี</span> <span class="nw">· อุปกรณ์ใหม่เข้าเกณฑ์ พพ. ไม่รวมค่าแรง/แบต</span> <span class="nw">· ห้ามซ้ำ BOI · ถึง 31 ธ.ค. 71</span>`
+    : '<span class="nw">ไม่นับสิทธิภาษีในจุดคุ้มทุน</span>';
+  $('#scSum').textContent=`· แย่ ${sg(S.fin.scYlo)}% / ${nf(S.fin.scElo,1)}% · ดี ${sg(S.fin.scYhi)}% / ${nf(S.fin.scEhi,1)}%`;
   $('#btnPrint').hidden=!m;
   if(!m){ save(); return; }
   $('#accF').style.visibility= S.ac.plf==='const'?'visible':'hidden';
@@ -1981,14 +2015,21 @@ function recalc(){
   const cost=kWp*1000*S.price.w + (bOn? S.batt.kwh*S.price.batt:0);
   const sumM=k=>M.reduce((s,o)=>s+(o[k]||0),0);
   const saveY=sumM('save'), saveM=saveY/12, genY=sumM('pv');
-  const F=finance({cost,avoidY:sumM('avoid'),expY:sumM('expv'),n,inv,bOn,kWp});
+  const pvCost=kWp*1000*S.price.w;
+  const F=finance({cost,pvCost,avoidY:sumM('avoid'),expY:sumM('expv'),n,inv,bOn,kWp});
+  // ช่วงคืนทุน: กรณีแย่/ดี = ปรับผลิตไฟ (PR) และอัตราค่าไฟขึ้น
+  const scen=(dy,esc)=>{ const pr0=S.site.pr; let Mx; S.site.pr=pr0*(1+dy/100); try{ Mx=monthly(kWp); } finally{ S.site.pr=pr0; }
+    const sx=k=>Mx.reduce((s,o)=>s+(o[k]||0),0); return finance({cost,pvCost,avoidY:sx('avoid'),expY:sx('expv'),n,inv,bOn,kWp,esc}); };
+  const FR={lo:scen(S.fin.scYlo,S.fin.scElo), hi:scen(S.fin.scYhi,S.fin.scEhi)};
+  const pyr1=v=>isFinite(v)&&v<=25? f1(v):'> 25';
+  const rngTxt=`${pyr1(FR.hi.pay)}–${pyr1(FR.lo.pay)}`;
   // แบตเตอรี่แยกคิด: เทียบกับ "โซลาร์อย่างเดียว" ขนาดที่ระบบแนะนำเมื่อไม่มีแบต (หรือจำนวนแผงเดิมถ้ากำหนดเอง)
   let F0=null, B=null;
   if(bOn){
     let M0,n0,k0,i0; S.batt.on=false;
     try{ n0=Math.max(1,Math.min(S[mk()].n ?? Math.min(recommend(),cap),cap)); k0=kwpOf(n0); i0=invKW(k0); M0=monthly(k0); } finally{ S.batt.on=true; }
     const s0=k=>M0.reduce((s,o)=>s+(o[k]||0),0);
-    F0=finance({cost:k0*1000*S.price.w,avoidY:s0('avoid'),expY:s0('expv'),n:n0,inv:i0,bOn:false,kWp:k0});
+    F0=finance({cost:k0*1000*S.price.w,pvCost:k0*1000*S.price.w,avoidY:s0('avoid'),expY:s0('expv'),n:n0,inv:i0,bOn:false,kWp:k0});
     const bc=S.batt.kwh*S.price.batt, d=F.cf.map((v,i)=>v-F0.cf[i]); let c=0, bp=Infinity;
     for(let y=0;y<d.length;y++){ const p=c; c+=d[y]; if(y>0&&c>=0&&p<0){ bp=(y-1)+(-p)/(d[y]||1); break; } }
     let nk=0; for(let h=0;h<24;h++) if(h>=18||h<6) nk+=L[h]; nk/=12;
@@ -1998,7 +2039,7 @@ function recalc(){
   $('#kGen').innerHTML=f1(T.pv)+' <small>kWh/วัน</small>'; $('#kGenM').textContent=nf(genY)+' หน่วย/ปี';
   $('#kSave').innerHTML=nf(saveM)+' <small>บ.</small>'; $('#kSaveY').textContent=nf(saveY)+' บ./ปีแรก';
   S.last={m,kWp:+kWp.toFixed(2),pay:isFinite(F.pay)?+F.pay.toFixed(1):null,save:Math.round(saveM)};
-  $('#kPay').innerHTML= isFinite(F.pay)? f1(F.pay)+' <small>ปี</small>':'> 25 <small>ปี</small>'; $('#kCost').textContent='ลงทุน '+nf(cost)+' บ.';
+  $('#kPay').innerHTML= isFinite(F.pay)? f1(F.pay)+' <small>ปี</small>':'> 25 <small>ปี</small>'; $('#kCost').innerHTML='ช่วง <span class="rng">'+rngTxt+'</span> ปี (ดี–แย่)';
 
   const pill=$('#roofPill'), okR=rec<=rmx, pc=rmx>0?Math.min(100,n/rmx*100):100;
   pill.hidden= m==='roof'||okR;
@@ -2029,10 +2070,10 @@ function recalc(){
     : `<dt>มูลค่าไฟที่ใช้เอง/ปี</dt><dd>${nf(sumM('avoid'))} บ.</dd>`+(S.tariff.net?`<dt>ขายคืน/ปี (${f2(S.tariff.sell)} บ.)</dt><dd>${nf(sumM('expv'))} บ.</dd>`:'');
   mo+=`<dt class="t">ประหยัด / เดือน (ปีแรก)</dt><dd class="t pv">${nf(saveM)} บ.</dd>`;
   mo+=`<dt>ลงทุนระบบ (${nf(S.price.w,2)} บ./W)</dt><dd>${nf(kWp*1000*S.price.w)} บ.</dd>`;
-  if(S.fin.tax) mo+= F.taxOk? `<dt>ภาษีคืน (ลดหย่อน × ${nf(S.fin.taxRate)}%)</dt><dd class="ex">${nf(F.tax)} บ.</dd>` : `<dt>ลดหย่อนภาษี</dt><dd class="im">ไม่เข้าเงื่อนไข (${BT[S.bt].res?'> 10 kWp':'เฉพาะบ้านอยู่อาศัย'})</dd>`;
-  mo+=`<dt class="t">คืนทุน${bOn?' (รวมแบต)':''}</dt><dd class="t">${isFinite(F.pay)?f1(F.pay)+' ปี':'> 25 ปี'}</dd>`;
-  mo+=`<dt>NPV 25 ปี (คิดลด ${nf(S.fin.disc,1)}%)</dt><dd class="${F.npv>=0?'ex':'im'}">${nf(F.npv)} บ.</dd>`;
-  mo+=`<dt>IRR</dt><dd>${F.irr==null?'—':nf(F.irr*100,1)+'%'}</dd>`;
+  if(S.fin.taxMode==='person') mo+= F.taxOk? `<dt>ลดหย่อนภาษีบุคคล (× ${nf(S.fin.taxRate)}%)</dt><dd class="ex">${nf(F.tax)} บ.</dd>` : `<dt>ลดหย่อนภาษีบุคคล</dt><dd class="im">ไม่เข้าเงื่อนไข (${BT[S.bt].res?'> 10 kWp':'เฉพาะบ้านอยู่อาศัย'})</dd>`;
+  if(S.fin.taxMode==='corp') mo+= `<dt>ภาษีลดเพิ่ม นิติบุคคล (หัก 1.5 เท่า)</dt><dd class="ex">${nf(F.tax)} บ.</dd>`;
+  mo+=`<dt class="t">คืนทุน${bOn?' (รวมแบต)':''} <small class="c-mu" style="font-weight:400">ช่วง ${rngTxt} ปี</small></dt><dd class="t">${isFinite(F.pay)?f1(F.pay)+' ปี':'> 25 ปี'}</dd>`;
+  mo+=`<dt>NPV 25 ปี (คิดลด ${nf(S.fin.disc,1)}%) · IRR</dt><dd><span class="${F.npv>=0?'ex':'im'}">${nf(F.npv)}</span> · ${F.irr==null?'—':nf(F.irr*100,1)+'%'}</dd>`;
   $('#money').innerHTML=mo;
   const pyr=v=>isFinite(v)&&v<=25? f1(v)+' ปี':'> 25 ปี';
   $('#battBox').hidden=!B;
@@ -2048,8 +2089,8 @@ function recalc(){
         : `<span class="nw">แบตไว้<b>สำรองไฟตอนไฟดับ</b></span> <span class="nw">ไม่ได้ทำให้คืนทุนเร็วขึ้น${slow? (isFinite(F.pay)? ` (ช้าลง ${f1(F.pay-F0.pay)} ปี)`:' (รวมแบตไม่คืนทุนใน 25 ปี)'):''}</span> `)
       + bk + ` <span class="nw">· ต้องใช้อินเวอร์เตอร์ Hybrid ที่มี Backup</span>`;
   }
-  drawCF(F,F0);
-  $('#cfSub').textContent=`(ค่าไฟขึ้น ${nf(S.fin.esc,1)}%/ปี)`;
+  drawCF(F,F0,FR);
+  $('#cfSub').textContent=`(ค่าไฟขึ้น ${nf(S.fin.esc,1)}%/ปี · แถบ = ดี–แย่)`;
   const repl=[]; if(S.fin.invYr>0) repl.push(`เปลี่ยนอินเวอร์เตอร์ปีที่ ${S.fin.invYr} ≈ ${nf(S.fin.invCost*inv)} บ.`); if(bOn) repl.push(`เปลี่ยนแบตปีที่ 11`);
   $('#cfStats').innerHTML=`<span class="nw">เงินสะสมปีที่ 25 <b class="${F.total>=0?'ex':'im'}">${nf(F.total)} บ.</b></span>`+repl.map(t=>`<span class="nw">${t}</span>`).join('')+`<span class="nw">ค่าดูแล ${nf(S.fin.om*n)} บ./ปี</span>`+(F0?`<span class="nw" style="color:var(--bt)">- - เส้นประ = ไม่มีแบต (${nf(F0.total)} บ.)</span>`:'');
 
@@ -2078,7 +2119,7 @@ function recalc(){
   notes.push('ปีแรกรวมจาก 12 เดือนตามแดดรายเดือน (ใช้ไฟเท่ากันทุกเดือน) · 25 ปีคิดค่าเสื่อมแผง ค่าไฟขึ้น ค่าดูแล และค่าเปลี่ยนอุปกรณ์');
   $('#notes').innerHTML=notes.map(t=>`<p>${t}</p>`).join('');
 
-  fillPrint({m,n,kWp,inv,bOn,wLocal,ratio});
+  fillPrint({m,n,kWp,inv,bOn,wLocal,ratio,rngTxt,F});
   save();
 }
 function fillPrint(c){
@@ -2094,6 +2135,8 @@ function fillPrint(c){
     <dt>หลังคา</dt><dd>${f1(roofArea())} ม² ใช้วางแผง ${nf(S.roof.pct,1)}% · แผง+โครงยึด ${f1(c.wLocal)} กก./ม²</dd>
     <dt>ค่าไฟ</dt><dd>${esc(TT().t)}${TT().code?' (ประเภท '+TT().code+')':''} · Ft ${S.tariff.ft} · ${S.tariff.net?'ขายคืน '+f2(S.tariff.sell)+' บ. ≤ '+S.tariff.lim+' kW':'ไม่ขายคืน'}</dd>
     <dt>สมมติฐาน 25 ปี</dt><dd>ค่าไฟขึ้น ${S.fin.esc}%/ปี · เสื่อมปีแรก ${S.fin.deg1}% ต่อปี ${S.fin.deg}% · ค่าดูแล ${S.fin.om} บ./แผง/ปี · คิดลด ${S.fin.disc}%</dd>
+    <dt>ช่วงคืนทุน</dt><dd>${c.rngTxt} ปี (แย่: ผลิต ${S.fin.scYlo}% ค่าไฟขึ้น ${S.fin.scElo}%/ปี · ดี: ผลิต +${S.fin.scYhi}% ค่าไฟขึ้น ${S.fin.scEhi}%/ปี)</dd>
+    <dt>สิทธิภาษี</dt><dd>${S.fin.taxMode==='corp'?'นิติบุคคล หักรายจ่าย 1.5 เท่า (พ.ร.ฎ. 805) ค่าอุปกรณ์ '+S.fin.eqPct+'% × อัตราภาษี '+S.fin.taxRate+'% = '+nf(c.F.tax)+' บ.':S.fin.taxMode==='person'?(c.F.taxOk?'บุคคล ลดหย่อน ≤ 200,000 บ. × '+S.fin.taxRate+'% = '+nf(c.F.tax)+' บ.':'บุคคล — ไม่เข้าเงื่อนไข'):'ไม่นับ'}</dd>
   </dl>`;
 }
 /* ── load schedule: import / attach ── */
