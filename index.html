@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Solar Designer — คำนวณขนาดระบบโซลาร์ ค่าไฟที่ประหยัด และระยะคืนทุน">
-<title>SPECTRA Solar Designer</title>
+<meta name="description" content="Solar Designer — คำนวณขนาดระบบโซลาร์ On-Grid ค่าไฟที่ประหยัด และระยะคืนทุน">
+<title>Solar Designer — Version 1.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -36,72 +36,100 @@
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
 button,input,select{font:inherit;color:inherit}
-.num,.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
 a{color:var(--acc-tx)}
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 
 /* ── top bar ── */
-.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--sf);border-bottom:1px solid var(--bd);
-  display:flex;align-items:center;gap:12px;padding:8px 16px;flex-wrap:wrap}
+.bar{position:sticky;top:0;z-index:30;background:var(--sf);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px 14px;padding:7px 16px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:9px;min-width:0}
 .brand .sun{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 50% 50%,var(--pv) 0 45%,transparent 47%),repeating-conic-gradient(var(--pv) 0 8deg,transparent 8deg 30deg);flex:none}
-.brand b{font-weight:700;letter-spacing:.01em}
-.brand small{color:var(--mu);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tabs{display:flex;gap:4px;background:var(--sf3);padding:3px;border-radius:9px;margin-left:auto}
+.brand .bt{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+.brand .bt b{font-weight:700;font-size:14.5px;display:flex;align-items:center;gap:7px;white-space:nowrap}
+.ver{font:600 10.5px var(--mono);color:var(--acc-tx);background:var(--acc-bg);padding:1px 7px;border-radius:10px}
+.brand small{color:var(--mu);font-size:11px}
+.tabs{display:flex;gap:3px;background:var(--sf3);padding:3px;border-radius:9px;margin-left:auto}
 .tabs button{border:0;background:none;padding:5px 11px;border-radius:7px;cursor:pointer;color:var(--mu);font-size:13px;white-space:nowrap}
 .tabs button.on{background:var(--sf);color:var(--tx);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08)}
-.ghost{border:1px solid var(--bd2);background:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--mu)}
+.acts{display:flex;gap:6px}
+.ghost{border:1px solid var(--bd2);background:none;border-radius:8px;padding:4px 10px;cursor:pointer;font-size:12.5px;color:var(--mu);white-space:nowrap}
 .ghost:hover{color:var(--tx);border-color:var(--mu)}
+.ib{display:inline-flex;align-items:center;gap:5px}
+.ib svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;flex:none}
+@media(max-width:520px){.ib span{display:none}.ib{padding:5px 8px}}
+@media(max-width:820px){
+  .bar{padding:6px 12px}
+  .acts{margin-left:auto}
+  .tabs{order:3;width:100%;margin-left:0}
+  .tabs button{flex:1;padding:5px 4px}
+}
+.banner{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--acc-bg);color:var(--acc-tx);padding:6px 16px;font-size:13px;border-bottom:1px solid var(--bd)}
+.banner .x{margin-left:auto}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:60;background:var(--tx);color:var(--sf);padding:9px 14px;border-radius:9px;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:calc(100vw - 32px);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.toast input{flex:1;min-width:180px;border:0;border-radius:6px;padding:4px 6px;font:12px var(--mono);background:var(--sf);color:var(--tx)}
 
 /* ── home ── */
-#home{max-width:1080px;margin:0 auto;padding:40px 16px 48px}
-#home h1{font-size:28px;line-height:1.25;margin:0 0 6px;text-wrap:balance}
-#home .lead{color:var(--mu);margin:0 0 26px;max-width:62ch}
-.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-.mcard{text-align:left;background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:20px 20px 18px;cursor:pointer;display:flex;flex-direction:column;gap:10px;transition:border-color .15s,transform .15s}
+#home{max-width:1240px;margin:0 auto;padding:24px 16px 40px}
+#home h1{font-size:23px;line-height:1.25;margin:0 0 4px}
+#home .lead{color:var(--mu);margin:0 0 16px;font-size:13.5px}
+#home .lead b{color:var(--tx)}
+#home h2.sec{font-size:19px;margin:28px 0 12px}
+.setgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;align-items:start}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.mcard{text-align:left;background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:16px;cursor:pointer;display:flex;flex-direction:column;gap:8px;transition:border-color .15s,transform .15s}
 .mcard:hover{border-color:var(--acc);transform:translateY(-2px)}
-.mcard svg{width:40px;height:40px;color:var(--acc)}
-.mcard h2{margin:0;font-size:18px}
-.mcard p{margin:0;color:var(--mu);font-size:13.5px}
-.mcard .need{margin-top:auto;padding-top:10px;border-top:1px dashed var(--bd);font-size:12.5px;color:var(--mu)}
-.mcard .need b{color:var(--tx);font-weight:600}
+.mcard svg{width:34px;height:34px;color:var(--acc)}
+.mcard h2{margin:0;font-size:17px}
+.mcard p{margin:0;color:var(--mu);font-size:13px}
 .mcard .lvl{font-family:var(--mono);font-size:11px;color:var(--acc-tx);background:var(--acc-bg);align-self:flex-start;padding:2px 8px;border-radius:20px}
-.home-foot{margin-top:22px;font-size:12.5px;color:var(--mu)}
+.home-foot{margin-top:18px;font-size:12.5px;color:var(--mu)}
+.msub{margin-top:10px;border-top:1px dashed var(--bd);padding-top:8px}
+.msub>summary{cursor:pointer;font-size:12.5px;color:var(--acc-tx);list-style:none}
+.msub>summary::-webkit-details-marker{display:none}
+.msub>summary::before{content:'▸ '}
+.msub[open]>summary::before{content:'▾ '}
+.mgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:8px}
+.mgrid label{display:flex;flex-direction:column;gap:1px;font-size:10.5px;color:var(--mu);text-align:center}
+.mgrid input{width:100%;min-width:0;background:var(--sf2);border:1px solid var(--bd);border-radius:6px;padding:3px 1px;font:12px var(--mono);text-align:center;outline:none}
+.mgrid input:focus{border-color:var(--acc)}
+@media(max-width:380px){.mgrid{grid-template-columns:repeat(4,1fr)}}
 
 /* ── work layout ── */
-.grid{display:grid;grid-template-columns:1fr;gap:14px;padding:14px 16px 32px;max-width:1500px;margin:0 auto}
+.grid{display:grid;grid-template-columns:1fr;gap:14px;padding:12px 16px 32px;max-width:1500px;margin:0 auto}
+.col-in,.col-out{display:flex;flex-direction:column;gap:12px;min-width:0}
+.modein,.pane{display:flex;flex-direction:column;gap:12px;min-width:0}
+@media(min-width:760px) and (max-width:1019px){
+  body.work .modein{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+}
 @media(min-width:1020px){
   body.work{display:flex;flex-direction:column;overflow:hidden}
-  body.work .grid{flex:1;min-height:0;grid-template-columns:minmax(380px,440px) 1fr;padding-block:0;max-width:none;width:100%}
-  .col-in,.col-out{overflow-y:auto;padding-block:14px 40px;scrollbar-width:thin}
+  body.work .grid{flex:1;min-height:0;grid-template-columns:minmax(360px,420px) minmax(0,1fr);padding-block:0;max-width:none;width:100%}
+  .col-in,.col-out{overflow-y:auto;padding-block:12px 40px;scrollbar-width:thin}
 }
-.col-in{display:flex;flex-direction:column;gap:12px;min-width:0}
-.col-out{display:flex;flex-direction:column;gap:12px;min-width:0}
-.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px}
-.card h3{margin:0 0 10px;font-size:14px;font-weight:600}
-.card h4{margin:14px 0 8px;font-size:11.5px;font-weight:600;color:var(--mu);letter-spacing:.06em;text-transform:uppercase}
-.card h4:first-child{margin-top:0}
-.modein{display:flex;flex-direction:column;gap:12px}
-.mode-title{display:flex;align-items:baseline;gap:10px}
-.mode-title h2{margin:0;font-size:18px}
-.mode-title span{color:var(--mu);font-size:12.5px}
+@media(min-width:1280px){
+  body.work .grid{grid-template-columns:minmax(640px,820px) minmax(460px,1fr)}
+  body.work .col-in{overflow:hidden;padding:0}
+  body.work .modein{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;height:100%}
+  body.work .pane{overflow-y:auto;min-height:0;padding-block:12px 40px;scrollbar-width:thin}
+}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px}
+.card h3{margin:0 0 8px;font-size:14px;font-weight:600}
+.setgrid .card h3{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.mode-title{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.mode-title h2{margin:0;font-size:17px}
+.mode-title span{color:var(--mu);font-size:12.5px;font-family:var(--mono)}
 
 /* fields */
 .f{display:flex;flex-direction:column;gap:3px;min-width:0}
 .f>span{font-size:12px;color:var(--mu)}
-.f input,.f select{width:100%;background:var(--sf2);border:1px solid var(--bd);border-radius:7px;padding:6px 8px;outline:none;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px}
-.f select{font-family:var(--sans)}
+.f input,.f select{width:100%;background:var(--sf2);border:1px solid var(--bd);border-radius:7px;padding:5px 8px;outline:none;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px}
+.f select,.f input.tx{font-family:var(--sans)}
 .f input:focus,.f select:focus{border-color:var(--acc)}
-.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:8px}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:8px;align-items:end}
 .row+.row,.row+.f,.f+.row,.f+.f,.row+.hint,.seg+.row,.row+.seg{margin-top:8px}
-.row>.f,.app-f>.f{margin-top:0}
 .hint{font-size:12px;color:var(--mu);margin:8px 0 0}
 .hint b{color:var(--tx);font-family:var(--mono);font-weight:600}
-.big{display:flex;align-items:baseline;gap:6px;margin-top:8px}
-.big b{font-family:var(--mono);font-size:22px;font-weight:600}
-.big span{color:var(--mu);font-size:12.5px}
 .seg{display:inline-flex;background:var(--sf3);border-radius:8px;padding:3px;gap:3px;flex-wrap:wrap}
-.seg button{border:0;background:none;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12.5px;color:var(--mu)}
+.seg button{border:0;background:none;border-radius:6px;padding:3px 10px;cursor:pointer;font-size:12.5px;color:var(--mu)}
 .seg button.on{background:var(--sf);color:var(--tx);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08)}
 input[type=range]{width:100%;accent-color:var(--acc);margin:6px 0 0}
 .sw{position:relative;width:34px;height:20px;flex:none;display:inline-block;cursor:pointer}
@@ -111,144 +139,113 @@ input[type=range]{width:100%;accent-color:var(--acc);margin:6px 0 0}
 .sw input:checked+i{background:var(--ok)}
 .sw input:checked+i:before{transform:translateX(14px)}
 .sw input:focus-visible+i{outline:2px solid var(--acc);outline-offset:2px}
+.sw.sm{width:28px;height:16px}
+.sw.sm i:before{width:10px;height:10px}
+.sw.sm input:checked+i:before{transform:translateX(12px)}
 .tog{display:flex;align-items:center;gap:8px;font-size:13px}
-.btn{border:1px solid var(--acc);background:var(--acc-bg);color:var(--acc-tx);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px;font-weight:600}
+.btn{border:1px solid var(--acc);background:var(--acc-bg);color:var(--acc-tx);border-radius:8px;padding:5px 12px;cursor:pointer;font-size:13px;font-weight:600}
 .btn:hover{filter:brightness(.97)}
 .btn.sm{padding:3px 9px;font-size:12px}
 .linkbtn{border:0;background:none;color:var(--acc-tx);cursor:pointer;font-size:12.5px;padding:0;text-decoration:underline;text-underline-offset:2px}
+.danger{border:1px solid var(--bd2);background:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:12.5px;color:var(--mu);margin-top:12px}
+.danger.arm{border-color:var(--bad);color:var(--bad);background:var(--bad-bg)}
+.sub3{font-size:11px;color:var(--mu);font-weight:600;letter-spacing:.05em;margin:12px 0 6px;padding-top:10px;border-top:1px dashed var(--bd)}
 
 /* system card */
-.sys .rec{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--acc-bg);border-radius:8px;padding:8px 10px}
+.tag{font:600 11px var(--mono);padding:1px 8px;border-radius:10px;background:var(--ok-bg);color:var(--ok);margin-left:6px;vertical-align:1px}
+.tag.hy{background:color-mix(in srgb,var(--bt) 16%,transparent);color:var(--bt)}
+.sys .rec{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--acc-bg);border-radius:8px;padding:7px 10px;margin-top:10px}
 .sys .rec div{font-size:12.5px;color:var(--acc-tx)}
-.sys .rec b{font-family:var(--mono);font-size:15px}
-.sys .nrow{display:grid;grid-template-columns:1fr 90px;gap:10px;align-items:end;margin-top:10px}
-.sys .meta{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
-.sys .meta div{background:var(--sf2);border-radius:7px;padding:6px 8px}
+.sys .rec b{font-family:var(--mono);font-size:14.5px}
+.sys .nrow{display:grid;grid-template-columns:1fr 80px;gap:10px;align-items:end;margin-top:8px}
+.sys .meta{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+.sys .meta div{background:var(--sf2);border-radius:7px;padding:5px 8px}
 .sys .meta small{display:block;font-size:11px;color:var(--mu)}
 .sys .meta b{font-family:var(--mono);font-size:13px;font-weight:600}
-.battrow{display:flex;align-items:center;gap:10px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--bd)}
-.battrow .f{width:110px}
+.ro{background:var(--sf3);border-radius:7px;padding:5px 8px;font:600 13px var(--mono);border:1px solid transparent}
+.ro.ok{color:var(--ok)} .ro.warn{color:var(--acc-tx)} .ro.bad{color:var(--bad)}
+.battrow{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
+.battrow .f{width:100px}
+.chips{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+.chips:empty{display:none}
+.chip{display:flex;gap:7px;align-items:flex-start;border-radius:8px;padding:5px 9px;font-size:12px;line-height:1.45;border:1px solid}
+.chip b{font-family:var(--mono)}
+.chip .ic{flex:none;font-weight:700;width:12px;text-align:center}
+.chip.ok{background:var(--ok-bg);color:var(--ok);border-color:color-mix(in srgb,var(--ok) 30%,transparent)}
+.chip.bad{background:var(--bad-bg);color:var(--bad);border-color:color-mix(in srgb,var(--bad) 30%,transparent)}
+.chip.warn{background:var(--acc-bg);color:var(--acc-tx);border-color:color-mix(in srgb,var(--acc) 35%,transparent)}
+.chip.info{background:var(--sf2);color:var(--mu);border-color:var(--bd)}
+.chip.info b{color:var(--tx)}
+dl.kv{margin:0;display:grid;grid-template-columns:1fr auto;gap:0}
+dl.kv dt,dl.kv dd{padding:5px 0;border-bottom:1px solid var(--bd);margin:0;font-size:13px}
+dl.kv dt{color:var(--mu)}
+dl.kv dd{text-align:right;font-family:var(--mono);font-weight:500}
+dl.kv dt.t,dl.kv dd.t{border-bottom:0;font-weight:700;color:var(--tx);padding-top:8px}
+dl.kv dd.t{font-size:14.5px}
+dl.kv.sm{margin-top:6px}
+dl.kv.sm dt,dl.kv.sm dd{padding:3px 0;font-size:12.5px}
+dl.kv .ex{color:var(--ex)} dl.kv .im{color:var(--im)} dl.kv .bt{color:var(--bt)} dl.kv .pv{color:var(--acc-tx)}
 
-/* common settings */
+/* checklist (roof) */
+.ck{display:flex;flex-direction:column;gap:1px}
+.ck label{display:grid;grid-template-columns:18px 1fr auto;gap:8px;align-items:center;padding:5px 4px;border-radius:6px;cursor:pointer;font-size:13px}
+.ck label:hover{background:var(--sf2)}
+.ck input{accent-color:var(--ok);width:16px;height:16px;margin:0}
+.ck small{font-family:var(--mono);color:var(--mu);font-size:11.5px}
+.ckres{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:10px;padding:8px 12px;border-radius:8px;background:var(--acc-bg);color:var(--acc-tx)}
+.ckres b{font-family:var(--mono);font-size:19px}
+
+/* ── appliance groups (compact rows) ── */
 details.card>summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 details.card>summary::-webkit-details-marker{display:none}
 details.card>summary b{font-size:14px}
 details.card>summary b::before{content:'▸ ';color:var(--mu)}
 details.card[open]>summary b::before{content:'▾ '}
 details.card>summary span{font-size:12px;color:var(--mu);font-family:var(--mono)}
-details.card[open]>summary{margin-bottom:10px}
-.fs{padding-top:4px}
-.fs+.fs{margin-top:12px;border-top:1px solid var(--bd);padding-top:12px}
-.danger{border:1px solid var(--bd2);background:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:12.5px;color:var(--mu);margin-top:14px}
-.danger.arm{border-color:var(--bad);color:var(--bad);background:var(--bad-bg)}
-
-/* appliances */
 .grp{padding:0}
-.grp>summary{padding:12px 14px;margin:0!important}
+.grp>summary{padding:10px 12px}
 .grp[open]>summary{border-bottom:1px solid var(--bd)}
-.grp .gsum{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--mu)}
-.grp .ginfo{padding:8px 14px;font-size:12px;color:var(--mu);background:var(--sf2);border-bottom:1px solid var(--bd)}
-.grp .ginfo b{font-family:var(--mono);color:var(--tx);font-weight:600}
-.grp .gfoot{padding:8px 14px 12px}
-.app{padding:10px 14px;border-bottom:1px solid var(--bd)}
+.grp .gsum{margin-left:auto}
+.gset{padding:7px 12px;background:var(--sf2);border-bottom:1px solid var(--bd);font-size:12px;color:var(--mu)}
+.gset .row{grid-template-columns:repeat(3,1fr)}
+.gset .f>span{font-size:11px}
+.gset .f input,.gset .f select{padding:3px 6px;font-size:12.5px;background:var(--sf)}
+.gset p{margin:6px 0 0;line-height:1.5}
+.gset b{font-family:var(--mono);color:var(--tx);font-weight:600}
+.ghead,.app-r{display:grid;gap:4px;align-items:center}
+.g-std{grid-template-columns:28px minmax(0,1fr) 44px 52px 44px 22px}
+.g-ac{grid-template-columns:28px minmax(0,1fr) 40px 36px 64px 22px}
+.ghead{padding:5px 12px 1px;font-size:10.5px;color:var(--fa)}
+.ghead span:nth-child(n+3){text-align:center}
+.gax,.app-t{display:grid;grid-template-columns:minmax(0,1fr) 60px;gap:6px;align-items:center}
+.gax{padding:0 12px 4px;border-bottom:1px solid var(--bd)}
+.gax>span{font-size:10.5px;color:var(--fa);text-align:right}
+.app{padding:5px 12px 6px;border-bottom:1px solid var(--bd)}
 .app.off{opacity:.45}
-.app-h{display:flex;align-items:center;gap:8px}
-.app-h .nm{flex:1;min-width:0;border:1px solid transparent;background:none;border-radius:6px;padding:3px 6px;font-weight:500}
-.app-h .nm:hover,.app-h .nm:focus{border-color:var(--bd);background:var(--sf2);outline:none}
-.x{border:0;background:none;color:var(--fa);cursor:pointer;font-size:18px;line-height:1;padding:2px 6px;border-radius:6px}
+.app-r input,.app-r select{width:100%;min-width:0;background:var(--sf2);border:1px solid var(--bd);border-radius:6px;padding:2px 3px;font:12.5px var(--mono);text-align:right;outline:none;height:26px}
+.app-r input:focus,.app-r select:focus{border-color:var(--acc)}
+.app-r input[type=number]{-moz-appearance:textfield;appearance:textfield}
+.app-r input::-webkit-outer-spin-button,.app-r input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.app-r select{text-align:left;font-family:var(--sans);padding:2px 1px}
+.app-r .nm{text-align:left;font-family:var(--sans);font-weight:500;background:none;border-color:transparent;text-overflow:ellipsis;padding:2px 4px}
+.app-r .nm:hover,.app-r .nm:focus{border-color:var(--bd);background:var(--sf2)}
+.app-t{margin-top:3px}
+.app-t .kwh{font:600 11.5px var(--mono);text-align:right;white-space:nowrap}
+.x{border:0;background:none;color:var(--fa);cursor:pointer;font-size:17px;line-height:1;padding:2px 4px;border-radius:6px}
 .x:hover{color:var(--bad);background:var(--bad-bg)}
-.app-f{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}
-.app-f .f>span{font-size:11px}
-.app-f .f input,.app-f .f select{padding:4px 6px;font-size:12.5px}
-.app-f .calc{align-self:end;font-size:11.5px;color:var(--mu);padding-bottom:6px;font-family:var(--mono)}
-.hrs{display:grid;grid-template-columns:repeat(24,1fr);gap:2px;margin-top:8px;touch-action:none;user-select:none;-webkit-user-select:none}
-.hrs b{height:18px;border-radius:3px;background:var(--sf3);cursor:pointer;position:relative}
-.hrs b.sun{background:color-mix(in srgb,var(--pv) 14%,var(--sf3))}
+.hrs{display:grid;grid-template-columns:repeat(24,1fr);gap:1.5px;touch-action:none;user-select:none;-webkit-user-select:none}
+.hrs b{height:13px;border-radius:2px;background:var(--sf3);cursor:pointer}
+@media(pointer:coarse){.hrs b{height:18px}}
+.hrs b.sun{background:color-mix(in srgb,var(--pv) 16%,var(--sf3))}
 .hrs b.on{background:var(--ld)}
 .hrs b.on.sun{background:color-mix(in srgb,var(--ld) 75%,var(--pv))}
-.hrs-ax{display:grid;grid-template-columns:repeat(24,1fr);font-family:var(--mono);font-size:9.5px;color:var(--fa);margin-top:1px}
+.hrs-ax{display:grid;grid-template-columns:repeat(24,1fr);font:9.5px var(--mono);color:var(--fa)}
 .hrs-ax span{grid-column:span 3}
-.app-m{margin-top:5px;font-size:11.5px;color:var(--mu);display:flex;gap:6px;flex-wrap:wrap}
-.app-m .kwh{font-family:var(--mono);color:var(--tx);font-weight:600}
-.app-m .src{color:var(--fa)}
-
-/* results */
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-@media(max-width:700px){.kpis{grid-template-columns:repeat(2,1fr)}}
-.kpi{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:11px 13px}
-.kpi small{display:block;font-size:11.5px;color:var(--mu)}
-.kpi b{display:block;font-family:var(--mono);font-size:22px;font-weight:600;line-height:1.25;margin-top:2px}
-.kpi span{font-size:11.5px;color:var(--mu);font-family:var(--mono)}
-.kpi.hi{background:var(--acc-bg);border-color:color-mix(in srgb,var(--acc) 40%,var(--bd))}
-.kpi.hi b{color:var(--acc-tx)}
-.pill{display:flex;align-items:center;gap:10px;border-radius:var(--r);padding:9px 13px;font-size:13px;border:1px solid}
-.pill.ok{background:var(--ok-bg);border-color:color-mix(in srgb,var(--ok) 35%,transparent);color:var(--ok)}
-.pill.bad{background:var(--bad-bg);border-color:color-mix(in srgb,var(--bad) 35%,transparent);color:var(--bad)}
-.pill b{font-family:var(--mono)}
-.pill .bar2{flex:1;height:6px;border-radius:4px;background:color-mix(in srgb,currentColor 18%,transparent);overflow:hidden;min-width:60px}
-.pill .bar2 i{display:block;height:100%;background:currentColor;border-radius:4px}
-.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mu);margin:-4px 0 6px}
-.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
-.chart svg{width:100%;height:auto;display:block}
-.chart .ax{fill:var(--mu);font:10.5px var(--mono)}
-.chart .gl{stroke:var(--bd);stroke-width:1}
-.two{display:grid;grid-template-columns:1fr;gap:12px}
-@media(min-width:1300px){.two{grid-template-columns:1fr 1fr}}
-dl.kv{margin:0;display:grid;grid-template-columns:1fr auto;gap:0}
-dl.kv dt,dl.kv dd{padding:6px 0;border-bottom:1px solid var(--bd);margin:0;font-size:13px}
-dl.kv dt{color:var(--mu)}
-dl.kv dd{text-align:right;font-family:var(--mono);font-weight:500}
-dl.kv dt.t,dl.kv dd.t{border-bottom:0;font-weight:700;color:var(--tx);padding-top:9px}
-dl.kv dd.t{font-size:15px}
-dl.kv .ex{color:var(--ex)} dl.kv .im{color:var(--im)} dl.kv .bt{color:var(--bt)} dl.kv .pv{color:var(--acc-tx)}
-.tblwrap{overflow-x:auto}
-table.ht{width:100%;border-collapse:collapse;font-size:12.5px}
-table.ht th{font-weight:600;color:var(--mu);font-size:11.5px;text-align:right;padding:5px 6px;border-bottom:1px solid var(--bd2);position:sticky;top:0;background:var(--sf)}
-table.ht th:first-child,table.ht td:first-child{text-align:left}
-table.ht td{padding:4px 6px;border-bottom:1px solid var(--bd);text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
-table.ht tr.sun td:first-child{box-shadow:inset 3px 0 0 var(--pv)}
-table.ht td.net{text-align:left;font-size:11.5px;white-space:normal}
-table.ht td.net span{display:inline-block;margin-right:8px}
-table.ht tfoot td{font-weight:700;border-top:1px solid var(--bd2);border-bottom:0}
-.c-ex{color:var(--ex)} .c-im{color:var(--im)} .c-bt{color:var(--bt)} .c-mu{color:var(--fa)} .c-pv{color:var(--acc-tx)}
-.brk{display:flex;flex-direction:column;gap:7px}
-.brk .r{display:grid;grid-template-columns:130px 1fr 70px;gap:8px;align-items:center;font-size:12.5px}
-.brk .r i{display:block;height:8px;border-radius:4px;background:var(--ld)}
-.brk .r b{font-family:var(--mono);font-weight:500;text-align:right}
-.note{font-size:12px;color:var(--mu);padding:0 2px}
-.note p{margin:0 0 4px}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
-
-/* ── v7 additions ── */
-#home{max-width:1240px}
-#home h2.sec{font-size:20px;margin:34px 0 4px}
-#home .sub{color:var(--mu);margin:0 0 16px;font-size:13.5px}
-.setgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;align-items:start}
-.setgrid .card h3{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
-.setgrid .card h3 small{font-weight:400;color:var(--mu);font-size:12px}
-.chips{display:flex;flex-direction:column;gap:6px;margin-top:10px}
-.chip{display:flex;gap:8px;align-items:flex-start;border-radius:8px;padding:7px 10px;font-size:12.5px;line-height:1.45;border:1px solid}
-.chip b{font-family:var(--mono)}
-.chip .ic{flex:none;font-weight:700;width:14px;text-align:center}
-.chip.ok{background:var(--ok-bg);color:var(--ok);border-color:color-mix(in srgb,var(--ok) 30%,transparent)}
-.chip.bad{background:var(--bad-bg);color:var(--bad);border-color:color-mix(in srgb,var(--bad) 30%,transparent)}
-.chip.warn{background:var(--acc-bg);color:var(--acc-tx);border-color:color-mix(in srgb,var(--acc) 35%,transparent)}
-.chip.info{background:var(--sf2);color:var(--mu);border-color:var(--bd)}
-.chip.info b{color:var(--tx)}
-dl.kv.sm dt,dl.kv.sm dd{padding:4px 0;font-size:12.5px}
-.sub3{font-size:11.5px;color:var(--mu);font-weight:500;letter-spacing:.05em;text-transform:uppercase;margin:14px 0 6px}
-/* checklist */
-.ck{display:flex;flex-direction:column;gap:2px}
-.ck label{display:grid;grid-template-columns:18px 1fr auto;gap:8px;align-items:center;padding:6px 4px;border-radius:6px;cursor:pointer;font-size:13px}
-.ck label:hover{background:var(--sf2)}
-.ck input{accent-color:var(--ok);width:16px;height:16px;margin:0}
-.ck small{font-family:var(--mono);color:var(--mu);font-size:11.5px}
-.ckres{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--acc-bg);color:var(--acc-tx)}
-.ckres b{font-family:var(--mono);font-size:20px}
-/* EV cars */
-.car{border:1px solid var(--bd);border-radius:9px;padding:10px;margin-top:10px;background:var(--sf2)}
+.gfoot{padding:7px 12px 9px}
+/* EV */
+.evbox{padding:10px 12px}
+.car{border:1px solid var(--bd);border-radius:9px;padding:9px;margin-top:9px;background:var(--sf2)}
 .car-h{display:flex;gap:8px;align-items:center}
-.car-h select{flex:1;min-width:0}
 .car .f input,.car .f select{background:var(--sf)}
 .car .meta2{font-size:11.5px;color:var(--mu);margin-top:6px}
 .car .meta2 b{font-family:var(--mono);color:var(--tx);font-weight:600}
@@ -256,47 +253,144 @@ dl.kv.sm dt,dl.kv.sm dd{padding:4px 0;font-size:12.5px}
 .ai .f{flex:1}
 .aitag{font-size:10.5px;font-family:var(--mono);background:var(--acc-bg);color:var(--acc-tx);padding:1px 6px;border-radius:10px;margin-left:4px}
 .aistat{font-size:12px;color:var(--mu);margin-top:6px}
-/* LC check */
+
+/* ── load schedule ── */
 .lcsum{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
 .lcsum span{font-family:var(--mono);font-size:11.5px;padding:2px 8px;border-radius:10px}
 .s-ok{background:var(--ok-bg);color:var(--ok)} .s-bad{background:var(--bad-bg);color:var(--bad)} .s-warn{background:var(--acc-bg);color:var(--acc-tx)} .s-mu{background:var(--sf3);color:var(--mu)}
+.lcbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 12px;border-bottom:1px solid var(--bd);background:var(--sf2)}
+.lcbar .sp{flex:1}
+.up{position:relative;overflow:hidden;display:inline-flex;align-items:center}
+.up input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.lcsec{padding:10px 12px;border-bottom:1px solid var(--bd)}
 .lcl{display:flex;flex-direction:column}
-.lcr{display:grid;grid-template-columns:22px 1fr auto;gap:8px;padding:7px 14px;border-bottom:1px solid var(--bd);font-size:12.5px;align-items:start}
+.lcr{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:8px;padding:6px 12px;border-bottom:1px solid var(--bd);font-size:12.5px;align-items:start}
 .lcr .st{font-weight:700;text-align:center;border-radius:5px;line-height:20px;font-size:12px}
 .lcr .nm2{min-width:0}
 .lcr .nm2 small{display:block;color:var(--mu);font-size:11.5px}
 .lcr .va{font-family:var(--mono);font-size:11.5px;color:var(--mu);text-align:right;white-space:nowrap}
-.lced{padding:10px 14px}
+.lcr select,.maptbl select{width:100%;margin-top:4px;background:var(--sf2);border:1px solid var(--bd);border-radius:6px;padding:3px 4px;font-size:12px}
+.lcfoot{display:flex;gap:12px;flex-wrap:wrap;padding:8px 12px}
+.lced{padding:0 12px 10px}
+.lced>summary{list-style:none;cursor:pointer;padding:8px 0 4px}
+.lced>summary::-webkit-details-marker{display:none}
 .lced table{width:100%;border-collapse:collapse;font-size:12px}
-.lced td{padding:2px 3px}
+.lced td{padding:2px 2px}
 .lced input{width:100%;background:var(--sf2);border:1px solid var(--bd);border-radius:5px;padding:3px 5px;font:12px var(--mono)}
 .lced input.t{font-family:var(--sans)}
-.app-f .f select.lcsel{font-size:11.5px}
-.app-lc{display:grid;grid-template-columns:1fr;margin-top:6px}
+.maptbl{display:flex;flex-direction:column;gap:6px}
+.maptbl .mr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:8px;align-items:center;font-size:12px}
+.maptbl .mr select{margin:0}
+.meterbar{height:8px;border-radius:5px;background:var(--sf3);overflow:hidden;margin:8px 0 4px;position:relative}
+.meterbar i{position:absolute;inset:0 auto 0 0;background:var(--ok);border-radius:5px}
+.meterbar.warn i{background:var(--acc)}
+.imp{margin:10px 12px 0;padding:10px;border:1px dashed var(--acc);border-radius:9px;background:var(--acc-bg);color:var(--acc-tx);font-size:12.5px}
+.imp ul{margin:6px 0;padding-left:18px;color:var(--tx);font-size:12px}
+.imp .impb{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.doc{padding:10px 12px;border-bottom:1px solid var(--bd)}
+.doch{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12.5px;margin-bottom:6px}
+.doch b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.doc iframe,.doc img{display:block;width:100%;height:420px;border:1px solid var(--bd);border-radius:8px;background:#fff;object-fit:contain}
+
+/* ── results ── */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px}
+.kpi{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:8px 11px}
+.kpi small{display:block;font-size:11.5px;color:var(--mu)}
+.kpi b{display:block;font-family:var(--mono);font-size:18px;font-weight:600;line-height:1.25;margin-top:1px;white-space:nowrap}
+.kpi b small{display:inline;font-size:11.5px;font-weight:500;color:var(--mu)}
+.kpi span{font-size:11px;color:var(--mu);font-family:var(--mono)}
+.kpi.hi{background:var(--acc-bg);border-color:color-mix(in srgb,var(--acc) 40%,var(--bd))}
+.kpi.hi b{color:var(--acc-tx)}
+.pill{display:flex;align-items:center;gap:10px;border-radius:var(--r);padding:7px 12px;font-size:12.5px;border:1px solid}
+.pill.ok{background:var(--ok-bg);border-color:color-mix(in srgb,var(--ok) 35%,transparent);color:var(--ok)}
+.pill.bad{background:var(--bad-bg);border-color:color-mix(in srgb,var(--bad) 35%,transparent);color:var(--bad)}
+.pill b{font-family:var(--mono)}
+.pill .bar2{flex:1;height:6px;border-radius:4px;background:color-mix(in srgb,currentColor 18%,transparent);overflow:hidden;min-width:60px}
+.pill .bar2 i{display:block;height:100%;background:currentColor;border-radius:4px}
+.chart h3 small{font-weight:400;font-size:12px;color:var(--fa)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--mu);margin:-2px 0 4px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.chart svg{width:100%;height:auto;display:block}
+.chart .ax{fill:var(--mu);font:10.5px var(--mono)}
+.chart .gl{stroke:var(--bd);stroke-width:1}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+details.card.tb>summary{margin:0}
+details.card.tb[open]>summary{margin-bottom:8px}
+.tblwrap{overflow-x:auto}
+table.ht{width:100%;border-collapse:collapse;font-size:12px}
+table.ht th{font-weight:600;color:var(--mu);font-size:11px;text-align:right;padding:4px 6px;border-bottom:1px solid var(--bd2);background:var(--sf)}
+table.ht th:first-child,table.ht td:first-child{text-align:left}
+table.ht td{padding:3px 6px;border-bottom:1px solid var(--bd);text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+table.ht tr.sun td:first-child{box-shadow:inset 3px 0 0 var(--pv)}
+table.ht td.net{text-align:left;font-size:11px;white-space:normal}
+table.ht td.net span{display:inline-block;margin-right:8px}
+table.ht tfoot td{font-weight:700;border-top:1px solid var(--bd2);border-bottom:0}
+.c-ex{color:var(--ex)} .c-im{color:var(--im)} .c-bt{color:var(--bt)} .c-mu{color:var(--fa)} .c-pv{color:var(--acc-tx)}
+.brk{display:flex;flex-direction:column;gap:6px}
+.brk .r{display:grid;grid-template-columns:110px 1fr 76px;gap:8px;align-items:center;font-size:12.5px}
+.brk .r i{display:block;height:8px;border-radius:4px;background:var(--ld)}
+.brk .r b{font-family:var(--mono);font-weight:500;text-align:right}
+.note{font-size:12px;color:var(--mu);padding:0 2px}
+.note p{margin:0 0 3px}
+.printonly{display:none}
+.phd{border-bottom:2px solid var(--tx);padding-bottom:8px;margin-bottom:4px}
+.phd .t{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.phd .t b{font-size:17px}
+.phd .t span{font-size:11px;color:var(--mu);font-family:var(--mono)}
+.pgrid{display:grid;grid-template-columns:110px 1fr;gap:2px 10px;font-size:12px;margin-top:8px}
+.pgrid dt{color:var(--mu)} .pgrid dd{margin:0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ── print / PDF ── */
+@media print{
+  @page{size:A4;margin:12mm}
+  :root,:root:not([data-theme="light"]),:root[data-theme="dark"]{
+    --bg:#fff; --sf:#fff; --sf2:#F4F6F5; --sf3:#E6EBE8; --bd:#D3DBD7; --bd2:#BCC7C2;
+    --tx:#14201B; --mu:#5B6B64; --fa:#8A9892;
+    --acc:#B86F00; --acc-bg:#FFF2D9; --acc-tx:#8A5200;
+    --pv:#E09A00; --ld:#2F5DA8; --ex:#17866B; --im:#B4432D; --bt:#7053B5;
+    --ok:#17866B; --ok-bg:#E1F3EC; --bad:#B4432D; --bad-bg:#FBE7E2; color-scheme:light}
+  html,body,body.work{height:auto;display:block;overflow:visible;background:#fff;font-size:12px}
+  .bar,.banner,.toast,#home,.col-in,.noprint{display:none!important}
+  body.work .grid,.grid{display:block;padding:0;max-width:none}
+  .col-out{overflow:visible!important;padding:0!important;gap:8px}
+  .col-out>*+*{margin-top:8px}
+  .printonly{display:block}
+  .card,.kpi,.pill,.two>*{break-inside:avoid}
+  .kpis{grid-template-columns:repeat(4,1fr)}
+  .two{grid-template-columns:1fr 1fr}
+  details.card>summary b::before,details.card[open]>summary b::before{content:''}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
 </style>
 </head>
 <body>
 <header class="bar">
-  <div class="brand"><span class="sun" aria-hidden="true"></span><b>Solar Designer</b><small id="siteLbl"></small></div>
+  <div class="brand"><span class="sun" aria-hidden="true"></span><div class="bt"><b>Solar Designer <span class="ver">Version 1.1</span></b><small>Publish by Zenconpro</small></div></div>
   <nav class="tabs" id="tabs">
-    <button data-go="home">ตั้งค่าเบื้องต้น</button>
+    <button data-go="home">ตั้งค่า</button>
     <button data-go="roof">หลังคา</button>
     <button data-go="bill">ค่าไฟ</button>
     <button data-go="load">เครื่องใช้ไฟฟ้า</button>
   </nav>
+  <div class="acts">
+    <button class="ghost ib" id="btnShare" title="สร้างลิงก์ที่มีค่าที่กรอกทั้งหมด" aria-label="แชร์ลิงก์"><svg viewBox="0 0 20 20"><circle cx="15" cy="4.5" r="2.2"/><circle cx="5" cy="10" r="2.2"/><circle cx="15" cy="15.5" r="2.2"/><path d="M7 9l6-3.4M7 11l6 3.4"/></svg><span>แชร์ลิงก์</span></button>
+    <button class="ghost ib" id="btnPrint" title="พิมพ์ หรือเลือก Save as PDF" aria-label="พิมพ์หรือบันทึก PDF"><svg viewBox="0 0 20 20"><path d="M5 7V2.5h10V7"/><rect x="2.5" y="7" width="15" height="7" rx="1.5"/><path d="M5 12h10v5.5H5z"/></svg><span>พิมพ์ / PDF</span></button>
+  </div>
 </header>
+<div class="banner" id="shareBanner" hidden><span>เปิดค่าจากลิงก์ที่แชร์</span><button class="linkbtn" id="shareUndo">กลับไปใช้ค่าเดิมของเครื่องนี้</button><button class="x" id="shareClose" aria-label="ปิด">×</button></div>
+<div class="toast" id="toast" role="status" hidden></div>
 
-<!-- ═════════ HOME : settings + mode chooser ═════════ -->
+<!-- ═════════ HOME ═════════ -->
 <section id="home">
   <h1>ตั้งค่าเบื้องต้น</h1>
-  <p class="lead">กรอกข้อมูลบ้านและค่าพื้นฐานก่อน ทุกวิธีคำนวณใช้ค่าชุดนี้ร่วมกัน แล้วเลือกวิธีคำนวณด้านล่าง</p>
+  <p class="lead">กรอกค่าพื้นฐานแล้วเลือกวิธีคำนวณด้านล่าง · ระบบคิดเป็น <b>On-Grid</b> และเพิ่มแบตเตอรี่ได้ (Hybrid)</p>
   <div class="setgrid">
     <div class="card">
       <h3>ข้อมูลบ้าน</h3>
-      <label class="f"><span>ชื่อบ้าน / โครงการ</span><input type="text" id="hname" data-k="house.name" style="font-family:var(--sans)"></label>
-      <div class="sub3">ระบบไฟ</div>
-      <div class="seg" data-seg="house.phase" data-num><button data-v="1">1 เฟส</button><button data-v="3">3 เฟส</button></div>
+      <label class="f"><span>ชื่อบ้าน / โครงการ</span><input type="text" class="tx" id="hname" data-k="house.name"></label>
       <div class="row">
+        <div class="f"><span>ระบบไฟ</span><div class="seg" data-seg="house.phase" data-num><button data-v="1">1 เฟส</button><button data-v="3">3 เฟส</button></div></div>
         <label class="f"><span>ขนาดมิเตอร์</span><select id="hmeter" data-k="house.meter" data-num></select></label>
       </div>
       <div class="chips" id="houseChips"></div>
@@ -310,11 +404,14 @@ dl.kv.sm dt,dl.kv.sm dd{padding:4px 0;font-size:12.5px}
         <label class="f"><span>ลองจิจูด</span><input type="number" id="lon" data-k="site.lon" step="0.0001"></label>
       </div>
       <div class="row">
-        <label class="f"><span>PSH (kWh/ม²/วัน)</span><input type="number" id="psh" data-k="site.psh" step="0.1" min="1" max="8"></label>
-        <label class="f"><span>PR ประสิทธิภาพระบบ</span><input type="number" id="pr" data-k="site.pr" step="0.01" min="0.5" max="1"></label>
+        <label class="f"><span>PSH เฉลี่ยทั้งปี</span><input type="number" id="psh" data-k="site.psh" step="0.1" min="1" max="8"></label>
+        <label class="f"><span>PR</span><input type="number" id="pr" data-k="site.pr" step="0.01" min="0.5" max="1"></label>
       </div>
-      <div class="seg" id="season" style="margin-top:8px"><button data-psh="5.6">หน้าร้อน 5.6</button><button data-psh="5.0">เฉลี่ยทั้งปี 5.0</button><button data-psh="4.0">หน้าฝน 4.0</button></div>
-      <p class="hint">ผลผลิต = PSH × PR = <b id="yieldTxt"></b> kWh/kWp/วัน · <a href="https://re.jrc.ec.europa.eu/pvg_tools/en/" target="_blank" rel="noopener">เช็กกับ PVGIS</a> (ค่า E_d)</p>
+      <p class="hint">ผลิตได้ <b id="yieldTxt"></b> kWh/kWp/วัน · <a href="https://re.jrc.ec.europa.eu/pvg_tools/en/" target="_blank" rel="noopener">เช็กกับ PVGIS</a></p>
+      <details class="msub"><summary>แดดรายเดือน (PSH kWh/ม²/วัน)</summary>
+        <div class="mgrid" id="mGrid"></div>
+        <p class="hint">ค่าเริ่มต้นตามภูมิภาค (NASA) แก้เป็นค่า PVGIS รายเดือนได้ · <button class="linkbtn" id="mReset">คืนค่าภูมิภาค</button></p>
+      </details>
     </div>
 
     <div class="card">
@@ -325,15 +422,15 @@ dl.kv.sm dt,dl.kv.sm dd{padding:4px 0;font-size:12.5px}
         <label class="f"><span>กว้าง (ม.)</span><input type="number" id="pwid" data-k="panel.wid" step="0.001" min="0.5"></label>
       </div>
       <div class="row">
-        <label class="f"><span>น้ำหนัก (กก./แผง)</span><input type="number" id="pkg" data-k="panel.kg" step="0.5" min="1"></label>
+        <label class="f"><span>น้ำหนัก (กก./แผง)</span><input type="number" id="pkg" data-k="panel.kg" step="0.1" min="1"></label>
         <label class="f"><span>เผื่อช่องว่าง/ราง (%)</span><input type="number" id="pgap" data-k="panel.gap" step="1" min="0" max="50"></label>
       </div>
-      <p class="hint">1 แผง = <b id="pInfo"></b></p>
+      <p class="hint" id="pInfo"></p>
     </div>
 
     <div class="card">
       <h3>ค่าไฟ</h3>
-      <label class="tog"><span class="sw"><input type="checkbox" id="ttier" data-k="tariff.tier"><i></i></span>คิดแบบขั้นบันได PEA 1.2 + Ft + VAT</label>
+      <label class="tog"><span class="sw"><input type="checkbox" id="ttier" data-k="tariff.tier"><i></i></span>ขั้นบันได PEA 1.2 + Ft + VAT</label>
       <div class="row" style="margin-top:8px">
         <label class="f"><span>Ft (บาท/หน่วย)</span><input type="number" id="tft" data-k="tariff.ft" step="0.0001"></label>
         <label class="f"><span>อัตราคงที่ (บาท/หน่วย)</span><input type="number" id="tbuy" data-k="tariff.buy" step="0.01"></label>
@@ -343,51 +440,47 @@ dl.kv.sm dt,dl.kv.sm dd{padding:4px 0;font-size:12.5px}
         <label class="f"><span>ราคาขายคืน (บาท)</span><input type="number" id="tsell" data-k="tariff.sell" step="0.01"></label>
         <label class="f"><span>เพดานขาย (kW)</span><input type="number" id="tlim" data-k="tariff.lim" step="0.5" min="0"></label>
       </div>
-      <p class="hint">อัตราคงที่ใช้เมื่อปิดขั้นบันได และเป็นมูลค่าไฟในวิธีหลังคา</p>
+      <p class="hint">โซลาร์ภาคประชาชน: 2.20 บ./หน่วย ไม่เกิน 5 kW ต่อมิเตอร์</p>
     </div>
 
     <div class="card">
       <h3>ราคาระบบ</h3>
       <div class="row">
-        <label class="f"><span>แผง+ติดตั้ง (บาท/W)</span><input type="number" id="cw" data-k="price.w" step="0.5"></label>
-        <label class="f"><span>แบตเตอรี่ (บาท/kWh)</span><input type="number" id="cb" data-k="price.batt" step="500"></label>
+        <label class="f"><span>แผง+อินเวอร์เตอร์+ติดตั้ง (บ./W)</span><input type="number" id="cw" data-k="price.w" step="0.5"></label>
+        <label class="f"><span>แบตเตอรี่ (บ./kWh)</span><input type="number" id="cb" data-k="price.batt" step="500"></label>
       </div>
     </div>
 
     <div class="card">
       <h3>เกณฑ์แนะนำขนาด</h3>
-      <label class="f"><span>ไฟโซลาร์ต้องถูกใช้เองในบ้านอย่างน้อย (%)</span><input type="number" id="thr" data-k="thr" min="50" max="100" step="1"></label>
-      <p class="hint">ระบบจะแนะนำจำนวนแผง<b style="font-family:var(--sans)">มากที่สุด</b>ที่ยังใช้ไฟเองได้ตามเกณฑ์นี้ ไฟที่ใช้เองมีค่า <b id="thrBuy"></b> บ./หน่วย แต่ไฟที่ขายคืนได้แค่ <b id="thrSell"></b> บ. ถ้าติดแผงมากเกินจนต้องขายไฟเยอะ ระบบจะคืนทุนช้าลง</p>
+      <label class="f"><span>ไฟโซลาร์ต้องใช้เองในบ้านอย่างน้อย (%)</span><input type="number" id="thr" data-k="thr" min="50" max="100" step="1"></label>
+      <p class="hint">แนะนำจำนวนแผงมากสุดที่ยังผ่านเกณฑ์นี้ เพราะไฟที่ใช้เองคุ้ม <b id="thrBuy"></b> บ./หน่วย แต่ขายคืนได้ <b id="thrSell"></b> บ.</p>
     </div>
   </div>
   <button class="danger" id="btnReset">คืนค่าเริ่มต้นทั้งหมด</button>
 
   <h2 class="sec">เลือกวิธีคำนวณ</h2>
-  <p class="sub">แต่ละวิธีแยกหน้าจอและแยกผลกัน</p>
   <div class="modes">
     <button class="mcard" data-go="roof">
       <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22 20 8l16 14"/><path d="M9 18v16h22V18"/><path d="M13 17l5-4h10l-5 4z" fill="currentColor" opacity=".25"/></svg>
       <span class="lvl">หยาบ · เร็ว</span>
       <h2>จากพื้นที่หลังคา</h2>
-      <p>ไม่รู้โหลด ไม่รู้ค่าไฟ อยากรู้ว่าหลังคาติดได้กี่แผง ผลิตไฟได้เท่าไร น้ำหนักผ่านเกณฑ์ไหม</p>
-      <div class="need">ต้องมี: <b>พื้นที่หลังคา (ม²)</b></div>
+      <p>รู้แค่ขนาดหลังคา ดูว่าติดได้กี่แผง ผลิตไฟเท่าไร น้ำหนักผ่านไหม</p>
     </button>
     <button class="mcard" data-go="bill">
       <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4h22v32l-4-3-3 3-4-3-4 3-3-3-4 3z"/><path d="M14 13h12M14 19h12M14 25h7"/></svg>
       <span class="lvl">กลาง</span>
       <h2>จากค่าไฟรายเดือน</h2>
-      <p>รู้ค่าไฟหรือหน่วยต่อเดือน ระบบแนะนำขนาด แล้วเช็กว่าจำนวนแผงลงหลังคาได้พอไหม</p>
-      <div class="need">ต้องมี: <b>บิลค่าไฟ</b> + สัดส่วนที่ใช้ตอนกลางวัน</div>
+      <p>มีบิลค่าไฟ ระบบแนะนำขนาดและเช็กว่าหลังคาพอ</p>
     </button>
     <button class="mcard" data-go="load">
       <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 4v8M25 4v8"/><path d="M10 12h20v7a10 10 0 0 1-20 0z"/><path d="M20 29v7"/></svg>
       <span class="lvl">ละเอียด</span>
       <h2>จากเครื่องใช้ไฟฟ้า</h2>
-      <p>กรอกแอร์ ไฟ ปลั๊ก ปั๊ม รถไฟฟ้า ทีละรายการ ตั้งเวลาใช้จริง และตรวจกับตารางโหลดว่ากรอกครบไหม</p>
-      <div class="need">มี<b>รายการตัวอย่าง</b>ให้แก้ได้ทุกช่อง</div>
+      <p>กรอกเครื่องใช้ไฟฟ้าและเวลาใช้จริง แล้วตรวจกับตารางโหลด</p>
     </button>
   </div>
-  <p class="home-foot">ค่าที่กรอกบันทึกไว้ในเบราว์เซอร์นี้อัตโนมัติ</p>
+  <p class="home-foot">ค่าที่กรอกบันทึกในเบราว์เซอร์นี้อัตโนมัติ · ส่งให้คนอื่นด้วยปุ่ม "แชร์ลิงก์"</p>
 </section>
 
 <!-- ═════════ WORK ═════════ -->
@@ -395,132 +488,166 @@ dl.kv.sm dt,dl.kv.sm dd{padding:4px 0;font-size:12.5px}
   <div class="col-in">
 
     <div class="modein" id="in-roof" hidden>
-      <div class="mode-title"><h2>จากพื้นที่หลังคา</h2><span>ติดเต็มพื้นที่ที่วางได้</span></div>
-      <div class="slot-sys"></div>
-      <div class="card">
-        <h3>ใช้ไฟโซลาร์เองได้กี่ %</h3>
-        <div class="seg" data-seg="m1.smode"><button data-v="check">ประเมินจากรายการ</button><button data-v="manual">กำหนดเอง</button></div>
-        <div id="ckBox">
-          <p class="hint">ติ๊กสิ่งที่เกิดขึ้นช่วงมีแดด (07–17 น.) ตัวเลขด้านขวาคือไฟที่ใช้ช่วงนั้นต่อวัน</p>
-          <div class="ck" id="ckList"></div>
-          <div class="sub3">แอร์ช่วงกลางวัน</div>
-          <div class="seg" data-seg="m1.ac"><button data-v="none">ไม่เปิด</button><button data-v="r2">1–2 ห้อง</button><button data-v="f1">ทั้งชั้นล่าง</button><button data-v="all">ทุกห้อง</button></div>
-          <p class="hint" id="ckAcHint"></p>
+      <div class="pane">
+        <div class="mode-title"><h2>จากพื้นที่หลังคา</h2></div>
+        <div class="slot-sys"></div>
+      </div>
+      <div class="pane">
+        <div class="card">
+          <h3>ใช้ไฟโซลาร์เองได้กี่ %</h3>
+          <div class="seg" data-seg="m1.smode"><button data-v="check">ประเมินจากรายการ</button><button data-v="manual">กำหนดเอง</button></div>
+          <div id="ckBox">
+            <p class="hint">ติ๊กสิ่งที่ใช้ไฟช่วง 07–17 น.</p>
+            <div class="ck" id="ckList"></div>
+            <div class="sub3">แอร์ช่วงกลางวัน</div>
+            <div class="seg" data-seg="m1.ac"><button data-v="none">ไม่เปิด</button><button data-v="r2">1–2 ห้อง</button><button data-v="f1">ทั้งชั้นล่าง</button><button data-v="all">ทุกห้อง</button></div>
+            <p class="hint" id="ckAcHint"></p>
+          </div>
+          <div id="manBox">
+            <div class="row" style="margin-top:8px"><label class="f"><span>ใช้เอง (%)</span><input type="number" id="m1self" data-k="m1.self" min="0" max="100" step="5"></label></div>
+            <input type="range" id="m1selfR" data-k="m1.self" min="0" max="100" step="5" aria-label="สัดส่วนใช้เอง">
+          </div>
+          <div class="ckres"><span>ใช้ไฟโซลาร์เองได้ประมาณ</span><b id="ckRes"></b></div>
         </div>
-        <div id="manBox">
-          <div class="row"><label class="f"><span>ใช้เอง (%) — ที่เหลือขายคืน/ทิ้ง</span><input type="number" id="m1self" data-k="m1.self" min="0" max="100" step="5"></label></div>
-          <input type="range" id="m1selfR" data-k="m1.self" min="0" max="100" step="5" aria-label="สัดส่วนใช้เอง">
-        </div>
-        <div class="ckres"><span>ใช้ไฟโซลาร์เองได้ประมาณ</span><b id="ckRes"></b></div>
       </div>
     </div>
 
     <div class="modein" id="in-bill" hidden>
-      <div class="mode-title"><h2>จากค่าไฟรายเดือน</h2><span>PEA ประเภท 1.2</span></div>
-      <div class="card">
-        <h3>ค่าไฟต่อเดือน</h3>
-        <div class="seg" data-seg="m2.by"><button data-v="bill">กรอกเป็นบาท</button><button data-v="units">กรอกเป็นหน่วย</button></div>
-        <div class="row">
-          <label class="f" id="m2billF"><span>ค่าไฟ (บาท/เดือน)</span><input type="number" id="m2bill" data-k="m2.bill" step="100" min="0"></label>
-          <label class="f" id="m2unitsF"><span>หน่วยไฟ (kWh/เดือน)</span><input type="number" id="m2units" data-k="m2.units" step="50" min="0"></label>
+      <div class="pane">
+        <div class="mode-title"><h2>จากค่าไฟรายเดือน</h2><span>PEA 1.2</span></div>
+        <div class="card">
+          <h3>ค่าไฟต่อเดือน</h3>
+          <div class="seg" data-seg="m2.by"><button data-v="bill">กรอกเป็นบาท</button><button data-v="units">กรอกเป็นหน่วย</button></div>
+          <div class="row" style="margin-top:8px">
+            <label class="f" id="m2billF"><span>ค่าไฟ (บาท/เดือน)</span><input type="number" id="m2bill" data-k="m2.bill" step="100" min="0"></label>
+            <label class="f" id="m2unitsF"><span>หน่วยไฟ (kWh/เดือน)</span><input type="number" id="m2units" data-k="m2.units" step="50" min="0"></label>
+          </div>
+          <p class="hint" id="m2derived"></p>
         </div>
-        <p class="hint" id="m2derived"></p>
+        <div class="card">
+          <h3>ใช้ไฟช่วงกลางวัน (07–17 น.)</h3>
+          <label class="f"><span>ลักษณะการใช้</span>
+            <select id="m2prof" data-k="m2.prof">
+              <option value="home">มีคนอยู่บ้าน · แอร์ชั้นล่างเปิดกลางวัน (≈31%)</option>
+              <option value="work">ออกทำงานกลางวัน (≈15%)</option>
+              <option value="show">บ้านตัวอย่าง / สำนักงาน (≈80%)</option>
+              <option value="custom">กำหนดเอง</option>
+            </select></label>
+          <div class="row"><label class="f"><span>สัดส่วนกลางวัน (%)</span><input type="number" id="m2day" data-k="m2.day" min="5" max="95" step="1"></label></div>
+          <input type="range" id="m2dayR" data-k="m2.day" min="5" max="95" step="1" aria-label="สัดส่วนกลางวัน">
+        </div>
       </div>
-      <div class="card">
-        <h3>ใช้ไฟช่วงกลางวัน (07–17 น.) กี่ %</h3>
-        <label class="f"><span>ลักษณะการใช้</span>
-          <select id="m2prof" data-k="m2.prof">
-            <option value="home">มีคนอยู่บ้าน · แอร์ชั้นล่างเปิดกลางวัน (≈31%)</option>
-            <option value="work">ออกทำงานกลางวัน บ้านว่าง (≈15%)</option>
-            <option value="show">บ้านตัวอย่าง / สำนักงาน เปิดกลางวัน (≈80%)</option>
-            <option value="custom">กำหนดเอง</option>
-          </select></label>
-        <div class="row"><label class="f"><span>สัดส่วนกลางวัน (%)</span><input type="number" id="m2day" data-k="m2.day" min="5" max="95" step="1"></label></div>
-        <input type="range" id="m2dayR" data-k="m2.day" min="5" max="95" step="1" aria-label="สัดส่วนกลางวัน">
-      </div>
-      <div class="slot-sys"></div>
+      <div class="pane"><div class="slot-sys"></div></div>
     </div>
 
     <div class="modein" id="in-load" hidden>
-      <div class="mode-title"><h2>จากเครื่องใช้ไฟฟ้า</h2><span id="m3tot"></span></div>
-      <div class="slot-sys"></div>
+      <div class="pane">
+        <div class="mode-title"><h2>จากเครื่องใช้ไฟฟ้า</h2><span id="m3tot"></span></div>
 
-      <details class="card grp" open id="lcCard">
-        <summary><b>ตรวจกับตารางโหลด</b><span class="lcsum" id="lcSum"></span></summary>
-        <div class="ginfo">เทียบรายการที่กรอกกับวงจรในตารางโหลด (Panel Schedule) · เลือกวงจรของแต่ละเครื่องได้ที่ช่อง "วงจรในตารางโหลด"</div>
-        <div class="lcl" id="lcList"></div>
-        <details class="lced"><summary class="linkbtn" style="list-style:none;cursor:pointer">แก้ไขตารางโหลด</summary>
-          <table><thead><tr><td class="c-mu">CKT</td><td class="c-mu">รายการ</td><td class="c-mu" style="width:52px">จุด</td><td class="c-mu" style="width:72px">VA</td><td style="width:24px"></td></tr></thead><tbody id="lcEd"></tbody></table>
-          <button class="btn sm" id="lcAdd" style="margin-top:8px">+ เพิ่มวงจร</button>
+        <details class="card grp" open data-grp="ac">
+          <summary><b>แอร์</b><span class="gsum" id="gs-ac"></span></summary>
+          <div class="gset">
+            <div class="row">
+              <label class="f"><span>kW/1,000 BTU</span><input type="number" id="ack" data-k="ac.k" step="0.005" min="0.05" max="0.2"></label>
+              <label class="f"><span>ภาระขณะเดิน</span><select id="acplf" data-k="ac.plf"><option value="tou">ตามเวลา</option><option value="const">คงที่</option></select></label>
+              <label class="f" id="accF"><span>ค่าคงที่ 0–1</span><input type="number" id="acc" data-k="ac.c" step="0.05" min="0.1" max="1"></label>
+            </div>
+            <p id="acFloors"></p>
+          </div>
+          <div class="ghead g-ac"><span></span><span>ชื่อ</span><span>ชั้น</span><span>เครื่อง</span><span>BTU</span><span></span></div>
+          <div class="gax"><div class="hrs-ax"><span>00</span><span>03</span><span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span></div><span>kWh/วัน</span></div>
+          <div class="glist" id="g-ac"></div>
+          <div class="gfoot"><button class="btn sm" data-add="ac">+ เพิ่มแอร์</button></div>
         </details>
-      </details>
 
-      <details class="card grp" open data-grp="ac">
-        <summary><b>แอร์</b><span class="gsum" id="gs-ac"></span></summary>
-        <div class="ginfo">
-          <div class="row">
-            <label class="f"><span>kW ต่อ 1,000 BTU</span><input type="number" id="ack" data-k="ac.k" step="0.005" min="0.05" max="0.2"></label>
-            <label class="f"><span>ภาระขณะเดิน</span><select id="acplf" data-k="ac.plf"><option value="tou">ตามเวลา PLF</option><option value="const">คงที่</option></select></label>
-            <label class="f" id="accF"><span>ค่าคงที่ (0–1)</span><input type="number" id="acc" data-k="ac.c" step="0.05" min="0.1" max="1"></label>
+        <details class="card grp" open data-grp="light">
+          <summary><b>แสงสว่าง</b><span class="gsum" id="gs-light"></span></summary>
+          <div class="ghead g-std"><span></span><span>ชื่อ</span><span>จำนวน</span><span>W/ดวง</span><span title="% ของดวงที่เปิดพร้อมกัน">%เปิด</span><span></span></div>
+          <div class="gax"><div class="hrs-ax"><span>00</span><span>03</span><span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span></div><span>kWh/วัน</span></div>
+          <div class="glist" id="g-light"></div>
+          <div class="gfoot"><button class="btn sm" data-add="light">+ เพิ่มดวงโคม</button></div>
+        </details>
+
+        <details class="card grp" open data-grp="plug">
+          <summary><b>เครื่องใช้ไฟฟ้า (เสียบเต้ารับ)</b><span class="gsum" id="gs-plug"></span></summary>
+          <div class="ghead g-std"><span></span><span>ชื่อ</span><span>จำนวน</span><span>W/เครื่อง</span><span title="% ของชั่วโมงที่กินไฟเต็มพิกัด">%ทำงาน</span><span></span></div>
+          <div class="gax"><div class="hrs-ax"><span>00</span><span>03</span><span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span></div><span>kWh/วัน</span></div>
+          <div class="glist" id="g-plug"></div>
+          <div class="gfoot"><button class="btn sm" data-add="plug">+ เพิ่มเครื่องใช้ไฟฟ้า</button></div>
+        </details>
+
+        <details class="card grp" open data-grp="fixed">
+          <summary><b>อุปกรณ์ติดตั้งประจำ</b><span class="gsum" id="gs-fixed"></span></summary>
+          <div class="ghead g-std"><span></span><span>ชื่อ</span><span>จำนวน</span><span>W/เครื่อง</span><span title="% ของชั่วโมงที่กินไฟเต็มพิกัด">%ทำงาน</span><span></span></div>
+          <div class="gax"><div class="hrs-ax"><span>00</span><span>03</span><span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span></div><span>kWh/วัน</span></div>
+          <div class="glist" id="g-fixed"></div>
+          <div class="gfoot"><button class="btn sm" data-add="fixed">+ เพิ่มอุปกรณ์</button></div>
+        </details>
+
+        <details class="card grp" open data-grp="ev">
+          <summary><b>ชาร์จรถไฟฟ้า (EV)</b><span class="gsum" id="gs-ev"></span></summary>
+          <div class="evbox">
+            <label class="tog"><span class="sw"><input type="checkbox" id="evon" data-k="ev.on"><i></i></span>ใช้โซลาร์ชาร์จรถด้วย</label>
+            <div class="row" style="margin-top:8px">
+              <label class="f"><span>เครื่องชาร์จ (Wallbox)</span><select id="evwb" data-k="ev.wb" data-num></select></label>
+              <label class="f"><span>ประสิทธิภาพชาร์จ (%)</span><input type="number" id="evce" data-k="ev.ce" min="70" max="100" step="1"></label>
+            </div>
+            <div id="cars"></div>
+            <button class="btn sm" id="carAdd" style="margin-top:8px">+ เพิ่มรถ</button>
+            <div class="sub3">วิธีชาร์จ</div>
+            <div class="seg" data-seg="ev.mode"><button data-v="solar">ตามแดดส่วนเกิน 09–16 น.</button><button data-v="fixed">ตั้งเวลา</button></div>
+            <div class="row"><label class="f"><span id="evstartL">เริ่มชาร์จ (น.)</span><select id="evstart" data-k="ev.start" data-num></select></label></div>
+            <p class="hint" id="evInfo"></p>
           </div>
-          <p class="hint" id="acFloors"></p>
-        </div>
-        <div class="glist" id="g-ac"></div>
-        <div class="gfoot"><button class="btn sm" data-add="ac">+ เพิ่มแอร์</button></div>
-      </details>
+        </details>
+        <button class="danger" id="btnAppsReset" style="align-self:flex-start">คืนค่ารายการตัวอย่าง</button>
+      </div>
 
-      <details class="card grp" open data-grp="light">
-        <summary><b>แสงสว่าง</b><span class="gsum" id="gs-light"></span></summary>
-        <div class="ginfo"><b>% เปิดพร้อมกัน</b> = ไม่ได้เปิดทุกห้องพร้อมกัน</div>
-        <div class="glist" id="g-light"></div>
-        <div class="gfoot"><button class="btn sm" data-add="light">+ เพิ่มดวงโคม</button></div>
-      </details>
+      <div class="pane">
+        <div class="slot-sys"></div>
 
-      <details class="card grp" open data-grp="plug">
-        <summary><b>เครื่องใช้ไฟฟ้า (เสียบเต้ารับ)</b><span class="gsum" id="gs-plug"></span></summary>
-        <div class="ginfo">คิดตามเครื่องที่เสียบจริง ไม่ใช่จำนวนเต้ารับ · <b>% เวลาทำงาน</b> = สัดส่วนที่กินไฟเต็มพิกัดในชั่วโมงนั้น</div>
-        <div class="glist" id="g-plug"></div>
-        <div class="gfoot"><button class="btn sm" data-add="plug">+ เพิ่มเครื่องใช้ไฟฟ้า</button></div>
-      </details>
-
-      <details class="card grp" open data-grp="fixed">
-        <summary><b>อุปกรณ์ติดตั้งประจำ</b><span class="gsum" id="gs-fixed"></span></summary>
-        <div class="ginfo">ค่า VA ในตารางโหลดใช้เลือกเบรกเกอร์ ไม่ใช่กำลังใช้งานจริง</div>
-        <div class="glist" id="g-fixed"></div>
-        <div class="gfoot"><button class="btn sm" data-add="fixed">+ เพิ่มอุปกรณ์</button></div>
-      </details>
-
-      <details class="card grp" open data-grp="ev">
-        <summary><b>ชาร์จรถไฟฟ้า (EV)</b><span class="gsum" id="gs-ev"></span></summary>
-        <div class="app" style="border-bottom:0">
-          <label class="tog"><span class="sw"><input type="checkbox" id="evon" data-k="ev.on"><i></i></span>ใช้โซลาร์ชาร์จรถด้วย</label>
-          <div class="row" style="margin-top:10px">
-            <label class="f"><span>เครื่องชาร์จที่บ้าน (Wallbox)</span><select id="evwb" data-k="ev.wb" data-num></select></label>
-            <label class="f"><span>ประสิทธิภาพชาร์จ (%)</span><input type="number" id="evce" data-k="ev.ce" min="70" max="100" step="1"></label>
+        <details class="card grp" open id="lcCard">
+          <summary><b>ตรวจกับตารางโหลด</b><span class="lcsum" id="lcSum"></span></summary>
+          <div class="lcbar">
+            <div class="seg" data-seg="lcm.mode"><button data-v="ckt">รายวงจร</button><button data-v="tot">VA รวม</button></div>
+            <span class="sp"></span>
+            <label class="btn sm up">อัปโหลด<input type="file" id="lcFile" accept=".xlsx,.xls,.xlsm,.csv,.pdf,image/*" aria-label="อัปโหลดตารางโหลด"></label>
+            <button class="linkbtn" id="lcTpl" title="ดาวน์โหลดแบบฟอร์ม CSV สำหรับกรอกใน Excel">แบบฟอร์ม</button>
           </div>
-          <div id="cars"></div>
-          <button class="btn sm" id="carAdd" style="margin-top:10px">+ เพิ่มรถ</button>
-          <div class="sub3">วิธีชาร์จ</div>
-          <div class="seg" data-seg="ev.mode"><button data-v="solar">ตามแดดส่วนเกิน 09–16 น.</button><button data-v="fixed">ตั้งเวลา</button></div>
-          <div class="row">
-            <label class="f"><span id="evstartL">เริ่มชาร์จ (น.)</span><select id="evstart" data-k="ev.start" data-num></select></label>
+          <div id="lcImp"></div>
+          <div class="doc" id="lcDoc" hidden></div>
+
+          <div id="lcTotBox" class="lcsec">
+            <div class="row">
+              <label class="f"><span>VA รวมทั้งตู้ (จากตารางโหลด)</span><input type="number" id="lcva" data-k="lcm.va" min="0" step="100"></label>
+            </div>
+            <div id="lcTotRes"></div>
+            <button class="linkbtn" id="lcFromCkt" style="margin-top:6px"></button>
           </div>
-          <p class="hint" id="evInfo"></p>
-        </div>
-      </details>
-      <button class="danger" id="btnAppsReset" style="align-self:flex-start">คืนค่ารายการตัวอย่าง</button>
+
+          <div id="lcCktBox">
+            <div class="lcl" id="lcList"></div>
+            <div class="lcfoot"><button class="linkbtn" id="lcAuto">จับคู่อัตโนมัติ</button></div>
+            <details class="lced" id="mapBox"><summary class="linkbtn">จับคู่เครื่องใช้ไฟฟ้ากับวงจร</summary><div class="maptbl" id="mapTbl"></div></details>
+            <details class="lced"><summary class="linkbtn">แก้ไขตารางโหลด</summary>
+              <table><thead><tr><td class="c-mu" style="width:84px">CKT</td><td class="c-mu">รายการ</td><td class="c-mu" style="width:46px">จุด</td><td class="c-mu" style="width:70px">VA</td><td style="width:22px"></td></tr></thead><tbody id="lcEd"></tbody></table>
+              <button class="btn sm" id="lcAdd" style="margin-top:8px">+ เพิ่มวงจร</button>
+            </details>
+          </div>
+        </details>
+      </div>
     </div>
 
-    <!-- roof + system (moved into the active mode) -->
+    <!-- roof + system card (moved into the active mode's slot) -->
     <div class="card sys" id="sysBox">
-      <h3>หลังคาและขนาดระบบ</h3>
+      <h3>หลังคาและขนาดระบบ<span class="tag" id="sysTag">On-Grid</span></h3>
       <div class="row">
         <label class="f"><span>พื้นที่หลังคารวม (ม²)</span><input type="number" id="rArea" data-k="roof.area" step="0.1" min="0"></label>
-        <label class="f"><span>ใช้วางแผงได้ (%)</span><input type="number" id="rPct" data-k="roof.pct" step="0.5" min="5" max="100"></label>
+        <label class="f"><span>ใช้วางแผง (%) · แนะนำ 60–70</span><input type="number" id="rPct" data-k="roof.pct" step="1" min="5" max="100"></label>
       </div>
-      <dl class="kv sm" style="margin-top:8px" id="roofKv"></dl>
+      <dl class="kv sm" id="roofKv"></dl>
       <div class="chips" id="roofChips"></div>
-      <div class="rec" style="margin-top:12px"><div id="recTxt"></div><button class="btn sm" id="btnRec">ใช้ค่าแนะนำ</button></div>
+      <div class="rec"><div id="recTxt"></div><button class="btn sm" id="btnRec">ใช้ค่าแนะนำ</button></div>
       <div class="nrow">
         <label class="f"><span id="nLbl">จำนวนแผง</span><input type="range" id="nR" min="1" max="40" step="1" aria-label="จำนวนแผง"></label>
         <label class="f"><span>แผง</span><input type="number" id="nN" min="1" step="1"></label>
@@ -530,41 +657,54 @@ dl.kv.sm dt,dl.kv.sm dd{padding:4px 0;font-size:12.5px}
         <div><small>พื้นที่แผง</small><b id="sArea"></b></div>
         <div><small>น้ำหนักรวม</small><b id="sKg"></b></div>
       </div>
-      <div class="sub3">ตรวจน้ำหนักบนหลังคา</div>
+      <div class="sub3">น้ำหนักแผง + โครงยึด</div>
       <div class="row">
         <label class="f"><span>โครงยึด/ราง (กก./ม²)</span><input type="number" id="rMount" data-k="roof.mount" step="0.5" min="0"></label>
-        <label class="f"><span>น้ำหนักบรรทุกจรหลังคา (กก./ม²)</span><input type="number" id="rLL" data-k="roof.ll" step="5" min="0"></label>
+        <div class="f"><span>แผง+โครงยึด (กก./ม²)</span><div class="ro" id="wVal"></div></div>
       </div>
       <div class="chips" id="wChips"></div>
+      <div class="sub3">อินเวอร์เตอร์และแบตเตอรี่</div>
+      <div class="row">
+        <label class="f"><span>อินเวอร์เตอร์ (kW AC)</span><select id="invSel" data-k="inv.kw" data-num></select></label>
+        <div class="f"><span>DC/AC (แนะนำ 1.0–1.3)</span><div class="ro" id="dcac"></div></div>
+      </div>
       <div class="battrow" id="battRow">
-        <label class="tog"><span class="sw"><input type="checkbox" id="bon" data-k="batt.on"><i></i></span>แบตเตอรี่</label>
+        <label class="tog"><span class="sw"><input type="checkbox" id="bon" data-k="batt.on"><i></i></span>เพิ่มแบตเตอรี่</label>
         <label class="f"><span>ความจุ (kWh)</span><input type="number" id="bkwh" data-k="batt.kwh" min="1" step="1"></label>
         <span class="hint" style="margin:0" id="battHint"></span>
       </div>
+      <div class="chips" id="invChips"></div>
     </div>
   </div>
 
   <div class="col-out" id="results">
+    <div class="printonly phd" id="printHead"></div>
     <div class="kpis">
       <div class="kpi"><small>ขนาดระบบ</small><b id="kKwp"></b><span id="kN"></span></div>
       <div class="kpi"><small>ผลิตไฟ</small><b id="kGen"></b><span id="kGenM"></span></div>
-      <div class="kpi hi"><small>ประหยัดต่อเดือน</small><b id="kSave"></b><span id="kSaveY"></span></div>
+      <div class="kpi hi"><small>ประหยัด/เดือน</small><b id="kSave"></b><span id="kSaveY"></span></div>
       <div class="kpi"><small>คืนทุน</small><b id="kPay"></b><span id="kCost"></span></div>
     </div>
     <div class="pill" id="roofPill"></div>
     <div class="card chart">
-      <h3>ใช้ vs ผลิต รายชั่วโมง <span class="c-mu" style="font-weight:400;font-size:12px">(วันเฉลี่ย)</span></h3>
+      <h3>ใช้ vs ผลิต รายชั่วโมง <small>(วันเฉลี่ยทั้งปี)</small></h3>
       <div class="legend" id="legend"></div>
       <div id="chart"></div>
     </div>
+    <div class="card chart">
+      <h3>รายเดือน <small id="mSub"></small></h3>
+      <div class="legend" id="mLegend"></div>
+      <div id="mChart"></div>
+    </div>
     <div class="two">
-      <div class="card"><h3>พลังงานต่อวัน</h3><dl class="kv" id="flow"></dl></div>
+      <div class="card"><h3>พลังงานต่อวัน <small class="c-mu" style="font-weight:400">(เฉลี่ย)</small></h3><dl class="kv" id="flow"></dl></div>
       <div class="card"><h3>ค่าไฟและความคุ้มค่า</h3><dl class="kv" id="money"></dl></div>
     </div>
     <div class="two">
-      <div class="card"><h3>ตารางรายชั่วโมง</h3><div class="tblwrap"><table class="ht" id="htbl"></table></div></div>
-      <div class="card" id="brkCard"><h3>ใช้ไฟแยกตามหมวด</h3><div class="brk" id="brk"></div></div>
+      <details class="card tb" id="mCard"><summary><b>ตารางรายเดือน</b></summary><div class="tblwrap"><table class="ht" id="mtbl"></table></div></details>
+      <details class="card tb" id="hCard"><summary><b>ตารางรายชั่วโมง</b></summary><div class="tblwrap"><table class="ht" id="htbl"></table></div></details>
     </div>
+    <div class="card" id="brkCard"><h3>ใช้ไฟแยกตามหมวด <small class="c-mu" style="font-weight:400">kWh/วัน</small></h3><div class="brk" id="brk"></div></div>
     <div class="note" id="notes"></div>
   </div>
 </div>
@@ -573,24 +713,42 @@ dl.kv.sm dt,dl.kv.sm dd{padding:4px 0;font-size:12.5px}
 (function(){
 'use strict';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const LS='solar-v7';
+const VER='1.1', LS='solar-v8', LS_OLD='solar-v7';
 const rng=(a,b)=>{const r=[];for(let i=a;i<b;i++)r.push(i%24);return r;};
 const clone=o=>JSON.parse(JSON.stringify(o));
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 const SITES={
-  mab:{t:'มาบประชัน บางละมุง',lat:12.9446,lon:100.9589,psh:5.0},
-  pty:{t:'พัทยา',lat:12.9236,lon:100.8825,psh:5.0},
-  cbr:{t:'ชลบุรี (อ.เมือง)',lat:13.3611,lon:100.9847,psh:5.0},
-  ryg:{t:'ระยอง',lat:12.6814,lon:101.2816,psh:5.0},
-  bkk:{t:'กรุงเทพฯ',lat:13.7563,lon:100.5018,psh:4.9},
-  nkr:{t:'นครราชสีมา',lat:14.9799,lon:102.0977,psh:5.2},
-  cnx:{t:'เชียงใหม่',lat:18.7883,lon:98.9853,psh:5.0},
-  hkt:{t:'ภูเก็ต',lat:7.8804,lon:98.3923,psh:4.8},
+  mab:{t:'มาบประชัน บางละมุง',lat:12.9446,lon:100.9589,psh:5.0,rg:'E'},
+  pty:{t:'พัทยา',lat:12.9236,lon:100.8825,psh:5.0,rg:'E'},
+  cbr:{t:'ชลบุรี (อ.เมือง)',lat:13.3611,lon:100.9847,psh:5.0,rg:'E'},
+  ryg:{t:'ระยอง',lat:12.6814,lon:101.2816,psh:5.0,rg:'E'},
+  bkk:{t:'กรุงเทพฯ',lat:13.7563,lon:100.5018,psh:4.9,rg:'C'},
+  nkr:{t:'นครราชสีมา',lat:14.9799,lon:102.0977,psh:5.2,rg:'NE'},
+  cnx:{t:'เชียงใหม่',lat:18.7883,lon:98.9853,psh:5.0,rg:'N'},
+  hkt:{t:'ภูเก็ต',lat:7.8804,lon:98.3923,psh:4.8,rg:'S'},
   custom:{t:'กำหนดเอง'}
 };
+/* รูปแบบแดดรายเดือนตามภูมิภาค (kWh/ม²/วัน, NASA POWER ผ่าน kohchangsolarcell.com)
+   ใช้เป็น "สัดส่วน" แล้วปรับให้ค่าเฉลี่ยทั้งปีเท่ากับ PSH ที่กรอก */
+const MREG={
+  C:[6.2,6.5,6.3,6.0,5.2,4.8,4.5,4.6,5.0,5.5,6.0,6.1],
+  N:[6.0,6.3,6.1,5.8,5.0,4.6,4.3,4.4,4.8,5.3,5.8,5.9],
+  NE:[6.3,6.5,6.4,6.1,5.3,4.9,4.6,4.7,5.1,5.6,6.1,6.2],
+  S:[6.5,6.8,6.5,5.8,5.0,4.5,4.2,4.3,4.8,5.2,5.8,6.0],
+  E:[6.1,6.4,6.2,5.9,5.1,4.7,4.4,4.5,4.9,5.4,5.9,6.0]
+};
+const MDAYS=[31,28,31,30,31,30,31,31,30,31,30,31];
+const MNAME=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const dayAvg=a=>a.reduce((s,v,i)=>s+v*MDAYS[i],0)/365;
+const normShape=a=>{const m=dayAvg(a);return a.map(v=>+(v/m).toFixed(4));};
+const regionOf=(lat,lon)=> lat<10?'S' : lat>16.5?(lon>101.5?'NE':'N') : lon>102?'NE' : (lon>100.7&&lat<14)?'E':'C';
+const regShape=()=>{ const s=SITES[S.site.preset]; return normShape(MREG[(s&&s.rg)||regionOf(S.site.lat,S.site.lon)]); };
+
 const METERS={1:[[15,'5(15) A'],[45,'15(45) A'],[100,'30(100) A']],3:[[45,'15(45) A × 3'],[100,'30(100) A × 3'],[150,'50(150) A × 3'],[200,'200 A × 3 (CT)']]};
 const PEA_LIM={1:5,3:10};
+const INV={1:[3,3.6,4,5,6,8,10],3:[5,6,8,10,12,15,17,20,25,30,36,40,50]};
+const DCAC_MAX=1.3;
 
 /* EV database — ค่าประมาณจากสเปกผู้ผลิต: [key, รุ่น, แบต kWh, kWh/100กม., AC สูงสุด kW] */
 const EVDB=[
@@ -629,7 +787,8 @@ function defLC(){ return [
   {id:'sp',ckt:'32, 34, 36',name:'สำรอง Solar Inverter',pts:1,va:5001},
   {id:'sx',ckt:'40–42',name:'สำรอง',pts:3,va:1700}
 ];}
-const lcKind=r=>/แสงสว่าง/.test(r.name)?'light':/เต้ารับ/.test(r.name)?'recept':/สำรอง|spare/i.test(r.name)?'spare':'count';
+const lcKind=r=>/แสงสว่าง|light/i.test(r.name)?'light':/เต้ารับ|receptacle|outlet|socket/i.test(r.name)?'recept':/สำรอง|spare/i.test(r.name)?'spare':'count';
+const sumVA=lc=>lc.reduce((s,r)=>s+(+r.va||0),0);
 
 function defApps(){
   let i=0; const A=(g,o)=>Object.assign({id:'d'+(++i),g,on:true,qty:1,w:0,btu:0,duty:100,fl:1,src:'',lc:''},o);
@@ -668,11 +827,12 @@ function defApps(){
 }
 
 const DEF={
-  v:7, mode:null,
+  v:8, mode:null,
   house:{name:'SPECTRA · มาบประชัน',phase:3,meter:100},
-  site:{preset:'mab',lat:12.9446,lon:100.9589,psh:5.0,pr:0.78},
-  panel:{w:640,len:2.278,wid:1.134,kg:28,gap:7},
-  roof:{area:177.9,pct:63.5,mount:3,ll:50},
+  site:{preset:'mab',lat:12.9446,lon:100.9589,psh:5.0,pr:0.78,shape:normShape(MREG.E)},
+  panel:{w:720,len:2.384,wid:1.303,kg:38.2,gap:7},
+  roof:{area:177.9,pct:65,mount:3},
+  inv:{kw:0},
   tariff:{tier:true,ft:0.1623,buy:4.90,net:true,sell:2.20,lim:5},
   price:{w:28.5,batt:12000},
   batt:{on:false,kwh:14},
@@ -682,29 +842,52 @@ const DEF={
   m3:{n:null},
   ac:{k:0.095,plf:'tou',c:0.65},
   ev:{on:true,wb:7.4,mode:'solar',start:22,ce:90,cars:[{id:'car1',model:'byd-atto3',name:'',km:40,eff:16,bat:60.5,ac:7,src:'db'}]},
+  lcm:{mode:'ckt',va:sumVA(defLC())},
   lc:defLC(),
   apps:defApps()
 };
 function merge(d,s){ if(d===null||typeof d!=='object'||Array.isArray(d)) return s===undefined?d:s; if(s==null||typeof s!=='object') return d;
   const o={}; for(const k in d) o[k]=(k in s)? merge(d[k],s[k]) : d[k]; return o; }
+function sanitize(o){
+  const sh=o.site.shape, p=SITES[o.site.preset];
+  if(!Array.isArray(sh)||sh.length!==12||!sh.every(v=>v>0.2&&v<3)) o.site.shape=normShape(MREG[(p&&p.rg)||regionOf(o.site.lat,o.site.lon)]);
+  if(!Array.isArray(o.apps)) o.apps=defApps();
+  if(!Array.isArray(o.lc)) o.lc=defLC();
+  if(!Array.isArray(o.ev.cars)||!o.ev.cars.length) o.ev.cars=clone(DEF.ev.cars);
+  if(!(o.mode in {roof:1,bill:1,load:1})) o.mode=null;
+  return o;
+}
+function fromSaved(s){
+  if(!s||typeof s!=='object') return null;
+  if(s.v===8) return sanitize(merge(clone(DEF),s));
+  if(s.v===7){ // ย้ายค่าจาก v1.0: เปลี่ยนเป็นแผง 720 W และพื้นที่วางแผง 65%
+    const o=merge(clone(DEF),s); o.v=8; o.panel=clone(DEF.panel); o.roof.pct=DEF.roof.pct;
+    const p=SITES[o.site.preset]; o.site.shape=normShape(MREG[(p&&p.rg)||regionOf(o.site.lat,o.site.lon)]);
+    o.lcm.va=sumVA(o.lc); o.m1.n=o.m2.n=o.m3.n=null; return sanitize(o); }
+  return null;
+}
 let S=clone(DEF);
-try{ const raw=localStorage.getItem(LS); if(raw){ const s=JSON.parse(raw); if(s&&s.v===7) S=merge(clone(DEF),s); } }catch(e){}
+try{ S=fromSaved(JSON.parse(localStorage.getItem(LS)||'null')) || fromSaved(JSON.parse(localStorage.getItem(LS_OLD)||'null')) || clone(DEF); }catch(e){ S=clone(DEF); }
 let saveT=null; function save(){ clearTimeout(saveT); saveT=setTimeout(()=>{ try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){} },250); }
 const get=p=>p.split('.').reduce((o,k)=>o==null?o:o[k],S);
 const set=(p,v)=>{const ks=p.split('.');let o=S;for(let i=0;i<ks.length-1;i++)o=o[ks[i]];o[ks[ks.length-1]]=v;};
 
 const nf=(n,d=0)=>(isFinite(n)?n:0).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
-const f1=n=>nf(n,1), f2=n=>nf(n,2);
+const f1=n=>nf(n,1), f2=n=>nf(n,2), fkw=v=>v%1?nf(v,1):nf(v);
 
 /* ── physics ── */
 const SH=(()=>{const a=Array(24).fill(0);let s=0;for(let h=6;h<18;h++){a[h]=Math.sin(Math.PI*(h+.5-6)/12);s+=a[h];}return a.map(v=>v/s);})();
 const yieldK=()=>S.site.psh*S.site.pr;
+const monPSH=()=>S.site.shape.map(f=>S.site.psh*f);
 const pArea=()=>S.panel.len*S.panel.wid;
 const roofUse=()=>S.roof.area*S.roof.pct/100;
 const roofMax=()=>Math.max(0,Math.floor(roofUse()/(pArea()*(1+S.panel.gap/100))));
 const kwpOf=n=>n*S.panel.w/1000;
 const meterKVA=()=> S.house.phase==1? .23*S.house.meter : .4*Math.sqrt(3)*S.house.meter;
 const PLF=h=> (h>=23||h<6)?.30 : h<9?.45 : h<11?.55 : h<17?.65 : h<20?.55 : .42;
+const invAuto=kWp=>{ const L=INV[S.house.phase]; const s=L.find(x=>kWp/x<=DCAC_MAX); return s??L[L.length-1]; };
+const invKW=kWp=> S.inv.kw>0? S.inv.kw : invAuto(kWp);
+const pvProf=(kWp,Y)=>{ const c=invKW(kWp); return SH.map(f=>Math.min(kWp*Y*f,c)); };
 function appKW(a,h){
   if(!a.on||!a.hrs.includes(h)) return 0;
   if(a.g==='ac'){
@@ -724,8 +907,9 @@ const billOf=u=> S.tariff.tier? tiered(u) : u*S.tariff.buy;
 function unitsOfBill(b){ if(!S.tariff.tier) return b/S.tariff.buy; let lo=0,hi=200000; for(let i=0;i<60;i++){const m=(lo+hi)/2; if(tiered(m)<b) lo=m; else hi=m;} return (lo+hi)/2; }
 const marginal=()=> S.tariff.tier? (4.4217+S.tariff.ft)*1.07 : S.tariff.buy;
 
-function simulate(load,kWp){
-  const pv=SH.map(f=>kWp*yieldK()*f);
+function simulate(load,kWp,Y){
+  if(Y==null) Y=yieldK();
+  const pv=pvProf(kWp,Y);
   const bOn=S.batt.on && S.mode!=='roof';
   const cap=bOn? S.batt.kwh*0.9 : 0, pmax=bOn? Math.max(2.5,S.batt.kwh*0.5):0, ce=.95, de=.97;
   const lim=S.tariff.net? S.tariff.lim : 0;
@@ -742,6 +926,7 @@ function simulate(load,kWp){
   }
   const sum=a=>a.reduce((s,v)=>s+v,0);
   R.T={pv:sum(pv),load:sum(load),direct:sum(R.direct),chg:sum(R.chg),dis:sum(R.dis),exp:sum(R.exp),cur:sum(R.cur),imp:sum(R.imp)};
+  R.T.clip=Math.max(0,kWp*Y-R.T.pv);
   R.T.self=R.T.pv>0?(R.T.pv-R.T.exp-R.T.cur)/R.T.pv:0;
   return R;
 }
@@ -751,14 +936,14 @@ const CK=[
   {k:'base',t:'ตู้เย็น + อุปกรณ์ standby',p:h=>.12},
   {k:'home',t:'มีคนอยู่บ้านกลางวัน (ไฟ ทีวี คอม ทำอาหาร)',p:h=>(h>=7&&h<17? .45:0)+(h===11?.8:0)},
   {k:'wfh',t:'ทำงานที่บ้าน / ออฟฟิศในบ้าน',p:h=>(h>=8&&h<17?.3:0)},
-  {k:'wash',t:'ซักผ้า รีดผ้า ทำความสะอาดตอนกลางวัน',p:h=>(h===9||h===10?.8:0)},
+  {k:'wash',t:'ซักผ้า รีดผ้า ตอนกลางวัน',p:h=>(h===9||h===10?.8:0)},
   {k:'pool',t:'ปั๊มสระว่ายน้ำเดินกลางวัน',p:h=>(h>=9&&h<16?1.5:0)},
   {k:'ev',t:'ชาร์จรถไฟฟ้าตอนกลางวัน',p:h=>(h===10||h===11?3.5:0)}
 ];
 const CKAC={none:{t:'',p:h=>0},
   r2:{t:'≈1.6 kW ช่วง 10–17 น.',p:h=>(h>=10&&h<17?(h===10?2.4:1.6):0)},
   f1:{t:'≈5 kW ช่วง 09–17 น. (แอร์รวม ~78,000 BTU)',p:h=>(h>=9&&h<17?(h===9?7:4.9):0)},
-  all:{t:'≈14.5 kW ช่วง 09–17 น. (แบบบ้านตัวอย่าง/ออฟฟิศ)',p:h=>(h>=9&&h<17?(h===9?21:14.5):0)}};
+  all:{t:'≈14.5 kW ช่วง 09–17 น. (บ้านตัวอย่าง/ออฟฟิศ)',p:h=>(h>=9&&h<17?(h===9?21:14.5):0)}};
 const dayKwh=p=>{let s=0;for(let h=7;h<17;h++)s+=p(h);return s;};
 function ckLoad(){ return Array.from({length:24},(_,h)=> CK.reduce((s,c)=>s+(S.m1.ck[c.k]?c.p(h):0),0) + CKAC[S.m1.ac].p(h)); }
 
@@ -774,12 +959,13 @@ function loadBill(){
 }
 const carCap=c=>Math.min(S.ev.wb, c.ac||S.ev.wb);
 const carNeed=c=>c.km*c.eff/100/(S.ev.ce/100);
-function loadApps(kWp){
+function loadApps(kWp,Y){
+  if(Y==null) Y=yieldK();
   const house=Array(24).fill(0), grp={ac:0,light:0,plug:0,fixed:0};
   for(const a of S.apps){ for(let h=0;h<24;h++){ const k=appKW(a,h); house[h]+=k; grp[a.g]+=k; } }
   const ev=Array(24).fill(0); let need=0, fromSun=0;
   if(S.ev.on){
-    const avail=Array(24).fill(0).map((_,h)=>kWp*yieldK()*SH[h]-house[h]);
+    const pv=pvProf(kWp,Y), avail=pv.map((v,h)=>v-house[h]);
     for(const c of S.ev.cars){
       const cap=carCap(c); let rem=carNeed(c); need+=rem;
       const mine=Array(24).fill(0);
@@ -792,10 +978,11 @@ function loadApps(kWp){
   }
   return {load:house.map((v,h)=>v+ev[h]), house, ev, need, fromSun, grp};
 }
-function buildLoad(kWp){
+function buildLoad(kWp,Y){
+  if(Y==null) Y=yieldK();
   if(S.mode==='bill') return loadBill().load;
-  if(S.mode==='load') return loadApps(kWp).load;
-  return S.m1.smode==='check'? ckLoad() : SH.map(f=>kWp*yieldK()*f*S.m1.self/100);
+  if(S.mode==='load') return loadApps(kWp,Y).load;
+  return S.m1.smode==='check'? ckLoad() : pvProf(kWp,Y).map(v=>v*S.m1.self/100);
 }
 function recommend(){
   const mx=roofMax();
@@ -803,6 +990,18 @@ function recommend(){
   let best=1; const top=Math.max(60,Math.ceil(mx*1.5));
   for(let n=1;n<=top;n++){ const k=kwpOf(n); if(simulate(buildLoad(k),k).T.self>=S.thr/100) best=n; }
   return best;
+}
+/* 12 เดือน: แดดตามเดือน โหลดเท่ากันทุกเดือน */
+function monthly(kWp){
+  const ps=monPSH(), out=[], roof=S.mode==='roof';
+  for(let i=0;i<12;i++){
+    const Y=ps[i]*S.site.pr, L=buildLoad(kWp,Y), T=simulate(L,kWp,Y).T, d=MDAYS[i];
+    const o={psh:ps[i],pv:T.pv*d,load:T.load*d,direct:T.direct*d,exp:T.exp*d,imp:T.imp*d};
+    if(roof) o.save=o.direct*marginal()+o.exp*S.tariff.sell;
+    else { o.before=billOf(o.load); o.after=billOf(o.imp)-o.exp*S.tariff.sell; o.save=o.before-o.after; }
+    out.push(o);
+  }
+  return out;
 }
 
 /* ── bindings ── */
@@ -835,7 +1034,8 @@ function onChange(p,el){
   if(p==='m2.bill') S.m2.units=Math.round(unitsOfBill(S.m2.bill));
   if(p==='m2.units') S.m2.bill=Math.round(billOf(S.m2.units));
   if(p==='site.lat'||p==='site.lon') S.site.preset='custom';
-  if(p==='house.phase'){ fillMeters(); fillWallbox(); }
+  if(p==='site.psh'||p==='site.lat'||p==='site.lon') renderMonths();
+  if(p==='house.phase'){ fillMeters(); fillWallbox(); invKey=''; }
   if(p.startsWith('ac.')) renderApps();
   syncInputs(el); recalc();
 }
@@ -848,72 +1048,73 @@ function fillWallbox(){
   if(!o.some(x=>x[0]==S.ev.wb)) S.ev.wb=7.4;
   $('#evwb').innerHTML=o.map(([v,t])=>`<option value="${v}">${t}</option>`).join(''); $('#evwb').value=S.ev.wb;
 }
+let invKey='';
+function fillInv(kWp){
+  const L=INV[S.house.phase]; if(S.inv.kw>0&&!L.includes(S.inv.kw)) S.inv.kw=0;
+  const a=invAuto(kWp), key=S.house.phase+'|'+a;
+  if(key!==invKey){ invKey=key; $('#invSel').innerHTML=`<option value="0">อัตโนมัติ · ${a} kW</option>`+L.map(s=>`<option value="${s}">${s} kW</option>`).join(''); }
+  $('#invSel').value=String(S.inv.kw);
+}
+function renderMonths(){
+  const p=monPSH();
+  $('#mGrid').innerHTML=p.map((v,i)=>`<label><span>${MNAME[i]}</span><input type="number" step="0.1" min="0.5" max="9" data-mon="${i}" value="${v.toFixed(2)}" aria-label="PSH ${MNAME[i]}"></label>`).join('');
+}
 function initStatic(){
   const sel=$('#sitePreset');
   sel.innerHTML=Object.entries(SITES).map(([k,s])=>`<option value="${k}">${s.t}${s.psh?' · PSH '+s.psh.toFixed(1):''}</option>`).join('');
-  sel.addEventListener('change',()=>{ const s=SITES[sel.value]; S.site.preset=sel.value; if(s.lat!=null){S.site.lat=s.lat;S.site.lon=s.lon;S.site.psh=s.psh;} syncInputs(); recalc(); });
-  $('#season').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.site.psh=parseFloat(b.dataset.psh);syncInputs();recalc();});
+  sel.addEventListener('change',()=>{ const s=SITES[sel.value]; S.site.preset=sel.value; if(s.lat!=null){S.site.lat=s.lat;S.site.lon=s.lon;S.site.psh=s.psh; S.site.shape=regShape();} syncInputs(); renderMonths(); recalc(); });
   $('#evstart').innerHTML=Array.from({length:24},(_,h)=>`<option value="${h}">${String(h).padStart(2,'0')}:00</option>`).join('');
   fillMeters(); fillWallbox();
-  // checklist
   $('#ckList').innerHTML=CK.map(c=>`<label><input type="checkbox" data-ck="${c.k}"><span>${c.t}</span><small>${f1(dayKwh(c.p))} kWh</small></label>`).join('');
   $('#ckList').addEventListener('change',e=>{const k=e.target.dataset.ck; if(!k)return; S.m1.ck[k]=e.target.checked; recalc();});
+  $('#mGrid').addEventListener('change',e=>{ const i=+e.target.dataset.mon, v=parseFloat(e.target.value); if(!(v>0)) return;
+    const p=monPSH(); p[i]=v; const avg=dayAvg(p); S.site.psh=+avg.toFixed(2); S.site.shape=p.map(x=>+(x/avg).toFixed(4)); syncInputs(); renderMonths(); recalc(); });
+  $('#mReset').addEventListener('click',()=>{ S.site.shape=regShape(); renderMonths(); recalc(); });
 }
 function syncCk(){ $$('#ckList input').forEach(i=>i.checked=!!S.m1.ck[i.dataset.ck]); }
 
-/* ── appliances ── */
+/* ── appliances (compact rows) ── */
 const GROUPS=['ac','light','plug','fixed'];
 const BTUS=[9000,12000,15000,18000,24000,30000,36000,48000,60000];
-function lcOptions(sel){ return `<option value="">— ไม่มีในตาราง —</option>`+S.lc.map(r=>`<option value="${r.id}"${r.id===sel?' selected':''}>${esc(r.ckt)} · ${esc(r.name)}</option>`).join(''); }
 function hrsHTML(a){
   let s='<div class="hrs" data-id="'+a.id+'">';
   for(let h=0;h<24;h++) s+=`<b data-h="${h}" class="${a.hrs.includes(h)?'on':''}${SH[h]>0?' sun':''}" title="${String(h).padStart(2,'0')}:00"></b>`;
-  return s+'</div><div class="hrs-ax"><span>00</span><span>03</span><span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span></div>';
+  return s+'</div>';
 }
 function appHTML(a){
-  const fields = a.g==='ac'
-    ? `<label class="f"><span>ชั้น</span><select data-f="fl"><option value="1"${a.fl==1?' selected':''}>1</option><option value="2"${a.fl==2?' selected':''}>2</option></select></label>
-       <label class="f"><span>จำนวน</span><input type="number" data-f="qty" min="0" step="1" value="${a.qty}"></label>
-       <label class="f"><span>BTU/เครื่อง</span><input type="number" data-f="btu" min="0" step="1000" list="btuList" value="${a.btu}"></label>
-       <span class="calc" data-calc></span>`
-    : `<label class="f"><span>${/Strip/.test(a.name)?'เมตร':'จำนวน'}</span><input type="number" data-f="qty" min="0" step="1" value="${a.qty}"></label>
-       <label class="f"><span>วัตต์/ชิ้น</span><input type="number" data-f="w" min="0" step="1" value="${a.w}"></label>
-       <label class="f"><span>${a.g==='light'?'% เปิดพร้อมกัน':'% เวลาทำงาน'}</span><input type="number" data-f="duty" min="0" max="100" step="5" value="${a.duty}"></label>
-       <span class="calc" data-calc></span>`;
+  const num=(f,v,st,mn,mx,lbl)=>`<input type="number" data-f="${f}" value="${v}" step="${st}" min="${mn}"${mx!=null?` max="${mx}"`:''} aria-label="${lbl}">`;
+  const mid= a.g==='ac'
+    ? `<select data-f="fl" aria-label="ชั้น"><option value="1"${a.fl==1?' selected':''}>1</option><option value="2"${a.fl==2?' selected':''}>2</option></select>${num('qty',a.qty,1,0,null,'จำนวนเครื่อง')}<input type="number" data-f="btu" value="${a.btu}" step="1000" min="0" list="btuList" aria-label="BTU ต่อเครื่อง">`
+    : `${num('qty',a.qty,1,0,null,'จำนวน')}${num('w',a.w,1,0,null,'วัตต์ต่อชิ้น')}${num('duty',a.duty,5,0,100,'เปอร์เซ็นต์')}`;
   return `<div class="app${a.on?'':' off'}" data-id="${a.id}">
-    <div class="app-h"><label class="sw" title="เปิด/ปิด"><input type="checkbox" data-f="on"${a.on?' checked':''} aria-label="ใช้งาน"><i></i></label>
-      <input class="nm" data-f="name" value="${esc(a.name)}" aria-label="ชื่อ">
-      <button class="x" data-del aria-label="ลบ">×</button></div>
-    <div class="app-f">${fields}</div>
-    <div class="app-lc"><label class="f"><span>วงจรในตารางโหลด</span><select class="lcsel" data-f="lc">${lcOptions(a.lc)}</select></label></div>
-    ${hrsHTML(a)}
-    <div class="app-m"><span class="kwh" data-kwh></span><span data-hn></span>${a.src?`<span class="src">· ${esc(a.src)}</span>`:''}</div>
+    <div class="app-r ${a.g==='ac'?'g-ac':'g-std'}"><label class="sw sm" title="เปิด/ปิด"><input type="checkbox" data-f="on"${a.on?' checked':''} aria-label="ใช้งาน"><i></i></label><input class="nm" data-f="name" value="${esc(a.name)}" title="${esc(a.name)}${a.src?' — '+esc(a.src):''}" aria-label="ชื่อ">${mid}<button class="x" data-del aria-label="ลบ">×</button></div>
+    <div class="app-t">${hrsHTML(a)}<span class="kwh" data-kwh></span></div>
   </div>`;
 }
-function renderApps(){ for(const g of GROUPS){ $('#g-'+g).innerHTML=S.apps.filter(a=>a.g===g).map(appHTML).join(''); } $$('.app[data-id]').forEach(r=>{const a=findApp(r.dataset.id); if(a) refreshRow(r,a);}); }
+function renderApps(){ for(const g of GROUPS){ $('#g-'+g).innerHTML=S.apps.filter(a=>a.g===g).map(appHTML).join(''); } $$('.app[data-id]').forEach(r=>{const a=findApp(r.dataset.id); if(a) refreshRow(r,a);}); renderMap(); }
 const findApp=id=>S.apps.find(a=>a.id===id);
 function refreshRow(row,a){
   row.classList.toggle('off',!a.on);
-  row.querySelector('[data-kwh]').textContent=f2(appDay(a))+' kWh/วัน';
-  const c=row.querySelector('[data-calc]'); if(c) c.textContent= a.g==='ac'? f2(a.btu*S.ac.k/1000)+' kW' : f2(a.qty*a.w/1000)+' kW';
-  row.querySelector('[data-hn]').textContent='· '+a.hrs.length+' ชม.';
+  const k=row.querySelector('[data-kwh]'); k.textContent=f2(appDay(a));
+  k.title=`พิกัด ${f2(appRatedW(a)/1000)} kW · ${a.hrs.length} ชม./วัน`;
 }
 function initApps(){
   const box=$('#in-load');
   box.addEventListener('input',e=>{
     const el=e.target, f=el.dataset.f; if(!f) return;
     const row=el.closest('.app[data-id]'), a=row&&findApp(row.dataset.id); if(!a) return;
-    if(f==='on') a.on=el.checked; else if(f==='name') a.name=el.value; else if(f==='lc') a.lc=el.value;
+    if(f==='on') a.on=el.checked; else if(f==='name'){ a.name=el.value; el.title=el.value; } else if(f==='fl') a.fl=+el.value;
     else { const v=parseFloat(el.value); if(!isFinite(v)) return; a[f]=v; }
     refreshRow(row,a); recalc();
   });
-  box.addEventListener('change',e=>{ const f=e.target.dataset.f; if(f==='fl'||f==='lc'){ const a=findApp(e.target.closest('.app').dataset.id); if(f==='fl')a.fl=+e.target.value; else a.lc=e.target.value; recalc(); }});
+  box.addEventListener('change',e=>{ const f=e.target.dataset.f; if(f==='fl'){ const a=findApp(e.target.closest('.app').dataset.id); a.fl=+e.target.value; recalc(); } if(f==='name') renderMap(); });
   box.addEventListener('click',e=>{
     const d=e.target.closest('[data-del]'); if(d){ const id=d.closest('.app').dataset.id; S.apps=S.apps.filter(a=>a.id!==id); renderApps(); recalc(); return; }
     const add=e.target.closest('[data-add]'); if(add){
       const g=add.dataset.add, id='u'+Date.now().toString(36);
-      const base={ac:{name:'แอร์ใหม่',btu:12000,fl:1,hrs:rng(20,30),lc:''},light:{name:'ดวงโคมใหม่',qty:1,w:10,duty:100,hrs:rng(18,23),lc:'lt'},plug:{name:'เครื่องใช้ไฟฟ้าใหม่',qty:1,w:100,duty:100,hrs:rng(18,22),lc:'rc'},fixed:{name:'อุปกรณ์ใหม่',qty:1,w:500,duty:100,hrs:[8,9],lc:''}}[g];
-      S.apps.push(Object.assign({id,g,on:true,qty:1,w:0,btu:0,duty:100,fl:1,src:'เพิ่มเอง'},base));
+      const base={ac:{name:'แอร์ใหม่',btu:12000,fl:1,hrs:rng(20,30)},light:{name:'ดวงโคมใหม่',qty:1,w:10,duty:100,hrs:rng(18,23)},plug:{name:'เครื่องใช้ไฟฟ้าใหม่',qty:1,w:100,duty:100,hrs:rng(18,22)},fixed:{name:'อุปกรณ์ใหม่',qty:1,w:500,duty:100,hrs:[8,9]}}[g];
+      const a=Object.assign({id,g,on:true,qty:1,w:0,btu:0,duty:100,fl:1,src:'เพิ่มเอง',lc:''},base);
+      mapOne(a); S.apps.push(a);
       renderApps(); recalc();
       const rows=$('#g-'+g).querySelectorAll('.app'); const nm=rows[rows.length-1]?.querySelector('.nm'); if(nm){nm.focus();nm.select();}
     }
@@ -929,21 +1130,232 @@ function initApps(){
   window.addEventListener('pointermove',e=>{ if(paint) apply(hit(e.clientX,e.clientY)); });
   window.addEventListener('pointerup',()=>{paint=null;}); window.addEventListener('pointercancel',()=>{paint=null;});
   const dl=document.createElement('datalist'); dl.id='btuList'; dl.innerHTML=BTUS.map(b=>`<option value="${b}">`).join(''); document.body.appendChild(dl);
-  $('#btnAppsReset').addEventListener('click',function(){ armed(this,()=>{ S.apps=defApps(); S.lc=defLC(); renderApps(); renderLCEd(); recalc(); },'กดอีกครั้งเพื่อแทนที่รายการทั้งหมด'); });
-  // LC editor
-  $('#lcEd').addEventListener('input',e=>{ const tr=e.target.closest('tr'); const r=S.lc.find(x=>x.id===tr.dataset.id); if(!r)return; const f=e.target.dataset.lf;
-    r[f]= (f==='pts'||f==='va')? (parseFloat(e.target.value)||0) : e.target.value; recalc(); });
-  $('#lcEd').addEventListener('change',()=>renderApps());
-  $('#lcEd').addEventListener('click',e=>{ const x=e.target.closest('[data-lcdel]'); if(!x)return; const id=x.closest('tr').dataset.id; S.lc=S.lc.filter(r=>r.id!==id); S.apps.forEach(a=>{if(a.lc===id)a.lc='';}); renderLCEd(); renderApps(); recalc(); });
-  $('#lcAdd').addEventListener('click',()=>{ S.lc.push({id:'l'+Date.now().toString(36),ckt:'',name:'วงจรใหม่',pts:1,va:0}); renderLCEd(); renderApps(); recalc(); });
-}
-function renderLCEd(){
-  $('#lcEd').innerHTML=S.lc.map(r=>`<tr data-id="${r.id}"><td style="width:92px"><input data-lf="ckt" value="${esc(r.ckt)}"></td><td><input class="t" data-lf="name" value="${esc(r.name)}"></td><td><input type="number" data-lf="pts" value="${r.pts}"></td><td><input type="number" data-lf="va" value="${r.va}"></td><td><button class="x" data-lcdel aria-label="ลบวงจร">×</button></td></tr>`).join('');
+  $('#btnAppsReset').addEventListener('click',function(){ armed(this,()=>{ S.apps=defApps(); S.lc=defLC(); S.lcm.va=sumVA(S.lc); renderApps(); renderLCEd(); syncInputs(); recalc(); },'กดอีกครั้งเพื่อแทนที่รายการทั้งหมด'); });
 }
 function armed(btn,fn,msg){
   if(btn.classList.contains('arm')){ btn.classList.remove('arm'); btn.textContent=btn.dataset.t; fn(); return; }
   btn.dataset.t=btn.textContent; btn.textContent=msg; btn.classList.add('arm');
   setTimeout(()=>{ if(btn.classList.contains('arm')){btn.classList.remove('arm');btn.textContent=btn.dataset.t;} },3500);
+}
+
+/* ── load schedule: mapping ── */
+const lcOptions=sel=>`<option value="">— เลือกวงจร —</option>`+S.lc.map(r=>`<option value="${r.id}"${r.id===sel?' selected':''}>${esc(r.ckt?r.ckt+' · ':'')}${esc(r.name)}</option>`).join('');
+const FIXMAP=[[/น้ำร้อน|น้ำอุ่น|heater/i,/น้ำร้อน|น้ำอุ่น|heater|W\.?H/i],[/hob|เตา/i,/hob|เตา/i],[/hood|ดูดควัน/i,/hood|ดูดควัน/i],[/สระ|pool/i,/สระ|pool/i],[/ปั๊ม|pump/i,/ปั๊ม|pump/i,/สระ|pool/i],[/ประตู|gate/i,/ประตู|gate/i]];
+function mapOne(a,usedAc){
+  const find=(re,ex)=>S.lc.find(r=>re.test(r.name)&&!(ex&&ex.test(r.name)));
+  let r=null;
+  if(a.g==='light') r=find(/แสงสว่าง|light/i);
+  else if(a.g==='plug') r=find(/เต้ารับ|receptacle|outlet|socket|ปลั๊ก/i);
+  else if(a.g==='ac'){
+    const acC=S.lc.filter(x=>/แอร์|CDU|FCU|A\/C|air|ปรับอากาศ/i.test(x.name));
+    const code=(a.name.match(/(CDU|FCU)\s*[\d]+\s*-\s*[\d]+/i)||[])[0];
+    if(code){ const c=code.replace(/\s/g,'').toLowerCase(); r=acC.find(x=>x.name.replace(/\s/g,'').toLowerCase().includes(c)); }
+    else if(usedAc) r=acC.find(x=>!usedAc.has(x.id)&&!/(CDU|FCU)\s*\d+\s*-\s*\d+/i.test(x.name));
+    if(r&&usedAc) usedAc.add(r.id);
+  } else {
+    for(const [ar,cr,ex] of FIXMAP){ if(ar.test(a.name)){ r=find(cr,ex); break; } }
+    if(!r&&/พัดลม|fan/i.test(a.name)) r=find(/เต้ารับ|receptacle|outlet/i);
+  }
+  if(r) a.lc=r.id;
+  return !!r;
+}
+function autoMap(onlyUnmapped){
+  const ids=new Set(S.lc.map(r=>r.id));
+  const usedAc=new Set(S.apps.filter(a=>a.g==='ac'&&ids.has(a.lc)).map(a=>a.lc));
+  let n=0; const hasCode=a=>/(CDU|FCU)\s*\d+\s*-\s*\d+/i.test(a.name);
+  for(const a of [...S.apps].sort((x,y)=>hasCode(y)-hasCode(x))){
+    if(onlyUnmapped&&a.lc&&ids.has(a.lc)) continue;
+    if(!ids.has(a.lc)) a.lc='';
+    if(mapOne(a,usedAc)) n++;
+  }
+  return n;
+}
+function renderMap(){
+  if(!$('#mapBox').open) return;
+  $('#mapTbl').innerHTML=S.apps.map(a=>`<div class="mr"><span>${esc(a.name)}</span><select data-map="${a.id}" aria-label="วงจรของ ${esc(a.name)}">${lcOptions(a.lc)}</select></div>`).join('');
+}
+function renderLCEd(){
+  $('#lcEd').innerHTML=S.lc.map(r=>`<tr data-id="${r.id}"><td><input data-lf="ckt" value="${esc(r.ckt)}" aria-label="CKT"></td><td><input class="t" data-lf="name" value="${esc(r.name)}" aria-label="รายการ"></td><td><input type="number" data-lf="pts" value="${r.pts}" aria-label="จุด"></td><td><input type="number" data-lf="va" value="${r.va}" aria-label="VA"></td><td><button class="x" data-lcdel aria-label="ลบวงจร">×</button></td></tr>`).join('');
+}
+function renderLC(){
+  const tot=S.lcm.mode==='tot';
+  $('#lcTotBox').hidden=!tot; $('#lcCktBox').hidden=tot;
+  if(tot){
+    const W=S.apps.filter(a=>a.on).reduce((s,a)=>s+appRatedW(a),0), va=Math.max(0,S.lcm.va||0), r=va>0?W/va:0;
+    const cls= !va?'s-mu' : r>1?'s-warn' : r<.5?'s-warn':'s-ok';
+    const msg= !va?'กรอก VA รวมจากตารางโหลด' : r>1?'พิกัดที่กรอกเกิน VA รวม — ตรวจค่าที่กรอกหรือตารางโหลด' : r<.5?'ไม่ถึงครึ่งของตารางโหลด — อาจกรอกเครื่องใช้ไฟฟ้าไม่ครบ':'ใกล้เคียงตารางโหลด (VA รวมมักสูงกว่าเพราะเผื่อเต้ารับและวงจรสำรอง)';
+    $('#lcTotRes').innerHTML=`<div class="meterbar${cls==='s-ok'?'':' warn'}"><i style="width:${Math.min(100,r*100)}%"></i></div><div class="hint" style="margin:0">พิกัดเครื่องใช้ไฟฟ้าที่เปิดอยู่ <b>${nf(W)}</b> W = <b>${nf(r*100)}%</b> ของ <b>${nf(va)}</b> VA</div>${chip(cls==='s-ok'?'ok':cls==='s-mu'?'info':'warn',cls==='s-ok'?'✓':'!',msg)}`;
+    const sv=sumVA(S.lc); const fb=$('#lcFromCkt'); fb.hidden=!sv||sv===va; fb.textContent=`ใช้ผลรวมจากรายวงจร (${nf(sv)} VA)`;
+    $('#lcSum').innerHTML=va?`<span class="${cls}">${nf(r*100)}%</span>`:'';
+    return;
+  }
+  let ok=0,bad=0,warn=0; const rows=[];
+  const ids=new Set(S.lc.map(r=>r.id));
+  for(const r of S.lc){
+    const kind=lcKind(r), L=S.apps.filter(a=>a.lc===r.id), q=L.reduce((s,a)=>s+a.qty,0), W=L.reduce((s,a)=>s+appRatedW(a),0);
+    let st,cls,msg;
+    if(kind==='spare'){ st='–';cls='s-mu';msg='วงจรสำรอง'; }
+    else if(!L.length){ st='✗';cls='s-bad';msg='ยังไม่ได้กรอก'; bad++; }
+    else if(kind==='light'||kind==='recept'){ st='✓';cls='s-ok';msg=`${L.length} รายการ`; ok++; }
+    else if(q<r.pts){ st='!';cls='s-warn';msg=`กรอก ${q}/${r.pts} จุด`; warn++; }
+    else if(q>r.pts){ st='!';cls='s-warn';msg=`กรอก ${q} เกิน ${r.pts} จุด`; warn++; }
+    else { st='✓';cls='s-ok';msg=`ครบ ${q}/${r.pts} จุด`; ok++; }
+    if(kind!=='spare'&&kind!=='light'&&kind!=='recept'&&W>r.va&&r.va>0){ if(cls==='s-ok'){cls='s-warn';st='!';ok--;warn++;} msg+=` · ${nf(W)} W > ${nf(r.va)} VA`; }
+    const off=L.filter(a=>!a.on).length; if(off) msg+=` · ปิด ${off}`;
+    rows.push(`<div class="lcr"><span class="st ${cls}">${st}</span><span class="nm2">${esc(r.name)} <small>${r.ckt?'CKT '+esc(r.ckt)+' · ':''}${msg}</small></span><span class="va">${nf(r.va)} VA${L.length?`<br>${nf(W)} W`:''}</span></div>`);
+  }
+  for(const a of S.apps.filter(a=>!a.lc||!ids.has(a.lc))){ bad++;
+    rows.push(`<div class="lcr"><span class="st s-bad">?</span><span class="nm2">${esc(a.name)} <small>ยังไม่ได้จับคู่วงจร</small><select data-map="${a.id}" aria-label="เลือกวงจร">${lcOptions('')}</select></span><span class="va">${nf(appRatedW(a))} W</span></div>`); }
+  if(S.ev.on) rows.push(`<div class="lcr"><span class="st s-mu">i</span><span class="nm2">เครื่องชาร์จรถไฟฟ้า <small>ถ้าแยกมิเตอร์ จะใช้ไฟโซลาร์ไม่ได้</small></span><span class="va">${f1(S.ev.wb)} kW</span></div>`);
+  $('#lcList').innerHTML=rows.join('');
+  $('#lcSum').innerHTML=`<span class="s-ok">✓ ${ok}</span>${warn?`<span class="s-warn">! ${warn}</span>`:''}${bad?`<span class="s-bad">✗ ${bad}</span>`:''}`;
+}
+
+/* ── load schedule: import / attach ── */
+function readText(f){ return f.arrayBuffer().then(buf=>{ try{ return new TextDecoder('utf-8',{fatal:true}).decode(buf).replace(/^﻿/,''); }catch(e){ return new TextDecoder('windows-874').decode(buf); } }); }
+function parseCSV(t){
+  const head=t.split(/\r?\n/).slice(0,8).join('\n');
+  const d=[',',';','\t'].map(c=>[c,head.split(c).length]).sort((a,b)=>b[1]-a[1])[0][0];
+  const rows=[]; let row=[], cell='', q=false;
+  for(let i=0;i<t.length;i++){ const c=t[i];
+    if(q){ if(c==='"'){ if(t[i+1]==='"'){cell+='"';i++;} else q=false; } else cell+=c; }
+    else if(c==='"') q=true; else if(c===d){ row.push(cell); cell=''; }
+    else if(c==='\n'||c==='\r'){ if(c==='\r'&&t[i+1]==='\n') i++; row.push(cell); rows.push(row); row=[]; cell=''; }
+    else cell+=c; }
+  if(cell||row.length){ row.push(cell); rows.push(row); }
+  return rows;
+}
+/* อ่าน .xlsx ในเบราว์เซอร์เอง (zip + XML) ไม่ต้องโหลดไลบรารีภายนอก */
+const colIdx=s=>{ let n=0; for(const ch of s.toUpperCase()) n=n*26+(ch.charCodeAt(0)-64); return n-1; };
+function unzip(buf){
+  const dv=new DataView(buf), u8=new Uint8Array(buf); let e=buf.byteLength-22;
+  while(e>=0&&dv.getUint32(e,true)!==0x06054b50) e--;
+  if(e<0) throw new Error('ไฟล์ไม่ใช่ .xlsx — ถ้าเป็น .xls รุ่นเก่า ให้บันทึกเป็น .xlsx หรือ .csv ก่อน');
+  const files={}; let p=dv.getUint32(e+16,true);
+  for(let i=0,n=dv.getUint16(e+10,true);i<n&&dv.getUint32(p,true)===0x02014b50;i++){
+    const method=dv.getUint16(p+10,true), size=dv.getUint32(p+20,true), nl=dv.getUint16(p+28,true), xl=dv.getUint16(p+30,true), cl=dv.getUint16(p+32,true), off=dv.getUint32(p+42,true);
+    const name=new TextDecoder().decode(u8.subarray(p+46,p+46+nl)), st=off+30+dv.getUint16(off+26,true)+dv.getUint16(off+28,true);
+    files[name]={method,data:u8.subarray(st,st+size)}; p+=46+nl+xl+cl;
+  }
+  return files;
+}
+async function inflate(f){ if(f.method===0) return f.data; if(!window.DecompressionStream) throw new Error('เบราว์เซอร์นี้อ่าน .xlsx ไม่ได้ — บันทึกเป็น .csv');
+  const st=new Blob([f.data]).stream().pipeThrough(new DecompressionStream('deflate-raw')); return new Uint8Array(await new Response(st).arrayBuffer()); }
+async function readSheets(file){
+  const z=unzip(await file.arrayBuffer()), txt=async n=>z[n]?new TextDecoder().decode(await inflate(z[n])):null, P=s=>new DOMParser().parseFromString(s,'application/xml');
+  const ss=[], sst=await txt('xl/sharedStrings.xml');
+  if(sst) for(const si of P(sst).getElementsByTagName('si')) ss.push([...si.getElementsByTagName('t')].filter(t=>t.parentNode.nodeName!=='rPh').map(t=>t.textContent).join(''));
+  const names=Object.keys(z).filter(n=>/^xl\/worksheets\/sheet\d+\.xml$/.test(n)).sort((a,b)=>parseInt(a.match(/\d+/)[0])-parseInt(b.match(/\d+/)[0]));
+  const out=[];
+  for(const n of names){ const doc=P(await txt(n)), rows=[];
+    for(const r of doc.getElementsByTagName('row')){ const ri=(+r.getAttribute('r')||rows.length+1)-1, row=[];
+      for(const c of r.getElementsByTagName('c')){ const col=colIdx((c.getAttribute('r')||'').replace(/\d+/g,'')), t=c.getAttribute('t'), v=c.getElementsByTagName('v')[0]; let val='';
+        if(t==='s') val=ss[+(v&&v.textContent)]??'';
+        else if(t==='inlineStr') val=[...c.getElementsByTagName('t')].map(x=>x.textContent).join('');
+        else if(v) val=(t==='str'||t==='e'||t==='b'||!isFinite(+v.textContent))? v.textContent : +v.textContent;
+        row[col>=0?col:row.length]=val; }
+      rows[ri]=Array.from(row,x=>x??''); }
+    out.push(Array.from(rows,r=>r||[])); }
+  return out;
+}
+function parseLC(rows){
+  const T=v=>String(v??'').replace(/\s+/g,' ').trim();
+  const N=v=>{ if(typeof v==='number') return v; const s=String(v??'').replace(/[,\s]/g,''); return /^-?\d*\.?\d+$/.test(s)?parseFloat(s):null; };
+  const isVA=c=>/^(va|w|watt|วัตต์|kva|kw|โหลด ?\(va\)|load ?\(va\))$|\(va\)|\(w\)|\(kva\)|\(kw\)|\bva\b|โวลต์แอมป์/i.test(c);
+  const isName=c=>!isVA(c)&&/รายการ|รายละเอียด|description|desc\.?$|load ?name|โหลด|ชื่อ|name|equipment|อุปกรณ์/i.test(c);
+  const isCkt=c=>/^(ckt|cct|cir|circuit|วงจร)|^no\.?$|วงจรที่|ckt\.? ?no/i.test(c);
+  const isPts=c=>!isVA(c)&&/จุด|qty|จำนวน|point|pcs|outlet/i.test(c);
+  const isPh=c=>/^(phase ?)?[abc]$|^เฟส ?[abc]$|^l[123]$|^[rst]$/i.test(c);
+  const near=(cols,x)=>cols.length?cols.reduce((b,c)=>Math.abs(c-x)<Math.abs(b-x)?c:b):-1;
+  for(let r=0;r<Math.min(rows.length,80);r++){
+    const hdr=(rows[r]||[]).map(T), idx=f=>hdr.map((c,i)=>c&&f(c)?i:-1).filter(i=>i>=0);
+    const nameC=idx(isName), vaC=idx(isVA), phC=idx(isPh);
+    if(!nameC.length||(!vaC.length&&!phC.length)) continue;
+    const cktC=idx(isCkt), ptC=idx(isPts);
+    const groups=nameC.map(nc=>{ const va=near(vaC,nc); return {nc,va,mult:/kva|kw/i.test(hdr[va]||'')?1000:1,
+      ph:vaC.length?[]:phC.filter(p=>near(nameC,p)===nc), ck:near(cktC,nc), pt:near(ptC,nc)}; });
+    const out=[];
+    for(let i=r+1;i<rows.length;i++){ const row=rows[i]||[];
+      for(const g of groups){
+        const name=T(row[g.nc]); if(!name||isName(name)||/^(รวม|total|sub ?total|grand|ผลรวม)/i.test(name)) continue;
+        let va= g.va>=0? N(row[g.va]) : g.ph.reduce((s,p)=>s+(N(row[p])||0),0);
+        va=va==null?null:va*(g.va>=0?g.mult:1);
+        const spare=/สำรอง|spare/i.test(name);
+        if(!(va>0)&&!spare) continue;
+        out.push({id:'i'+out.length+Date.now().toString(36),ckt:g.ck>=0?T(row[g.ck]):'',name,pts:Math.max(1,Math.round(N(row[g.pt])||1)),va:Math.round(va||0)});
+      }
+    }
+    if(out.length) return out;
+  }
+  return [];
+}
+let pendingImp=null;
+async function onLCFile(file){
+  const ext=(file.name.split('.').pop()||'').toLowerCase();
+  if(/^(pdf|png|jpe?g|webp|gif|heic)$/.test(ext)||/^image\//.test(file.type)||file.type==='application/pdf'){ await saveDoc(file); toast('แนบไฟล์ไว้ดูประกอบแล้ว'); return; }
+  let sheets;
+  try{
+    if(ext==='csv'||ext==='txt') sheets=[parseCSV(await readText(file))];
+    else if(ext==='xlsx'||ext==='xlsm') sheets=await readSheets(file);
+    else if(ext==='xls'){ toast('ไฟล์ .xls รุ่นเก่า — เปิดใน Excel แล้วบันทึกเป็น .xlsx หรือ .csv ก่อน',4500); return; }
+    else { toast('รองรับ .xlsx .xls .csv .pdf และรูปภาพ'); return; }
+  }catch(e){ toast(esc(e.message||'อ่านไฟล์ไม่สำเร็จ'),4000); return; }
+  let best=[]; for(const rows of sheets){ const r=parseLC(rows); if(r.length>best.length) best=r; }
+  pendingImp=best.length?best:null; showImp(file.name);
+}
+function showImp(fname){
+  const box=$('#lcImp');
+  if(fname==null){ box.innerHTML=''; return; }
+  if(!pendingImp){ box.innerHTML=`<div class="imp"><b>${esc(fname)}</b>: ไม่พบคอลัมน์ "รายการ" และ "VA" — ลองใช้ไฟล์แบบฟอร์ม<div class="impb"><button class="linkbtn" data-imp="cancel">ปิด</button></div></div>`; return; }
+  const L=pendingImp;
+  box.innerHTML=`<div class="imp"><b>${esc(fname)}</b>: อ่านได้ <b>${L.length}</b> วงจร · รวม <b>${nf(sumVA(L))}</b> VA
+    <ul>${L.slice(0,6).map(r=>`<li>${esc(r.ckt?r.ckt+' · ':'')}${esc(r.name)} — ${nf(r.va)} VA</li>`).join('')}${L.length>6?`<li>… อีก ${L.length-6} วงจร</li>`:''}</ul>
+    <div class="impb"><button class="btn sm" data-imp="replace">แทนที่ตารางเดิม</button><button class="btn sm" data-imp="append">เพิ่มต่อท้าย</button><button class="linkbtn" data-imp="cancel">ยกเลิก</button></div></div>`;
+}
+function applyImp(mode){
+  if(!pendingImp) return;
+  if(mode==='replace'){ S.lc=pendingImp; S.apps.forEach(a=>a.lc=''); } else S.lc=S.lc.concat(pendingImp);
+  const n=autoMap(true); pendingImp=null; showImp(null);
+  S.lcm.va=sumVA(S.lc); S.lcm.mode='ckt';
+  renderLCEd(); renderMap(); syncInputs(); recalc();
+  toast(`นำเข้าแล้ว · จับคู่อัตโนมัติ ${n} รายการ`);
+}
+function dlTemplate(){
+  const rows=[['CKT','รายการ','จุด','VA'],...S.lc.map(r=>[r.ckt,r.name,r.pts,r.va])];
+  const q=c=>/[",\n]/.test(String(c))?'"'+String(c).replace(/"/g,'""')+'"':String(c);
+  const csv='﻿'+rows.map(r=>r.map(q).join(',')).join('\r\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); a.download='load-schedule.csv';
+  document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);
+}
+const IDB=(()=>{ let p=null;
+  const open=()=>p||(p=new Promise((res,rej)=>{ try{ const r=indexedDB.open('solar-designer',1); r.onupgradeneeded=()=>r.result.createObjectStore('f'); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }catch(e){ rej(e); } }));
+  const tx=(mode,fn)=>open().then(db=>new Promise((res,rej)=>{ const t=db.transaction('f',mode), q=fn(t.objectStore('f')); t.oncomplete=()=>res(q&&q.result); t.onerror=()=>rej(t.error); }));
+  return {get:k=>tx('readonly',s=>s.get(k)), put:(k,v)=>tx('readwrite',s=>s.put(v,k)), del:k=>tx('readwrite',s=>s.delete(k))};
+})();
+let docURL=null;
+function setDoc(d){
+  if(docURL){ URL.revokeObjectURL(docURL); docURL=null; }
+  const box=$('#lcDoc'); if(!d){ box.hidden=true; box.innerHTML=''; return; }
+  docURL=URL.createObjectURL(d.blob); const pdf=/pdf/i.test(d.type)||/\.pdf$/i.test(d.name);
+  box.hidden=false;
+  box.innerHTML=`<div class="doch"><b title="${esc(d.name)}">${esc(d.name)}</b><a href="${docURL}" target="_blank" rel="noopener">เปิดแท็บใหม่</a><button class="linkbtn" id="docDel">ลบไฟล์</button></div>${pdf?`<iframe src="${docURL}" title="ตารางโหลดที่แนบ"></iframe>`:`<img src="${docURL}" alt="ตารางโหลดที่แนบ">`}`;
+}
+async function saveDoc(file){ const d={name:file.name,type:file.type,blob:file}; try{ await IDB.put('lcdoc',d); }catch(e){} setDoc(d); }
+async function loadDoc(){ try{ const d=await IDB.get('lcdoc'); if(d&&d.blob) setDoc(d); }catch(e){} }
+function initLC(){
+  $('#lcEd').addEventListener('input',e=>{ const tr=e.target.closest('tr'); const r=S.lc.find(x=>x.id===tr.dataset.id); if(!r)return; const f=e.target.dataset.lf;
+    r[f]= (f==='pts'||f==='va')? (parseFloat(e.target.value)||0) : e.target.value; recalc(); });
+  $('#lcEd').addEventListener('change',()=>renderMap());
+  $('#lcEd').addEventListener('click',e=>{ const x=e.target.closest('[data-lcdel]'); if(!x)return; const id=x.closest('tr').dataset.id; S.lc=S.lc.filter(r=>r.id!==id); S.apps.forEach(a=>{if(a.lc===id)a.lc='';}); renderLCEd(); renderMap(); recalc(); });
+  $('#lcAdd').addEventListener('click',()=>{ S.lc.push({id:'l'+Date.now().toString(36),ckt:'',name:'วงจรใหม่',pts:1,va:0}); renderLCEd(); renderMap(); recalc(); });
+  $('#lcCard').addEventListener('change',e=>{ const id=e.target.dataset.map; if(!id) return; const a=findApp(id); if(a){ a.lc=e.target.value; renderMap(); recalc(); } });
+  $('#mapBox').addEventListener('toggle',renderMap);
+  $('#lcAuto').addEventListener('click',()=>{ const n=autoMap(true); renderMap(); recalc(); toast(n?`จับคู่เพิ่ม ${n} รายการ`:'ไม่พบรายการที่จับคู่ได้เพิ่ม'); });
+  $('#lcFromCkt').addEventListener('click',()=>{ S.lcm.va=sumVA(S.lc); syncInputs(); recalc(); });
+  $('#lcTpl').addEventListener('click',dlTemplate);
+  $('#lcFile').addEventListener('change',e=>{ const f=e.target.files&&e.target.files[0]; e.target.value=''; if(f) onLCFile(f); });
+  $('#lcImp').addEventListener('click',e=>{ const b=e.target.closest('[data-imp]'); if(!b) return; if(b.dataset.imp==='cancel'){ pendingImp=null; showImp(null); } else applyImp(b.dataset.imp); });
+  $('#lcDoc').addEventListener('click',async e=>{ if(e.target.id!=='docDel') return; try{ await IDB.del('lcdoc'); }catch(err){} setDoc(null); });
 }
 
 /* ── EV cars ── */
@@ -957,11 +1369,11 @@ function renderCars(){
     <div class="car" data-car="${c.id}">
       <div class="car-h"><label class="f" style="flex:1"><span>รถคันที่ ${i+1}${c.src==='ai'?'<span class="aitag">ข้อมูลจาก AI</span>':''}</span><select data-cf="model">${carOptions(c.model)}</select></label>
         ${S.ev.cars.length>1?'<button class="x" data-cardel aria-label="ลบรถ" style="align-self:end">×</button>':''}</div>
-      ${c.model==='custom'?`<div class="ai"><label class="f"><span>ยี่ห้อ / รุ่น</span><input type="text" data-cf="name" value="${esc(c.name)}" placeholder="เช่น Xpeng G6" style="font-family:var(--sans)"></label><button class="btn sm" data-ai ${sampleFn?'':'hidden'}>หาข้อมูลอัตโนมัติ</button></div><div class="aistat" data-aistat>${sampleFn?'':'กรอกค่าจากสเปกผู้ผลิต'}</div>`:''}
+      ${c.model==='custom'?`<div class="ai"><label class="f"><span>ยี่ห้อ / รุ่น</span><input type="text" class="tx" data-cf="name" value="${esc(c.name)}" placeholder="เช่น Xpeng G6"></label><button class="btn sm" data-ai ${sampleFn?'':'hidden'}>หาข้อมูลอัตโนมัติ</button></div><div class="aistat" data-aistat>${sampleFn?'':'กรอกค่าจากสเปกผู้ผลิต'}</div>`:''}
       <div class="row" style="margin-top:8px">
         <label class="f"><span>กม./วัน</span><input type="number" data-cf="km" min="0" step="5" value="${c.km}"></label>
         <label class="f"><span>kWh/100 กม.</span><input type="number" data-cf="eff" min="5" max="40" step="0.5" value="${c.eff}"></label>
-        <label class="f"><span>ชาร์จ AC สูงสุด (kW)</span><input type="number" data-cf="ac" min="1" max="22" step="0.1" value="${c.ac}"></label>
+        <label class="f"><span>AC สูงสุด (kW)</span><input type="number" data-cf="ac" min="1" max="22" step="0.1" value="${c.ac}"></label>
         <label class="f"><span>แบต (kWh)</span><input type="number" data-cf="bat" min="5" max="200" step="0.1" value="${c.bat}"></label>
       </div>
       <div class="meta2" data-cmeta></div>
@@ -971,7 +1383,7 @@ function renderCars(){
 function refreshCars(){
   $$('#cars .car').forEach(el=>{ const c=S.ev.cars.find(x=>x.id===el.dataset.car); if(!c) return;
     const need=carNeed(c), cap=carCap(c);
-    el.querySelector('[data-cmeta]').innerHTML=`ชาร์จวันละ <b>${f1(need)}</b> kWh · <b>${f1(need/cap)}</b> ชม. ที่ <b>${f1(cap)}</b> kW${c.ac<S.ev.wb?' (รถรับได้แค่นี้)':''} · วิ่งได้ ≈ <b>${nf(c.bat/c.eff*100)}</b> กม./ชาร์จเต็ม`;
+    el.querySelector('[data-cmeta]').innerHTML=`ชาร์จ <b>${f1(need)}</b> kWh/วัน · <b>${f1(need/cap)}</b> ชม. @ <b>${f1(cap)}</b> kW${c.ac<S.ev.wb?' (รถรับได้แค่นี้)':''}`;
   });
 }
 function initCars(){
@@ -1005,6 +1417,7 @@ function initCars(){
 }
 
 /* ── mode switching ── */
+const MODE_T={roof:'จากพื้นที่หลังคา',bill:'จากค่าไฟรายเดือน',load:'จากเครื่องใช้ไฟฟ้า'};
 function go(m){
   if(m==='home') m=null;
   S.mode=m; save();
@@ -1026,16 +1439,17 @@ function initSys(){
   $('#btnRec').addEventListener('click',()=>{ S[mk()].n=null; recalc(); });
 }
 
-/* ── chart ── */
+/* ── charts ── */
 function niceMax(v){ if(v<=0) return 1; const p=Math.pow(10,Math.floor(Math.log10(v))); for(const m of [1,1.5,2,2.5,3,4,5,6,8,10]) if(m*p>=v) return m*p; return 10*p; }
+const tick=v=>v>=10000?nf(v/1000)+'k':(v%1?v.toFixed(1):nf(v));
 function drawChart(R,roof){
-  const W=720,H=230,pl=40,pr=10,pt=10,pb=26, iw=W-pl-pr, ih=H-pt-pb, bw=iw/24;
+  const W=720,H=196,pl=40,pr=10,pt=16,pb=24, iw=W-pl-pr, ih=H-pt-pb, bw=iw/24;
   const mx=niceMax(Math.max(...R.pv,...R.load));
   const y=v=>pt+ih-(v/mx)*ih;
   let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="กราฟใช้ไฟและผลิตไฟรายชั่วโมง">`;
   const dv=[4,5,3,6].find(k=>Math.abs(mx/k*2-Math.round(mx/k*2))<1e-9)||4;
-  for(let i=0;i<=dv;i++){ const v=mx*i/dv, yy=y(v); s+=`<line class="gl" x1="${pl}" x2="${W-pr}" y1="${yy}" y2="${yy}"/><text class="ax" x="${pl-6}" y="${yy+3.5}" text-anchor="end">${v%1?v.toFixed(1):v}</text>`; }
-  s+=`<text class="ax" x="4" y="${pt+8}">kW</text><rect x="${pl+6*bw}" y="${pt}" width="${12*bw}" height="${ih}" fill="var(--pv)" opacity=".06"/>`;
+  for(let i=0;i<=dv;i++){ const v=mx*i/dv, yy=y(v); s+=`<line class="gl" x1="${pl}" x2="${W-pr}" y1="${yy}" y2="${yy}"/><text class="ax" x="${pl-6}" y="${yy+3.5}" text-anchor="end">${tick(v)}</text>`; }
+  s+=`<text class="ax" x="4" y="${pt-6}">kW</text><rect x="${pl+6*bw}" y="${pt}" width="${12*bw}" height="${ih}" fill="var(--pv)" opacity=".06"/>`;
   for(let h=0;h<24;h++){
     const x=pl+h*bw+bw*.14, w=bw*.72, self=R.direct[h]+R.dis[h], imp=roof?0:R.imp[h];
     if(imp>0) s+=`<rect x="${x}" y="${y(self+imp)}" width="${w}" height="${y(self)-y(self+imp)}" fill="var(--ld)" opacity=".55" rx="2"/>`;
@@ -1045,48 +1459,34 @@ function drawChart(R,roof){
   s+=`<path d="${d}" fill="var(--pv)" opacity=".22"/>`;
   let l=''; for(let h=0;h<24;h++) l+=(h?' L':'M')+(pl+h*bw+bw/2)+' '+y(R.pv[h]);
   s+=`<path d="${l}" fill="none" stroke="var(--pv)" stroke-width="2.2" stroke-linejoin="round"/>`;
-  for(let h=0;h<=24;h+=3) s+=`<text class="ax" x="${pl+h*bw}" y="${H-8}" text-anchor="middle">${String(h%24).padStart(2,'0')}</text>`;
+  for(let h=0;h<=24;h+=3) s+=`<text class="ax" x="${pl+h*bw}" y="${H-7}" text-anchor="middle">${String(h%24).padStart(2,'0')}</text>`;
   $('#chart').innerHTML=s+'</svg>';
   $('#legend').innerHTML=`<span><i style="background:var(--pv)"></i>ผลิตไฟ</span><span><i style="background:var(--ex)"></i>ใช้ไฟจากโซลาร์${S.batt.on&&!roof?'/แบต':''}</span>`+(roof?'':`<span><i style="background:var(--ld);opacity:.55"></i>ซื้อจากการไฟฟ้า</span>`);
 }
-const chip=(k,ic,html)=>`<div class="chip ${k}"><span class="ic">${ic}</span><span>${html}</span></div>`;
-
-/* ── LC check ── */
-function renderLC(){
-  let ok=0,bad=0,warn=0; const rows=[];
-  const ids=new Set(S.lc.map(r=>r.id));
-  for(const r of S.lc){
-    const kind=lcKind(r), L=S.apps.filter(a=>a.lc===r.id), q=L.reduce((s,a)=>s+a.qty,0), W=L.reduce((s,a)=>s+appRatedW(a),0);
-    let st,cls,msg;
-    if(kind==='spare'){ st='–';cls='s-mu';msg='วงจรสำรอง'; }
-    else if(!L.length){ st='✗';cls='s-bad';msg='ยังไม่ได้กรอก'; bad++; }
-    else if(kind==='light'||kind==='recept'){ st='✓';cls='s-ok';msg=`${L.length} รายการ`; ok++; }
-    else if(q<r.pts){ st='!';cls='s-warn';msg=`กรอก ${q} จาก ${r.pts} จุด`; warn++; }
-    else if(q>r.pts){ st='!';cls='s-warn';msg=`กรอก ${q} เกินตาราง ${r.pts} จุด`; warn++; }
-    else { st='✓';cls='s-ok';msg=`ครบ ${q}/${r.pts} จุด`; ok++; }
-    if(kind!=='spare'&&kind!=='light'&&kind!=='recept'&&W>r.va&&r.va>0){ if(cls==='s-ok'){cls='s-warn';st='!';ok--;warn++;} msg+=` · พิกัดที่กรอก ${nf(W)} W > ${nf(r.va)} VA`; }
-    const off=L.filter(a=>!a.on).length;
-    if(off) msg+=` · ปิดอยู่ ${off}`;
-    rows.push(`<div class="lcr"><span class="st ${cls}">${st}</span><span class="nm2">${esc(r.name)} <small>CKT ${esc(r.ckt)} · ${msg}</small></span><span class="va">${nf(r.va)} VA${L.length?`<br>กรอก ${nf(W)} W`:''}</span></div>`);
-  }
-  const orphan=S.apps.filter(a=>!a.lc||!ids.has(a.lc));
-  for(const a of orphan){ bad++; rows.push(`<div class="lcr"><span class="st s-bad">?</span><span class="nm2">${esc(a.name)} <small>ไม่มีวงจรในตารางโหลด — ตรวจกับผู้ออกแบบไฟฟ้า หรือเลือกวงจรให้ถูก</small></span><span class="va">${nf(appRatedW(a))} W</span></div>`); }
-  if(S.ev.on) rows.push(`<div class="lcr"><span class="st s-mu">i</span><span class="nm2">เครื่องชาร์จรถไฟฟ้า <small>ถ้าใช้มิเตอร์แยก จะไม่อยู่ในตารางนี้ — ต้องต่ออยู่หลังมิเตอร์เดียวกับอินเวอร์เตอร์จึงจะใช้ไฟโซลาร์ได้</small></span><span class="va">${f1(S.ev.wb)} kW</span></div>`);
-  $('#lcList').innerHTML=rows.join('');
-  $('#lcSum').innerHTML=`<span class="s-ok">✓ ${ok}</span>${warn?`<span class="s-warn">! ${warn}</span>`:''}${bad?`<span class="s-bad">✗ ${bad}</span>`:''}`;
+function drawMonthly(M,roof){
+  const W=720,H=176,pl=44,pr=10,pt=16,pb=22, iw=W-pl-pr, ih=H-pt-pb, bw=iw/12;
+  const mx=niceMax(Math.max(...M.map(o=>o.pv),...(roof?[]:M.map(o=>o.load))));
+  const y=v=>pt+ih-(v/mx)*ih;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="กราฟผลิตไฟรายเดือน">`;
+  for(let i=0;i<=4;i++){ const v=mx*i/4, yy=y(v); s+=`<line class="gl" x1="${pl}" x2="${W-pr}" y1="${yy}" y2="${yy}"/><text class="ax" x="${pl-6}" y="${yy+3.5}" text-anchor="end">${tick(v)}</text>`; }
+  s+=`<text class="ax" x="4" y="${pt-6}">kWh</text>`;
+  M.forEach((o,i)=>{ const x=pl+i*bw+bw*.2, w=bw*.6; s+=`<rect x="${x}" y="${y(o.pv)}" width="${w}" height="${y(0)-y(o.pv)}" fill="var(--pv)" opacity=".85" rx="2"><title>${MNAME[i]} ผลิต ${nf(o.pv)} kWh</title></rect><text class="ax" x="${pl+i*bw+bw/2}" y="${H-6}" text-anchor="middle">${MNAME[i]}</text>`; });
+  if(!roof){ let l=''; M.forEach((o,i)=>{ l+=(i?' L':'M')+(pl+i*bw+bw/2)+' '+y(o.load); }); s+=`<path d="${l}" fill="none" stroke="var(--ld)" stroke-width="2"/>`; M.forEach((o,i)=>{ s+=`<circle cx="${pl+i*bw+bw/2}" cy="${y(o.load)}" r="3" fill="var(--ld)"/>`; }); }
+  $('#mChart').innerHTML=s+'</svg>';
+  $('#mLegend').innerHTML=`<span><i style="background:var(--pv)"></i>ผลิตไฟ</span>`+(roof?'':`<span><i style="background:var(--ld)"></i>ใช้ไฟ</span>`);
 }
+const chip=(k,ic,html)=>`<div class="chip ${k}"><span class="ic">${ic}</span><span>${html}</span></div>`;
 
 /* ── main recalc ── */
 function recalc(){
   const m=S.mode, Y=yieldK(), rmx=roofMax(), kva=meterKVA(), lim=PEA_LIM[S.house.phase];
-  // header + home
-  $('#siteLbl').textContent=S.house.name||'';
   $('#sitePreset').value=S.site.preset;
   $('#yieldTxt').textContent=f2(Y);
-  $$('#season button').forEach(b=>b.classList.toggle('on',Math.abs(+b.dataset.psh-S.site.psh)<.01));
-  $('#pInfo').textContent=`${f2(pArea())} ม² · ${f1(S.panel.kg/pArea())} กก./ม²`;
+  const eff=S.panel.w/(pArea()*1000)*100;
+  $('#pInfo').innerHTML=`1 แผง <b>${f2(pArea())}</b> ม² · <b>${f1(S.panel.kg/pArea())}</b> กก./ม² · ประสิทธิภาพ <b>${f1(eff)}%</b>${eff>25?' <span class="c-im">สูงเกินจริง ตรวจขนาดแผง</span>':''}`;
   $('#thrBuy').textContent=f2(marginal()); $('#thrSell').textContent=f2(S.tariff.sell);
-  $('#houseChips').innerHTML=chip('info','i',`มิเตอร์รับโหลดได้ ≈ <b>${nf(kva,1)}</b> kVA`)+chip('info','i',`เกณฑ์ทั่วไป กฟภ. บ้าน ${S.house.phase} เฟส ติดโซลาร์ได้ไม่เกิน <b>${lim}</b> kW`);
+  $('#houseChips').innerHTML=chip('info','i',`มิเตอร์รับได้ ≈ <b>${nf(kva,1)}</b> kVA · เกณฑ์ทั่วไป กฟภ. อินเวอร์เตอร์ ≤ <b>${lim}</b> kW`);
+  $('#btnPrint').hidden=!m;
   if(!m){ save(); return; }
   $('#accF').style.visibility= S.ac.plf==='const'?'visible':'hidden';
 
@@ -1106,95 +1506,113 @@ function recalc(){
 
   const rec=recommend(), cap=Math.max(1,rmx);
   let n=S[mk()].n ?? Math.min(rec,cap); n=Math.max(1,Math.min(n,cap));
-  const kWp=kwpOf(n);
+  const kWp=kwpOf(n), bOn=S.batt.on&&m!=='roof';
+  fillInv(kWp); const inv=invKW(kWp);
   let A=null, L;
-  if(m==='load'){ A=loadApps(kWp); L=A.load; } else L=buildLoad(kWp);
-  const R=simulate(L,kWp), T=R.T;
+  if(m==='load'){ A=loadApps(kWp,Y); L=A.load; } else L=buildLoad(kWp,Y);
+  const R=simulate(L,kWp,Y), T=R.T, M=monthly(kWp);
 
   // roof + system card
-  const res=S.roof.area-roofUse();
-  $('#roofKv').innerHTML=`<dt>หลังคารวม</dt><dd>${f1(S.roof.area)} ม²</dd><dt>พื้นที่วางแผงได้ (${nf(S.roof.pct,1)}%)</dt><dd>${f1(roofUse())} ม²</dd><dt>เว้นว่าง ขอบ ทางเดิน ซ่อมบำรุง (${nf(100-S.roof.pct,1)}%)</dt><dd>${f1(res)} ม²</dd><dt class="t">วางแผงได้สูงสุด</dt><dd class="t">${rmx} แผง · ${f2(kwpOf(rmx))} kWp</dd>`;
-  $('#roofChips').innerHTML= S.roof.pct>80
-    ? chip('bad','!',`เหลือพื้นที่ว่าง ${nf(100-S.roof.pct,1)}% — น้อยกว่า 20% ที่ควรเผื่อไว้ซ่อมบำรุงและความปลอดภัย`)
-    : chip('ok','✓',`เหลือพื้นที่ว่าง ${nf(100-S.roof.pct,1)}% (≥ 20%)`);
+  const tag=$('#sysTag'); tag.textContent=bOn?'Hybrid · มีแบต':'On-Grid'; tag.classList.toggle('hy',bOn);
+  const pct=S.roof.pct;
+  $('#roofKv').innerHTML=`<dt>วางแผงได้ (${nf(pct,1)}%)</dt><dd>${f1(roofUse())} ม²</dd><dt>เว้นขอบ ทางเดิน ซ่อมบำรุง</dt><dd>${f1(S.roof.area-roofUse())} ม²</dd><dt class="t">วางได้สูงสุด</dt><dd class="t">${rmx} แผง · ${f2(kwpOf(rmx))} kWp</dd>`;
+  $('#roofChips').innerHTML= pct>80? chip('bad','!',`${nf(pct,1)}% — เหลือที่ว่างน้อยเกินไป ควรอยู่ในช่วง 60–70%`)
+    : pct>70? chip('warn','!',`${nf(pct,1)}% — สูงกว่าช่วงแนะนำ 60–70% ตรวจทางเดินและระยะขอบ`)
+    : pct>=60? chip('ok','✓',`${nf(pct,1)}% อยู่ในช่วงแนะนำ 60–70%`)
+    : chip('info','i',`${nf(pct,1)}% — ต่ำกว่าช่วงแนะนำ (เผื่อพื้นที่มาก)`);
   $('#recTxt').innerHTML= m==='roof'
     ? `เต็มพื้นที่ <b>${rec} แผง</b> · ${f2(kwpOf(rec))} kWp`
-    : (rec>rmx ? `แนะนำ <b>${rec} แผง</b> (${f2(kwpOf(rec))} kWp)<br><span style="opacity:.85">แต่หลังคาวางได้ ${rmx} แผง</span>` : `แนะนำ <b>${rec} แผง</b> · ${f2(kwpOf(rec))} kWp<br><span style="opacity:.85">ใหญ่สุดที่ยังใช้ไฟเองได้ ≥ ${S.thr}%</span>`);
+    : (rec>rmx ? `แนะนำ <b>${rec} แผง</b> (${f2(kwpOf(rec))} kWp) · หลังคาวางได้ ${rmx}` : `แนะนำ <b>${rec} แผง</b> · ${f2(kwpOf(rec))} kWp · ใช้เอง ≥ ${S.thr}%`);
   $('#btnRec').hidden= S[mk()].n==null;
   const nR=$('#nR'); nR.max=cap; nR.value=n; $('#nN').max=cap;
   if(document.activeElement!==$('#nN')) $('#nN').value=n;
   $('#nLbl').textContent=`จำนวนแผง (สูงสุด ${cap})`;
   const usedA=n*pArea()*(1+S.panel.gap/100), totKg=n*S.panel.kg+usedA*S.roof.mount;
   $('#sKwp').textContent=f2(kWp)+' kWp'; $('#sArea').textContent=f1(usedA)+' ม²'; $('#sKg').textContent=nf(totKg)+' กก.';
-  const wLocal=S.panel.kg/pArea()+S.roof.mount, wAvg=totKg/Math.max(1,S.roof.area);
-  $('#wChips').innerHTML=
-    (wLocal<=20 ? chip('ok','✓',`แผง+โครงยึด <b>${f1(wLocal)}</b> กก./ม² ไม่เกิน 20 กก./ม² → ไม่ถือเป็นการดัดแปลงอาคาร (กฎกระทรวง ฉบับที่ 72 พ.ศ. 2568) แต่ต้องแจ้งเจ้าพนักงานท้องถิ่นก่อนติดตั้ง`)
-                : chip('bad','✗',`แผง+โครงยึด <b>${f1(wLocal)}</b> กก./ม² เกิน 20 กก./ม² → ถือเป็นการดัดแปลงอาคาร ต้องขออนุญาตและมีวิศวกรรับรอง`))
-    + chip('info','i',`เฉลี่ยทั้งหลังคา <b>${f1(wAvg)}</b> กก./ม² = <b>${nf(wAvg/Math.max(1,S.roof.ll)*100)}%</b> ของน้ำหนักบรรทุกจร ${nf(S.roof.ll)} กก./ม² — แผงเป็นน้ำหนักคงที่เพิ่มถาวร ให้วิศวกรโครงสร้างตรวจโครงหลังคาและแรงลมยก`)
-    + (kWp>lim ? chip('warn','!',`${f2(kWp)} kWp เกินเกณฑ์ทั่วไป กฟภ. บ้าน ${S.house.phase} เฟส (${lim} kW) — ต้องหารือ กฟภ. เขต หรือใช้ Zero Export`) : chip('ok','✓',`${f2(kWp)} kWp อยู่ในเกณฑ์ทั่วไป กฟภ. บ้าน ${S.house.phase} เฟส (≤ ${lim} kW)`));
+  const wLocal=S.panel.kg/pArea()+S.roof.mount;
+  const wv=$('#wVal'); wv.textContent=f1(wLocal); wv.className='ro '+(wLocal<=20?'ok':'bad');
+  $('#wChips').innerHTML= wLocal<=20
+    ? chip('ok','✓',`ไม่เกิน 20 กก./ม² → ไม่ถือเป็นการดัดแปลงอาคาร (กฎกระทรวง ฉบับที่ 72 พ.ศ. 2568)`)
+    : chip('bad','✗',`เกิน 20 กก./ม² → ถือเป็นการดัดแปลงอาคาร ต้องขออนุญาตและมีวิศวกรรับรอง`);
+  const ratio=kWp/inv, dc=$('#dcac');
+  dc.textContent=f2(ratio); dc.className='ro '+(ratio>1.5?'bad':(ratio>DCAC_MAX||ratio<0.9)?'warn':'ok');
+  const ic=[];
+  if(ratio>DCAC_MAX) ic.push(chip(ratio>1.5?'bad':'warn','!',`DC/AC ${f2(ratio)} — แผงถูกตัดยอดช่วงแดดจัด${T.clip>0.05?` ≈ ${f1(T.clip)} kWh/วัน`:''}`));
+  else if(ratio<0.9) ic.push(chip('warn','!',`DC/AC ${f2(ratio)} — อินเวอร์เตอร์ใหญ่เกินแผง`));
+  if(S.house.phase==1&&inv>5) ic.push(chip('bad','✗',`บ้าน 1 เฟส อินเวอร์เตอร์เกิน 5 kW — ต้องเป็นระบบ 3 เฟส`));
+  else ic.push(inv>lim ? chip('warn','!',`อินเวอร์เตอร์ ${fkw(inv)} kW เกินเกณฑ์ทั่วไป กฟภ. (${lim} kW) — หารือ กฟภ. เขต หรือตั้ง Zero Export`)
+                       : chip('ok','✓',`อินเวอร์เตอร์ ${fkw(inv)} kW อยู่ในเกณฑ์ทั่วไป กฟภ. (≤ ${lim} kW)`));
+  $('#invChips').innerHTML=ic.join('');
   $('#battHint').textContent= S.batt.on? `ลงทุนเพิ่ม ${nf(S.batt.kwh*S.price.batt)} บ.`:'';
   if(m==='roof') $('#ckRes').textContent=nf(T.self*100)+'%';
 
   if(m==='load'){
     const fl={1:{r:0,avg:0,e:0,n:0,b:0},2:{r:0,avg:0,e:0,n:0,b:0}};
     for(const a of S.apps) if(a.g==='ac'&&a.on){ const F=fl[a.fl]||fl[1], e=appDay(a); F.r+=a.btu*S.ac.k/1000*a.qty; F.e+=e; F.avg+=a.hrs.length?e/a.hrs.length:0; F.n+=a.qty; F.b+=a.btu*a.qty; }
-    $('#acFloors').innerHTML=[1,2].map(k=>`ชั้น ${k}: ${fl[k].n} เครื่อง ${nf(fl[k].b)} BTU · พิกัด <b>${f2(fl[k].r)}</b> kW · เฉลี่ยขณะเปิด <b>${f2(fl[k].avg)}</b> kW · <b>${f1(fl[k].e)}</b> kWh/วัน`).join('<br>');
+    $('#acFloors').innerHTML=[1,2].map(k=>`ชั้น ${k}: ${fl[k].n} เครื่อง ${nf(fl[k].b)} BTU · พิกัด <b>${f2(fl[k].r)}</b> kW · ขณะเปิด <b>${f2(fl[k].avg)}</b> kW · <b>${f1(fl[k].e)}</b> kWh/วัน`).join('<br>');
     const gs={ac:0,light:0,plug:0,fixed:0}; let nac=0;
     for(const a of S.apps) if(a.on){ gs[a.g]+=appDay(a); if(a.g==='ac') nac+=a.qty; }
     $('#gs-ac').textContent=`${nac} เครื่อง · ${f1(gs.ac)} kWh/วัน`;
     $('#gs-light').textContent=`${f1(gs.light)} kWh/วัน`; $('#gs-plug').textContent=`${f1(gs.plug)} kWh/วัน`; $('#gs-fixed').textContent=`${f1(gs.fixed)} kWh/วัน`;
     $('#gs-ev').textContent= S.ev.on? `${S.ev.cars.length} คัน · ${f1(A.need)} kWh/วัน`:'ปิด';
-    $('#m3tot').textContent=`รวม ${f1(T.load)} kWh/วัน · ${nf(T.load*30.4)} หน่วย/เดือน`;
+    $('#m3tot').textContent=`${f1(T.load)} kWh/วัน · ${nf(T.load*30.4)} หน่วย/เดือน`;
     $('#evstartL').textContent= S.ev.mode==='solar'?'ส่วนที่แดดไม่พอ ชาร์จต่อเวลา':'เริ่มชาร์จ (น.)';
-    $('#evInfo').innerHTML= S.ev.on ? `รวม <b>${f1(A.need)}</b> kWh/วัน · จากโซลาร์ <b>${f1(A.fromSun)}</b> · จากการไฟฟ้า <b>${f1(A.need-A.fromSun)}</b> kWh` : 'ปิดอยู่';
+    $('#evInfo').innerHTML= S.ev.on ? `จากโซลาร์ <b>${f1(A.fromSun)}</b> · จากการไฟฟ้า <b>${f1(A.need-A.fromSun)}</b> kWh/วัน` : '';
     refreshCars();
     const items=[['แอร์',gs.ac],['แสงสว่าง',gs.light],['เครื่องใช้ไฟฟ้า',gs.plug],['อุปกรณ์ประจำ',gs.fixed],['รถไฟฟ้า',A.need]].filter(x=>x[1]>0);
     const mxb=Math.max(...items.map(x=>x[1]),1), tot=items.reduce((s,x)=>s+x[1],0);
-    $('#brk').innerHTML=items.map(([t,v])=>`<div class="r"><span>${t}</span><i style="width:${Math.max(2,v/mxb*100)}%"></i><b>${f1(v)} <span class="c-mu">${nf(v/tot*100)}%</span></b></div>`).join('')+`<p class="hint">หน่วยเป็น kWh/วัน</p>`;
+    $('#brk').innerHTML=items.map(([t,v])=>`<div class="r"><span>${t}</span><i style="width:${Math.max(2,v/mxb*100)}%"></i><b>${f1(v)} <span class="c-mu">${nf(v/tot*100)}%</span></b></div>`).join('');
     renderLC();
   }
 
-  // KPIs & money
-  const D=30.4, bOn=S.batt.on&&m!=='roof';
+  // KPIs & money (รวม 12 เดือน)
   const cost=kWp*1000*S.price.w + (bOn? S.batt.kwh*S.price.batt:0);
-  let before=null, after=null, saveM;
-  if(m==='roof') saveM=(T.direct*marginal()+T.exp*S.tariff.sell)*D;
-  else { before=billOf(T.load*D); after=billOf(T.imp*D)-T.exp*D*S.tariff.sell; saveM=before-after; }
-  const saveY=saveM*12, pay=saveY>0? cost/saveY : Infinity;
+  const sumM=k=>M.reduce((s,o)=>s+(o[k]||0),0);
+  const saveY=sumM('save'), saveM=saveY/12, pay=saveY>0? cost/saveY : Infinity;
+  const before=m!=='roof'?sumM('before')/12:null, after=m!=='roof'?sumM('after')/12:null, genY=sumM('pv');
   let life=-cost; for(let yy=1;yy<=25;yy++){ life+=saveY*Math.pow(.995,yy-1); if(bOn&&yy===11) life-=S.batt.kwh*S.price.batt; }
-  $('#kKwp').textContent=f2(kWp)+' kWp'; $('#kN').textContent=`${n} แผง × ${S.panel.w}W`;
-  $('#kGen').textContent=f1(T.pv)+' kWh/วัน'; $('#kGenM').textContent=nf(T.pv*D)+' หน่วย/เดือน';
-  $('#kSave').textContent=nf(saveM)+' บ.'; $('#kSaveY').textContent=nf(saveY)+' บ./ปี';
-  $('#kPay').textContent= isFinite(pay)? f1(pay)+' ปี':'—'; $('#kCost').textContent='ลงทุน '+nf(cost)+' บ.';
+  $('#kKwp').innerHTML=f2(kWp)+' <small>kWp</small>'; $('#kN').textContent=`${n} × ${S.panel.w} W · Inv ${fkw(inv)} kW`;
+  $('#kGen').innerHTML=f1(T.pv)+' <small>kWh/วัน</small>'; $('#kGenM').textContent=nf(genY)+' หน่วย/ปี';
+  $('#kSave').innerHTML=nf(saveM)+' <small>บ.</small>'; $('#kSaveY').textContent=nf(saveY)+' บ./ปี';
+  $('#kPay').innerHTML= isFinite(pay)? f1(pay)+' <small>ปี</small>':'—'; $('#kCost').textContent='ลงทุน '+nf(cost)+' บ.';
 
-  const pill=$('#roofPill'), okR=rec<=rmx||m==='roof', pct=rmx>0?Math.min(100,n/rmx*100):100;
+  const pill=$('#roofPill'), okR=rec<=rmx||m==='roof', pc=rmx>0?Math.min(100,n/rmx*100):100;
   pill.className='pill '+(okR?'ok':'bad');
   pill.innerHTML= okR
-    ? `<span>หลังคาพอ ใช้ <b>${n}/${rmx}</b> แผง · ${f1(usedA)} จาก ${f1(roofUse())} ม²</span><span class="bar2"><i style="width:${pct}%"></i></span>`
-    : `<span>หลังคาไม่พอ ขนาดแนะนำ <b>${rec}</b> แผง วางได้ <b>${rmx}</b> แผง · ขาด ${rec-rmx} แผง</span><span class="bar2"><i style="width:100%"></i></span>`;
+    ? `<span>หลังคาพอ ใช้ <b>${n}/${rmx}</b> แผง · ${f1(usedA)} จาก ${f1(roofUse())} ม²</span><span class="bar2"><i style="width:${pc}%"></i></span>`
+    : `<span>หลังคาไม่พอ แนะนำ <b>${rec}</b> วางได้ <b>${rmx}</b> แผง · ขาด ${rec-rmx}</span><span class="bar2"><i style="width:100%"></i></span>`;
 
   drawChart(R,m==='roof');
+  drawMonthly(M,m==='roof');
+  const mxI=M.reduce((b,o,i)=>o.pv>M[b].pv?i:b,0), mnI=M.reduce((b,o,i)=>o.pv<M[b].pv?i:b,0);
+  $('#mSub').textContent=`(สูงสุด ${MNAME[mxI]} ${nf(M[mxI].pv)} · ต่ำสุด ${MNAME[mnI]} ${nf(M[mnI].pv)} kWh)`;
 
   let fl=`<dt>ผลิตได้</dt><dd class="pv">${f1(T.pv)} kWh</dd>`;
   fl+= m==='roof'? `<dt>ใช้ช่วงมีแดด (ประเมิน)</dt><dd>${f1(T.direct)} kWh</dd>` : `<dt>ใช้ไฟทั้งวัน</dt><dd>${f1(T.load)} kWh</dd><dt>ใช้โซลาร์ทันที</dt><dd class="ex">${f1(T.direct)} kWh</dd>`;
-  if(bOn) fl+=`<dt>เก็บเข้าแบต → ใช้กลางคืน</dt><dd class="bt">${f1(T.chg)} → ${f1(T.dis)} kWh</dd>`;
-  fl+=`<dt>ขายคืน${S.tariff.net?'':' (ปิดอยู่)'}</dt><dd class="ex">${f1(T.exp)} kWh</dd>`;
+  if(bOn) fl+=`<dt>เข้าแบต → ใช้กลางคืน</dt><dd class="bt">${f1(T.chg)} → ${f1(T.dis)} kWh</dd>`;
+  fl+=`<dt>ขายคืน${S.tariff.net?'':' (ปิด)'}</dt><dd class="ex">${f1(T.exp)} kWh</dd>`;
   if(T.cur>0.05) fl+=`<dt>ทิ้ง (เกินเพดานขาย)</dt><dd class="im">${f1(T.cur)} kWh</dd>`;
+  if(T.clip>0.05) fl+=`<dt>ตัดยอดโดยอินเวอร์เตอร์</dt><dd class="im">${f1(T.clip)} kWh</dd>`;
   if(m!=='roof') fl+=`<dt>ซื้อจากการไฟฟ้า</dt><dd class="im">${f1(T.imp)} kWh</dd>`;
   fl+=`<dt class="t">ใช้ไฟโซลาร์เอง</dt><dd class="t">${nf(T.self*100)}%</dd>`;
   if(m!=='roof') fl+=`<dt class="t" style="padding-top:2px">โซลาร์แทนไฟบ้าน</dt><dd class="t" style="padding-top:2px">${nf(T.load>0?(T.load-T.imp)/T.load*100:0)}%</dd>`;
-  if(m==='load'){ let pk=0,ph=0; L.forEach((v,h)=>{if(v>pk){pk=v;ph=h;}}); fl+=`<dt>โหลดสูงสุด (เฉลี่ยรายชั่วโมง)</dt><dd class="${pk>kva*.8?'im':''}">${f1(pk)} kW @ ${String(ph).padStart(2,'0')}:00 · มิเตอร์ ${nf(kva)} kVA</dd>`; }
+  if(m==='load'){ let pk=0,ph=0; L.forEach((v,h)=>{if(v>pk){pk=v;ph=h;}}); fl+=`<dt>โหลดสูงสุด (รายชั่วโมง)</dt><dd class="${pk>kva*.8?'im':''}">${f1(pk)} kW @ ${String(ph).padStart(2,'0')}:00</dd>`; }
   $('#flow').innerHTML=fl;
 
   let mo= m!=='roof'
-    ? `<dt>ค่าไฟเดิม / เดือน</dt><dd>${nf(before)} บ.</dd><dt>ค่าไฟหลังติด / เดือน</dt><dd>${nf(after)} บ.</dd>`
-    : `<dt>มูลค่าไฟที่ใช้เอง (${f2(marginal())} บ./หน่วย)</dt><dd>${nf(T.direct*marginal()*D)} บ.</dd><dt>ขายคืน (${f2(S.tariff.sell)} บ.)</dt><dd>${nf(T.exp*S.tariff.sell*D)} บ.</dd>`;
+    ? `<dt>ค่าไฟเดิม (เฉลี่ย/เดือน)</dt><dd>${nf(before)} บ.</dd><dt>ค่าไฟหลังติด (เฉลี่ย/เดือน)</dt><dd>${nf(after)} บ.</dd>`
+    : `<dt>มูลค่าไฟที่ใช้เอง/ปี</dt><dd>${nf(sumM('direct')*marginal())} บ.</dd><dt>ขายคืน/ปี (${f2(S.tariff.sell)} บ.)</dt><dd>${nf(sumM('exp')*S.tariff.sell)} บ.</dd>`;
   mo+=`<dt class="t">ประหยัด / เดือน</dt><dd class="t pv">${nf(saveM)} บ.</dd><dt>ประหยัด / ปี</dt><dd>${nf(saveY)} บ.</dd>`;
-  mo+=`<dt>ลงทุนแผง+ติดตั้ง (${nf(S.price.w,2)} บ./W)</dt><dd>${nf(kWp*1000*S.price.w)} บ.</dd>`;
+  mo+=`<dt>ลงทุนระบบ (${nf(S.price.w,2)} บ./W)</dt><dd>${nf(kWp*1000*S.price.w)} บ.</dd>`;
   if(bOn) mo+=`<dt>แบตเตอรี่ ${S.batt.kwh} kWh</dt><dd>${nf(S.batt.kwh*S.price.batt)} บ.</dd>`;
   mo+=`<dt class="t">คืนทุน</dt><dd class="t">${isFinite(pay)?f1(pay)+' ปี':'—'}</dd>`;
   mo+=`<dt>สุทธิ 25 ปี (แผงเสื่อม 0.5%/ปี${bOn?', เปลี่ยนแบตปีที่ 11':''})</dt><dd class="${life>=0?'ex':'im'}">${nf(life)} บ.</dd>`;
   $('#money').innerHTML=mo;
+
+  let mt=`<thead><tr><th>เดือน</th><th>ผลิต (kWh)</th><th>ประหยัด (บ.)</th></tr></thead><tbody>`;
+  M.forEach((o,i)=>{ mt+=`<tr><td>${MNAME[i]}</td><td class="c-pv">${nf(o.pv)}</td><td>${nf(o.save)}</td></tr>`; });
+  mt+=`</tbody><tfoot><tr><td>รวม</td><td class="c-pv">${nf(genY)}</td><td>${nf(saveY)}</td></tr></tfoot>`;
+  $('#mtbl').innerHTML=mt;
 
   let tb=`<thead><tr><th>เวลา</th><th>${m==='roof'?'ใช้ (ประเมิน)':'ใช้'}</th><th>ผลิต</th><th style="text-align:left">ไฟไปไหน (kWh)</th></tr></thead><tbody>`;
   for(let h=0;h<24;h++){
@@ -1211,18 +1629,81 @@ function recalc(){
   $('#htbl').innerHTML=tb;
 
   const notes=[];
-  if(m==='roof') notes.push('วิธีหลังคาไม่รู้โหลดกลางคืน จึงไม่คำนวณค่าไฟเดิม/หลังติด — ตัวเลขประหยัดคือมูลค่าไฟที่ใช้เองช่วงมีแดด + รายได้ขายคืน');
+  if(m==='roof') notes.push('วิธีหลังคาไม่รู้โหลดกลางคืน: ประหยัด = มูลค่าไฟที่ใช้เองช่วงมีแดด + ขายคืน');
+  notes.push('ประหยัดต่อปีรวมจาก 12 เดือนตามแดดรายเดือน โดยถือว่าใช้ไฟเท่ากันทุกเดือน');
   if(kWp>10 && m!=='roof') notes.push(`ระบบ ${f1(kWp)} kWp เกิน 10 kW — ไม่เข้าเงื่อนไขลดหย่อนภาษีบุคคลธรรมดา 200,000 บ.`);
   $('#notes').innerHTML=notes.map(t=>`<p>${t}</p>`).join('');
+
+  fillPrint({m,n,kWp,inv,bOn,wLocal,ratio});
   save();
+}
+function fillPrint(c){
+  const site=SITES[S.site.preset]||{};
+  $('#printHead').innerHTML=`<div class="t"><b>Solar Designer — สรุปผลการคำนวณ</b><span>Version ${VER} · Publish by Zenconpro</span></div>
+  <dl class="pgrid">
+    <dt>โครงการ</dt><dd>${esc(S.house.name)} · ${S.house.phase} เฟส</dd>
+    <dt>วันที่</dt><dd>${new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})}</dd>
+    <dt>วิธีคำนวณ</dt><dd>${MODE_T[c.m]}</dd>
+    <dt>ที่ตั้ง / แดด</dt><dd>${esc(site.t||'กำหนดเอง')} (${S.site.lat}, ${S.site.lon}) · PSH ${f2(S.site.psh)} · PR ${S.site.pr}</dd>
+    <dt>แผง</dt><dd>${S.panel.w} W (${S.panel.len}×${S.panel.wid} ม., ${S.panel.kg} กก.) × ${c.n} แผง = ${f2(c.kWp)} kWp</dd>
+    <dt>อินเวอร์เตอร์</dt><dd>${fkw(c.inv)} kW ${c.bOn?'Hybrid + แบตเตอรี่ '+S.batt.kwh+' kWh':'On-Grid'} · DC/AC ${f2(c.ratio)}</dd>
+    <dt>หลังคา</dt><dd>${f1(S.roof.area)} ม² ใช้วางแผง ${nf(S.roof.pct,1)}% · แผง+โครงยึด ${f1(c.wLocal)} กก./ม²</dd>
+    <dt>ค่าไฟ</dt><dd>${S.tariff.tier?'PEA 1.2 ขั้นบันได Ft '+S.tariff.ft:'คงที่ '+f2(S.tariff.buy)+' บ./หน่วย'} · ${S.tariff.net?'ขายคืน '+f2(S.tariff.sell)+' บ. ≤ '+S.tariff.lim+' kW':'ไม่ขายคืน'}</dd>
+    <dt>ราคาระบบ</dt><dd>${nf(S.price.w,2)} บ./W${c.bOn?' · แบต '+nf(S.price.batt)+' บ./kWh':''}</dd>
+  </dl>`;
+}
+
+/* ── share link / print / toast ── */
+let toastT=null;
+function toast(html,ms=2600){ const t=$('#toast'); t.innerHTML=html; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>{t.hidden=true;},ms); }
+const b64u=u8=>{ let s=''; for(let i=0;i<u8.length;i+=0x8000) s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000)); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); };
+const unb64u=s=>{ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; const b=atob(s), u=new Uint8Array(b.length); for(let i=0;i<b.length;i++) u[i]=b.charCodeAt(i); return u; };
+async function encState(o){
+  const bytes=new TextEncoder().encode(JSON.stringify(o));
+  if(window.CompressionStream){ try{ const st=new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw')); return 'z'+b64u(new Uint8Array(await new Response(st).arrayBuffer())); }catch(e){} }
+  return 'j'+b64u(bytes);
+}
+async function decState(s){
+  const bytes=unb64u(s.slice(1));
+  if(s[0]==='z'){ const st=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw')); return JSON.parse(new TextDecoder().decode(await new Response(st).arrayBuffer())); }
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+async function shareLink(){
+  const url=location.href.split('#')[0]+'#s='+(await encState(S));
+  if(navigator.share&&matchMedia('(pointer:coarse)').matches){ try{ await navigator.share({title:'Solar Designer — '+(S.house.name||''),url}); return; }catch(e){ if(e&&e.name==='AbortError') return; } }
+  try{ await navigator.clipboard.writeText(url); toast('คัดลอกลิงก์แล้ว — ส่งให้คนอื่นเปิดแล้วจะเห็นค่าชุดนี้'); }
+  catch(e){ toast(`<span>คัดลอกลิงก์นี้</span><input readonly value="${esc(url)}" aria-label="ลิงก์แชร์">`,12000); const i=$('#toast input'); if(i){ i.focus(); i.select(); } }
+}
+function applyState(s){ S=s; invKey=''; fillMeters(); fillWallbox(); renderApps(); renderLCEd(); renderCars(); renderMonths(); syncInputs(); go(S.mode); }
+async function checkHash(){
+  const mm=location.hash.match(/^#s=([zj][A-Za-z0-9_-]+)/); if(!mm) return;
+  try{ history.replaceState(null,'',location.pathname+location.search); }catch(e){}
+  try{
+    const s=fromSaved(await decState(mm[1])); if(!s) throw new Error('bad');
+    let prev=null; try{ prev=localStorage.getItem(LS); }catch(e){}
+    applyState(s);
+    const bn=$('#shareBanner'); bn.hidden=false;
+    $('#shareUndo').hidden=!prev;
+    $('#shareUndo').onclick=()=>{ const o=fromSaved(JSON.parse(prev)); if(o) applyState(o); bn.hidden=true; };
+  }catch(e){ toast('ลิงก์แชร์ไม่สมบูรณ์ — เปิดด้วยค่าเดิม',4000); }
+}
+function initShare(){
+  $('#btnShare').addEventListener('click',()=>{ shareLink().catch(()=>toast('สร้างลิงก์ไม่สำเร็จ')); });
+  $('#btnPrint').addEventListener('click',()=>window.print());
+  $('#shareClose').addEventListener('click',()=>{ $('#shareBanner').hidden=true; });
+  window.addEventListener('beforeprint',()=>{ $$('#results details').forEach(d=>{ d.dataset.po=d.open?'1':''; d.open=true; }); });
+  window.addEventListener('afterprint',()=>{ $$('#results details').forEach(d=>{ d.open=d.dataset.po==='1'; }); });
 }
 
 /* ── init ── */
 function init(){
-  initStatic(); bindAll(); initApps(); initCars(); initSys(); renderApps(); renderLCEd(); renderCars(); syncInputs();
+  initStatic(); bindAll(); initApps(); initCars(); initSys(); initLC(); initShare();
+  renderApps(); renderLCEd(); renderCars(); renderMonths(); syncInputs();
   $$('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
-  $('#btnReset').addEventListener('click',function(){ armed(this,()=>{ S=clone(DEF); S.apps=defApps(); S.lc=defLC(); fillMeters(); fillWallbox(); renderApps(); renderLCEd(); renderCars(); syncInputs(); go(null); },'กดอีกครั้งเพื่อยืนยันล้างทุกค่า'); });
+  $('#btnReset').addEventListener('click',function(){ armed(this,()=>{ applyState(clone(DEF)); go(null); },'กดอีกครั้งเพื่อยืนยันล้างทุกค่า'); });
   go(S.mode);
+  loadDoc();
+  checkHash();
 }
 init();
 })();
