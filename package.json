@@ -1,6 +1,6 @@
 {
   "name": "solar-designer",
-  "version": "1.5.0",
+  "version": "1.8.0",
   "private": true,
   "description": "Solar Designer — static web app (HTML/CSS/JS, no framework)",
   "scripts": {

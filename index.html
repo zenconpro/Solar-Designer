@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Solar Designer — คำนวณขนาดระบบโซลาร์ On-Grid ค่าไฟที่ประหยัด และระยะคืนทุน">
-<title>Solar Designer — Version 1.5</title>
+<meta name="description" content="HONOURTH Solar Rooftop Design — คำนวณขนาดระบบโซลาร์ On-Grid ค่าไฟที่ประหยัด และระยะคืนทุน">
+<title>HONOURTH Solar Rooftop Design — Version 1.8</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -510,6 +510,28 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
 .hint b,.chip b,.stats b,.pill b,.thrlbl b,.sys .rec b{margin:0 .15em}
 .sys .rec b{font-weight:600;font-size:14px}
 .ckbadge b{font-weight:600}
+/* v1.6: 3 หน้า — ตั้งค่า | ข้อมูล | สรุปผล */
+.instrip{display:none}
+body.work.p-in .instrip{display:flex;align-items:center;justify-content:space-between;gap:6px 14px;flex-wrap:wrap;background:var(--acc-bg);color:var(--acc-tx);border:1px solid var(--bd);border-radius:10px;padding:7px 12px;font-size:13px;margin-top:10px;flex:none}
+.instrip b{font-family:var(--mono);font-weight:600;margin:0 .12em;color:var(--tx)}
+body.work.p-in #results{display:none}
+body.work.p-sum .col-in{display:none}
+body.work.p-in .grid{grid-template-columns:minmax(0,1180px)!important;justify-content:center}
+body.work.p-sum .grid{grid-template-columns:minmax(0,1240px)!important;justify-content:center}
+@media(min-width:1280px){
+  body.work.p-in .col-in{display:flex;flex-direction:column;overflow:hidden}
+  body.work.p-in .modein{flex:1;min-height:0;height:auto}
+}
+.sumhead{display:flex;align-items:baseline;gap:4px 12px;flex-wrap:wrap}
+.sumhead h2{margin:0;font-size:17px}
+.sumhead h2 span{font-weight:500;color:var(--mu)}
+.sumhead>span{font-size:12.5px}
+.tech>summary small{color:var(--mu);font-weight:400;margin-left:6px;font-size:12px}
+.tech .charts,.tech .two,.tech>.card{margin-top:10px}
+table.yt{width:100%}
+table.yt th,table.yt td{text-align:right;white-space:nowrap;padding-top:3px;padding-bottom:3px}
+table.yt th:first-child,table.yt td:first-child{text-align:left}
+table.yt tfoot td{font-weight:600}
 /* battery breakdown */
 .bbox{margin-top:8px;border:1px solid var(--bd);border-left:3px solid var(--bt);border-radius:8px;padding:5px 10px 6px}
 .bbox h4{margin:0;font-size:12px;font-weight:600;color:var(--bt)}
@@ -523,16 +545,86 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
   .two.tri>#nCard{grid-column:1/-1}
   .two.tri>details{break-inside:avoid}
 }
+@media print{
+  body.work.p-in #results{display:flex!important}
+  .instrip{display:none!important}
+}
+.sumhead{display:none}
+body.work.p-in .instrip{padding:4px 12px;margin-top:8px}
+.selfcard .ck.ck2 label{padding:1px 4px}
+
+/* v1.7: เรียงซ้าย→ขวา เต็มจอ */
+@media(min-width:1200px) and (min-height:600px){
+  body:not(.work) #home{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:auto 1fr}
+  body:not(.work):not(.adv-on) #home{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+#home .advbar{grid-column:1/-1;margin:0}
+@media(min-width:1200px) and (min-height:600px){ body:not(.work) #home .advbar{padding-top:10px} }
+.hrs b{height:16px;font:8px/16px var(--mono);text-align:center;color:var(--fa);overflow:hidden}
+.hrs b.on{color:#fff}
+@media(pointer:coarse){.hrs b{height:20px;line-height:20px}}
+.pick{position:fixed;z-index:90;background:var(--sf);border:1px solid var(--bd2);border-radius:9px;box-shadow:0 10px 28px rgba(0,0,0,.2);padding:5px;display:grid;grid-template-columns:repeat(3,58px);gap:4px}
+.pick button{border:1px solid var(--bd);background:var(--sf2);border-radius:6px;padding:4px 2px;font:12px var(--mono);cursor:pointer;color:var(--tx)}
+.pick button:hover,.pick button.on{border-color:var(--acc);background:var(--acc-bg);color:var(--acc-tx)}
+input[data-pick]{cursor:pointer}
+body.work.p-in .grid{grid-template-columns:minmax(0,1fr)!important;max-width:none}
+body.work.p-sum .grid{grid-template-columns:minmax(0,1fr)!important;max-width:none}
+@media(min-width:1020px){
+  body.work.p-in .modein{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start}
+}
+@media(min-width:1280px){
+  body.work.p-in .modein{align-items:stretch}
+}
+.lcchk>summary small{font-weight:400}
+
+@media(min-width:1020px) and (max-width:1399px){
+  body.work.p-in #in-load{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(min-width:1280px) and (max-width:1399px){
+  body.work.p-in .col-in{overflow-y:auto}
+  body.work.p-in #in-load{height:auto;align-items:start}
+  body.work.p-in #in-load .pane{overflow:visible}
+}
+@media(min-width:1400px){
+  body.work.p-in #in-load{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+.lcw{font-size:11.5px;font-weight:500;margin-left:4px}
+
+/* v1.8: แบรนด์ HONOURTH · ตั้งค่าขั้นสูง · การ์ดวิธีคำนวณแบบภาพ */
+.brand .logo{height:38px;width:auto;flex:none;border-radius:4px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .brand .logo{background:#fff;padding:2px 3px}}
+.brand .bt b{font-size:15px;letter-spacing:.2px}
+.pub{display:flex;flex-direction:column;align-items:flex-end;line-height:1.2;margin-left:auto;padding:3px 10px;border:1px solid var(--acc);border-radius:9px;background:var(--acc-bg)}
+.pub .ver{font:700 13px var(--mono);color:var(--acc-tx);background:none;padding:0}
+.pub span{font-size:11.5px;color:var(--mu)} .pub span b{color:var(--tx);font-weight:700}
+.tabs{margin-left:0}
+@media(max-width:820px){.pub{margin-left:auto;padding:2px 8px}.pub span{font-size:10.5px}.brand .bt b{font-size:13px}.brand .logo{height:30px}}
+@media(max-width:520px){.pub span{display:none}}
+body:not(.adv-on) .adv{display:none!important}
+.advbar{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap;font-size:12px;margin:0 0 12px;column-span:all}
+.advbtn .st{font-size:11px;color:var(--mu);margin-left:2px}
+.instrip .isbtn{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#home .mcard{padding:10px 12px;gap:14px}
+#home .mcard .ill{width:108px;height:72px;flex:none;color:var(--acc)}
+#home .mcard .mt b{font-size:15px}
+#home .mcard .mt small{font-size:12px;line-height:1.45}
+#home .mcard .lvl{position:absolute;top:8px;right:10px}
+#home .mcard{position:relative}
+#home .mcard .mt{padding-right:44px}
+
+/* ชื่อเครื่องใช้ไฟฟ้าแสดงเต็ม ไม่ตัดท้าย (ขึ้นบรรทัดใหม่ได้) */
+.app-r textarea.nm{resize:none;overflow:hidden;field-sizing:content;min-height:26px;height:auto;white-space:normal;line-height:1.3;padding:3px 4px;font:500 12.5px var(--sans);text-align:left;background:none;border:1px solid transparent;border-radius:6px;color:var(--tx);width:100%;min-width:0;outline:none}
+.app-r textarea.nm:hover,.app-r textarea.nm:focus{border-color:var(--bd);background:var(--sf2)}
 </style>
 </head>
 <body>
 <header class="bar">
-  <div class="brand"><span class="sun" aria-hidden="true"></span><div class="bt"><b>Solar Designer <span class="ver">Version 1.5</span></b><small>Publish by Zenconpro · <span class="case" id="siteLbl"></span></small></div></div>
+  <div class="brand"><img class="logo" src="data:image/png;base64,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" alt="HONOUR THAILAND" width="30" height="38"><div class="bt"><b>HONOURTH Solar Rooftop Design</b><small><span class="case" id="siteLbl"></span></small></div></div>
+  <div class="pub" title="เวอร์ชันและผู้พัฒนา"><b class="ver">Version 1.8</b><span>Publish by <b>Virakharesh</b></span></div>
   <nav class="tabs" id="tabs">
     <button data-go="home">ตั้งค่า</button>
-    <button data-go="roof" hidden>คำนวณจากหลังคา</button>
-    <button data-go="bill" hidden>คำนวณจากค่าไฟ</button>
-    <button data-go="load" hidden>คำนวณจากเครื่องใช้ไฟฟ้า</button>
+    <button data-go="in" hidden id="tabIn">ข้อมูล</button>
+    <button data-go="sum" hidden>สรุปผล</button>
   </nav>
   <div class="acts">
     <button class="ghost ib" id="btnShare" title="สร้างลิงก์ที่มีค่าของบ้านหลังนี้ทั้งหมด" aria-label="แชร์ลิงก์"><svg viewBox="0 0 20 20"><circle cx="15" cy="4.5" r="2.2"/><circle cx="5" cy="10" r="2.2"/><circle cx="15" cy="15.5" r="2.2"/><path d="M7 9l6-3.4M7 11l6 3.4"/></svg><span>แชร์ลิงก์</span></button>
@@ -544,43 +636,7 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
 
 <!-- ═════════ HOME ═════════ -->
 <section id="home">
-  <div class="hcol">
-    <div class="card hcard">
-      <h3>บ้านที่บันทึกไว้ <small id="hsCnt"></small></h3>
-      <div class="hlist" id="hList" role="list"></div>
-      <div class="cbb hbtns">
-        <button class="btn sm" id="caseNew">+ เพิ่มบ้านหลังใหม่</button>
-        <button class="ghost" id="caseDup">ทำสำเนาหลังนี้</button>
-        <button class="ghost" id="caseDel">ลบหลังนี้</button>
-        <button class="ghost" id="btnReset">คืนค่าเริ่มต้น</button>
-      </div>
-      <div class="cnew" id="cnBox" hidden>
-        <label class="f"><span>ชื่อบ้าน / ลูกค้า</span><input type="text" class="tx" id="cnName" placeholder="เช่น บ้านคุณสมชาย แปลง A-12"></label>
-        <label class="f"><span>เริ่มจากแบบ</span><select id="cnTpl"></select></label>
-        <div class="cbb"><button class="btn sm" id="cnOk">บันทึกหลังใหม่</button><button class="linkbtn" id="cnCancel">ยกเลิก</button></div>
-      </div>
-      <p class="hint"><span class="nw">บันทึกให้อัตโนมัติทุกครั้งที่แก้</span> <span class="nw">(เก็บในเบราว์เซอร์นี้)</span><br><button class="linkbtn" id="bkExp">สำรองทุกหลังเป็นไฟล์</button> · <button class="linkbtn" id="bkImp">เปิดจากไฟล์สำรอง</button><input type="file" id="bkFile" accept=".json,application/json" hidden></p>
-    </div>
-    <div class="card">
-      <h3>เลือกวิธีคำนวณ <small>เลือก 1 วิธี</small></h3>
-      <div class="modes">
-        <button class="mcard" data-go="roof">
-          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22 20 8l16 14"/><path d="M9 18v16h22V18"/><path d="M13 17l5-4h10l-5 4z" fill="currentColor" opacity=".25"/></svg>
-          <span class="mt"><b>จากพื้นที่หลังคา</b><small>รู้แค่ขนาดหลังคา · ติดได้กี่แผง น้ำหนักผ่านไหม</small></span><span class="lvl">เร็ว</span>
-        </button>
-        <button class="mcard" data-go="bill">
-          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4h22v32l-4-3-3 3-4-3-4 3-3-3-4 3z"/><path d="M14 13h12M14 19h12M14 25h7"/></svg>
-          <span class="mt"><b>จากค่าไฟรายเดือน</b><small>มีบิลค่าไฟ · แนะนำขนาดและจุดคุ้มทุน</small></span><span class="lvl">กลาง</span>
-        </button>
-        <button class="mcard" data-go="load">
-          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 4v8M25 4v8"/><path d="M10 12h20v7a10 10 0 0 1-20 0z"/><path d="M20 29v7"/></svg>
-          <span class="mt"><b>จากเครื่องใช้ไฟฟ้า</b><small>กรอกเครื่องใช้และเวลาใช้จริง · ตรวจกับตารางโหลด</small></span><span class="lvl">ละเอียด</span>
-        </button>
-      </div>
-      <p class="hint" id="mHint"></p>
-    </div>
-  </div>
-
+  <div class="advbar"><button class="ghost advbtn" type="button">⚙ ตั้งค่าขั้นสูง <span class="st"></span></button><span class="c-mu" id="advSum"></span></div>
   <div class="hcol">
     <div class="card">
       <h3>ข้อมูลอาคาร</h3>
@@ -612,6 +668,7 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
     <div class="card">
       <h3>ที่ตั้งและแดด</h3>
       <label class="f"><span>ที่ตั้ง</span><select id="sitePreset"></select></label>
+      <div class="adv">
       <div class="row">
         <label class="f"><span>ละติจูด</span><input type="number" id="lat" data-k="site.lat" step="0.0001"></label>
         <label class="f"><span>ลองจิจูด</span><input type="number" id="lon" data-k="site.lon" step="0.0001"></label>
@@ -620,14 +677,23 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
         <label class="f"><span>PSH เฉลี่ยทั้งปี</span><input type="number" id="psh" data-k="site.psh" step="0.1" min="1" max="8"></label>
         <label class="f"><span>PR</span><input type="number" id="pr" data-k="site.pr" step="0.01" min="0.5" max="1"></label>
       </div>
+      </div>
       <p class="hint">ผลิตได้ <b id="yieldTxt"></b> kWh/kWp/วัน · <a href="https://re.jrc.ec.europa.eu/pvg_tools/en/" target="_blank" rel="noopener">เช็กกับ PVGIS</a></p>
-      <details class="msub"><summary>แดดรายเดือน (PSH kWh/ม²/วัน)</summary>
+<div class="adv">      <details class="msub"><summary>แดดรายเดือน (PSH kWh/ม²/วัน)</summary>
         <div class="mgrid" id="mGrid"></div>
         <p class="hint">ค่าเริ่มต้นตามภูมิภาค (NASA) แก้เป็นค่า PVGIS รายเดือนได้ · <button class="linkbtn" id="mReset">คืนค่าภูมิภาค</button></p>
-      </details>
+      </details></div>
     </div>
 
     <div class="card">
+      <h3>ราคาระบบโดยประมาณ</h3>
+      <div class="row">
+        <label class="f"><span>แผง+Inv.+ติดตั้ง (บ./W)</span><input type="number" id="cw" data-k="price.w" step="0.5"></label>
+        <label class="f"><span>แบตเตอรี่ (บ./kWh)</span><input type="number" id="cb" data-k="price.batt" step="500"></label>
+      </div>
+    </div>
+
+    <div class="card adv">
       <h3>แผงโซลาร์</h3>
       <div class="row">
         <label class="f"><span>วัตต์/แผง</span><input type="number" id="pw" data-k="panel.w" step="5" min="100"></label>
@@ -640,18 +706,26 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
       </div>
       <div class="chips" id="pWarn"></div>
     </div>
-
-    <div class="card">
-      <h3>ราคาระบบโดยประมาณ</h3>
-      <div class="row">
-        <label class="f"><span>แผง+Inv.+ติดตั้ง (บ./W)</span><input type="number" id="cw" data-k="price.w" step="0.5"></label>
-        <label class="f"><span>แบตเตอรี่ (บ./kWh)</span><input type="number" id="cb" data-k="price.batt" step="500"></label>
+    <div class="card hcard">
+      <h3>บ้านที่บันทึกไว้ <small id="hsCnt"></small></h3>
+      <div class="hlist" id="hList" role="list"></div>
+      <div class="cbb hbtns">
+        <button class="btn sm" id="caseNew">+ เพิ่มบ้านหลังใหม่</button>
+        <button class="ghost" id="caseDup">ทำสำเนาหลังนี้</button>
+        <button class="ghost" id="caseDel">ลบหลังนี้</button>
+        <button class="ghost" id="btnReset">คืนค่าเริ่มต้น</button>
       </div>
+      <div class="cnew" id="cnBox" hidden>
+        <label class="f"><span>ชื่อบ้าน / ลูกค้า</span><input type="text" class="tx" id="cnName" placeholder="เช่น บ้านคุณสมชาย แปลง A-12"></label>
+        <label class="f"><span>เริ่มจากแบบ</span><select id="cnTpl"></select></label>
+        <div class="cbb"><button class="btn sm" id="cnOk">บันทึกหลังใหม่</button><button class="linkbtn" id="cnCancel">ยกเลิก</button></div>
+      </div>
+      <p class="hint"><span class="nw">บันทึกให้อัตโนมัติทุกครั้งที่แก้</span> <span class="nw">(เก็บในเบราว์เซอร์นี้)</span><br><button class="linkbtn" id="bkExp">สำรองทุกหลังเป็นไฟล์</button> · <button class="linkbtn" id="bkImp">เปิดจากไฟล์สำรอง</button><input type="file" id="bkFile" accept=".json,application/json" hidden></p>
     </div>
   </div>
 
-  <div class="hcol">
-    <div class="card">
+  <div class="hcol adv">
+    <div class="card adv">
       <h3>เกณฑ์แนะนำขนาดระบบ</h3>
       <div class="seg" id="thrSeg"><button data-t="90">คุ้มสุด</button><button data-t="80">สมดุล</button><button data-t="70">ผลิตเยอะ</button><button data-t="c">กำหนดเอง</button></div>
       <div class="thrbar" aria-hidden="true"><i id="thrI"></i></div>
@@ -660,7 +734,7 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
       <label class="f" id="thrCustF" style="margin-top:8px"><span>ใช้เองอย่างน้อย (%)</span><input type="number" id="thr" data-k="thr" min="50" max="100" step="1"></label>
     </div>
 
-    <div class="card">
+    <div class="card adv">
       <h3>สมมติฐานความคุ้มค่า 25 ปี</h3>
       <div class="fgrid">
         <label class="f"><span>ค่าไฟขึ้น (%/ปี)</span><input type="number" data-k="fin.esc" step="0.5" min="0" max="10"></label>
@@ -685,11 +759,45 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
       <p class="hint" id="taxHint"></p>
     </div>
   </div>
+
+  <div class="hcol">
+    <div class="card">
+      <h3>เลือกวิธีคำนวณ <small>เลือก 1 วิธี</small></h3>
+      <div class="modes">
+        <button class="mcard" data-go="roof">
+          <svg class="ill" viewBox="0 0 120 80" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="100" cy="16" r="7"/><path d="M100 3v4M100 25v4M87 16h4M109 16h4M91 7l3 3M106 22l3 3M109 7l-3 3M94 22l-3 3"/>
+<path d="M10 44 46 16l36 28"/><path d="M18 38v34h56V38"/><path d="M40 72V54h12v18"/>
+<path d="M24 36 44 20.5l12 9.3L36 45.3z" fill="currentColor" fill-opacity=".12"/><path d="M29 32.2l12 9.3M34 28.3l12 9.3M40 24.4l12 9.3M30.2 40.6 50 25.2"/>
+<rect x="60" y="50" width="9" height="9" rx="1"/></g></svg>
+          <span class="mt"><b>จากพื้นที่หลังคา</b><small>รู้แค่ขนาดหลังคา · ติดได้กี่แผง น้ำหนักผ่านไหม</small></span><span class="lvl">เร็ว</span>
+        </button>
+        <button class="mcard" data-go="bill">
+          <svg class="ill" viewBox="0 0 120 80" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M20 6h44v68l-5.5-4-5.5 4-5.5-4-5.5 4-5.5-4-5.5 4-5.5-4-5.5 4z"/><path d="M28 18h20M28 27h28M28 36h24M28 45h28"/><path d="M28 58h12" stroke-width="3"/>
+<path d="M50 54l-4 8h6l-4 8" />
+<rect x="74" y="10" width="38" height="58" rx="5"/><circle cx="93" cy="32" r="12"/><path d="M93 32l7-6"/><circle cx="93" cy="32" r="2" fill="currentColor"/><rect x="82" y="50" width="22" height="8" rx="1.5"/><path d="M86 54h4M94 54h6"/></g></svg>
+          <span class="mt"><b>จากค่าไฟรายเดือน</b><small>มีบิลค่าไฟ · แนะนำขนาดและจุดคุ้มทุน</small></span><span class="lvl">กลาง</span>
+        </button>
+        <button class="mcard" data-go="load">
+          <svg class="ill" viewBox="0 0 120 80" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round">
+<rect x="4" y="8" width="22" height="64" rx="3"/><path d="M4 30h22M9 16v8M9 36v10"/>
+<rect x="32" y="34" width="28" height="38" rx="3"/><path d="M32 43h28"/><circle cx="46" cy="58" r="9"/><circle cx="46" cy="58" r="4"/><path d="M37 38.5h4"/>
+<rect x="64" y="8" width="52" height="16" rx="3"/><path d="M70 19h40M100 13h8"/>
+<circle cx="80" cy="46" r="11"/><path d="M80 46l-6-8M80 46l9-3M80 46l-2 10"/><path d="M80 57v11M72 72h16"/>
+<path d="M98 50h14l-2 22h-10z"/><path d="M112 54h3v10h-4"/><path d="M103 50v-4h4v4"/></g></svg>
+          <span class="mt"><b>จากเครื่องใช้ไฟฟ้า</b><small>กรอกเครื่องใช้และเวลาใช้จริง · ตรวจกับตารางโหลด</small></span><span class="lvl">ละเอียด</span>
+        </button>
+      </div>
+      <p class="hint" id="mHint"></p>
+    </div>
+  </div>
 </section>
 
 <!-- ═════════ WORK ═════════ -->
 <div class="grid" id="work" hidden>
   <div class="col-in">
+    <div class="instrip" id="inStrip"><div id="isTxt"></div><div class="isbtn"><button class="ghost advbtn" type="button">⚙ ตั้งค่าขั้นสูง <span class="st"></span></button><button class="btn sm" data-go="sum">ดูสรุปผล →</button></div></div>
 
     <div class="modein" id="in-roof" hidden>
       <div class="pane">
@@ -705,7 +813,7 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
             <div class="sub3">แอร์ที่เปิดช่วงกลางวัน</div>
             <div class="row row4">
               <label class="f"><span>เครื่อง</span><input type="number" data-k="m1.acN" min="0" step="1"></label>
-              <label class="f"><span>BTU/เครื่อง</span><input type="number" data-k="m1.acBtu" min="0" step="1000" list="btuList"></label>
+              <label class="f"><span>BTU/เครื่อง</span><input type="number" data-k="m1.acBtu" min="0" step="1000" data-pick="btu"></label>
               <label class="f"><span>เปิด</span><select data-k="m1.acS" data-num class="hsel"></select></label>
               <label class="f"><span>ปิด</span><select data-k="m1.acE" data-num class="hsel"></select></label>
             </div>
@@ -718,8 +826,8 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
             <input type="range" id="m1selfR" data-k="m1.self" min="0" max="100" step="1" aria-label="สัดส่วนใช้เอง">
           </div>
         </div>
-        <div class="slot-inv"></div>
       </div>
+      <div class="pane"><div class="slot-inv"></div></div>
     </div>
 
     <div class="modein" id="in-bill" hidden>
@@ -742,9 +850,9 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
           </div>
           <input type="range" id="m2dayR" data-k="m2.day" min="5" max="95" step="1" aria-label="สัดส่วนกลางวัน">
         </div>
-        <div class="slot-inv"></div>
       </div>
       <div class="pane"><div class="slot-roof"></div></div>
+      <div class="pane"><div class="slot-inv"></div></div>
     </div>
 
     <div class="modein" id="in-load" hidden>
@@ -753,7 +861,7 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
 
         <details class="card grp" open data-grp="ac">
           <summary><b>แอร์</b><span class="gsum" id="gs-ac"></span></summary>
-          <div class="gset">
+          <div class="gset adv">
             <div class="row">
               <label class="f"><span>kW/1,000 BTU</span><input type="number" id="ack" data-k="ac.k" step="0.005" min="0.05" max="0.2"></label>
               <label class="f"><span>ภาระขณะเดิน</span><select id="acplf" data-k="ac.plf"><option value="tou">ตามเวลา</option><option value="const">คงที่</option></select></label>
@@ -762,61 +870,53 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
             <div id="acFloors"></div>
           </div>
           <div class="ghead g-ac"><span></span><span>ห้อง</span><span>ชั้น</span><span>เครื่อง</span><span>BTU</span><span></span></div>
-          <div class="gax"><div class="hrs-ax"><span>00</span><span>03</span><span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span></div><span>kWh/วัน</span></div>
           <div class="glist" id="g-ac"></div>
           <div class="gfoot"><button class="btn sm" data-add="ac">+ เพิ่มแอร์</button></div>
         </details>
-
-        <details class="card grp" open data-grp="light">
-          <summary><b>แสงสว่าง</b><span class="gsum" id="gs-light"></span></summary>
-          <div class="ghead g-std"><span></span><span>ชื่อ</span><span>จำนวน</span><span>W/ดวง</span><span title="% ของดวงที่เปิดพร้อมกัน">%เปิด</span><span></span></div>
-          <div class="gax"><div class="hrs-ax"><span>00</span><span>03</span><span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span></div><span>kWh/วัน</span></div>
-          <div class="glist" id="g-light"></div>
-          <div class="gfoot"><input class="addq" data-addq="light" placeholder="+ พิมพ์ค้นหาเพื่อเพิ่ม เช่น ดาวน์ไลท์, LED, สปอตไลท์" aria-label="ค้นหาดวงโคม"></div>
-        </details>
-
+        <button class="danger adv" id="btnAppsReset" style="align-self:flex-start">คืนค่ารายการตั้งต้น</button>
+      </div>
+      <div class="pane">
         <details class="card grp" open data-grp="plug">
           <summary><b>เครื่องใช้ไฟฟ้า (เสียบเต้ารับ)</b><span class="gsum" id="gs-plug"></span></summary>
           <div class="ghead g-std"><span></span><span>ชื่อ</span><span>จำนวน</span><span>W/เครื่อง</span><span title="% ของชั่วโมงที่กินไฟเต็มพิกัด">%ทำงาน</span><span></span></div>
-          <div class="gax"><div class="hrs-ax"><span>00</span><span>03</span><span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span></div><span>kWh/วัน</span></div>
           <div class="glist" id="g-plug"></div>
           <div class="gfoot"><input class="addq" data-addq="plug" placeholder="+ พิมพ์ค้นหาเพื่อเพิ่ม เช่น ตู้เย็น, ทีวี, ไมโครเวฟ" aria-label="ค้นหาเครื่องใช้ไฟฟ้า"></div>
         </details>
-
-        <details class="card grp" open data-grp="fixed">
-          <summary><b>อุปกรณ์ติดตั้งประจำ</b><span class="gsum" id="gs-fixed"></span></summary>
-          <div class="ghead g-std"><span></span><span>ชื่อ</span><span>จำนวน</span><span>W/เครื่อง</span><span title="% ของชั่วโมงที่กินไฟเต็มพิกัด">%ทำงาน</span><span></span></div>
-          <div class="gax"><div class="hrs-ax"><span>00</span><span>03</span><span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span></div><span>kWh/วัน</span></div>
-          <div class="glist" id="g-fixed"></div>
-          <div class="gfoot"><input class="addq" data-addq="fixed" placeholder="+ พิมพ์ค้นหาเพื่อเพิ่ม เช่น น้ำอุ่น, ปั๊มน้ำ, ปั๊มสระ" aria-label="ค้นหาอุปกรณ์"></div>
-        </details>
-
         <details class="card grp" open data-grp="ev">
           <summary><b>ชาร์จรถไฟฟ้า (EV)</b><span class="gsum" id="gs-ev"></span></summary>
           <div class="evbox">
             <label class="tog"><span class="sw"><input type="checkbox" id="evon" data-k="ev.on"><i></i></span>มีรถไฟฟ้าชาร์จที่บ้าน</label>
-            <div class="row" style="margin-top:8px">
+            <div class="row adv" style="margin-top:8px">
               <label class="f"><span>เครื่องชาร์จ (Wallbox)</span><select id="evwb" data-k="ev.wb" data-num></select></label>
               <label class="f"><span>ประสิทธิภาพชาร์จ (%)</span><input type="number" id="evce" data-k="ev.ce" min="70" max="100" step="1"></label>
             </div>
             <div id="cars"></div>
             <button class="btn sm" id="carAdd" style="margin-top:8px">+ เพิ่มรถ</button>
             <div class="sub3">วิธีชาร์จ</div>
-            <label class="evopt"><input type="radio" name="evmode" value="solar"><span><b>ชาร์จกลางวันด้วยไฟโซลาร์ที่เหลือ</b><small>ชาร์จช่วง 09–16 น. เมื่อไฟโซลาร์เหลือจากบ้าน ≥ 1.4 kW · ถ้ายังไม่เต็ม ชาร์จต่อตามเวลาด้านล่าง</small></span></label>
-            <label class="evopt"><input type="radio" name="evmode" value="fixed"><span><b>ชาร์จตามเวลาที่ตั้ง</b><small>เริ่มชาร์จตามเวลาด้านล่างจนเต็ม ไม่รอแดด (เช่น กลับบ้านเสียบตอนกลางคืน)</small></span></label>
-            <div class="row" style="margin-top:8px"><label class="f"><span id="evstartL">เวลาเริ่มชาร์จ</span><select id="evstart" data-k="ev.start" data-num></select></label></div>
+            <label class="evopt"><input type="radio" name="evmode" value="solar"><span><b>ชาร์จกลางวันด้วยไฟโซลาร์ที่เหลือ</b><small><span class="nw">ชาร์จช่วง 09–16 น.</span> <span class="nw">เมื่อไฟโซลาร์เหลือจากบ้าน ≥ 1.4 kW</span> <span class="nw">· ถ้ายังไม่เต็ม ชาร์จต่อตามเวลาด้านล่าง</span></small></span></label>
+            <label class="evopt"><input type="radio" name="evmode" value="fixed"><span><b>ชาร์จตามเวลาที่ตั้ง</b><small><span class="nw">เริ่มชาร์จตามเวลาด้านล่างจนเต็ม ไม่รอแดด</span> <span class="nw">(เช่น กลับบ้านเสียบตอนกลางคืน)</span></small></span></label>
+            <label class="evopt"><input type="radio" name="evmode" value="custom"><span><b>กำหนดช่วงเวลาชาร์จเอง</b><small><span class="nw">คลิกเลือกชั่วโมงที่ชาร์จ</span> <span class="nw">เลือกได้ทั้งกลางวันและกลางคืน</span> <span class="nw">· ชาร์จเต็มกำลังในชั่วโมงที่เลือกจนเต็ม</span></small></span></label>
+            <div id="evHrsBox" style="margin-top:8px"><div class="hrs evh" id="evHrs"></div></div>
+            <div class="row" id="evStartRow" style="margin-top:8px"><label class="f"><span id="evstartL">เวลาเริ่มชาร์จ</span><select id="evstart" data-k="ev.start" data-num></select></label></div>
             <p class="hint" id="evInfo"></p>
           </div>
         </details>
-        <button class="danger" id="btnAppsReset" style="align-self:flex-start">คืนค่ารายการตั้งต้น</button>
       </div>
-
       <div class="pane">
-        <div class="slot-roof"></div>
-        <div class="slot-inv"></div>
-
-        <details class="card grp" open id="lcCard">
-          <summary><b>ตรวจกับตารางโหลด</b><span class="lcsum" id="lcSum"></span></summary>
+        <details class="card grp" open data-grp="light">
+          <summary><b>แสงสว่าง</b><span class="gsum" id="gs-light"></span></summary>
+          <div class="ghead g-std"><span></span><span>ชื่อ</span><span>จำนวน</span><span>W/ดวง</span><span title="% ของดวงที่เปิดพร้อมกัน">%เปิด</span><span></span></div>
+          <div class="glist" id="g-light"></div>
+          <div class="gfoot"><input class="addq" data-addq="light" placeholder="+ พิมพ์ค้นหาเพื่อเพิ่ม เช่น ดาวน์ไลท์, LED, สปอตไลท์" aria-label="ค้นหาดวงโคม"></div>
+        </details>
+        <details class="card grp" open data-grp="fixed">
+          <summary><b>อุปกรณ์ติดตั้งประจำ</b><span class="gsum" id="gs-fixed"></span></summary>
+          <div class="ghead g-std"><span></span><span>ชื่อ</span><span>จำนวน</span><span>W/เครื่อง</span><span title="% ของชั่วโมงที่กินไฟเต็มพิกัด">%ทำงาน</span><span></span></div>
+          <div class="glist" id="g-fixed"></div>
+          <div class="gfoot"><input class="addq" data-addq="fixed" placeholder="+ พิมพ์ค้นหาเพื่อเพิ่ม เช่น น้ำอุ่น, ปั๊มน้ำ, ปั๊มสระ" aria-label="ค้นหาอุปกรณ์"></div>
+        </details>
+        <details class="card grp lcchk" id="lcCard">
+          <summary><b>ตรวจกับตารางโหลด</b> <small class="c-mu">(ไม่บังคับ)</small><span class="lcsum" id="lcSum"></span></summary>
           <div class="lcbar">
             <div class="seg sm" data-seg="lcm.mode"><button data-v="ckt">รายวงจร</button><button data-v="tot">VA รวม</button></div>
             <span class="sp"></span>
@@ -840,6 +940,10 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
             </details>
           </div>
         </details>
+      </div>
+      <div class="pane">
+        <div class="slot-roof"></div>
+        <div class="slot-inv"></div>
       </div>
     </div>
 
@@ -871,8 +975,8 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
         <div><small>พื้นที่แผง</small><b id="sArea"></b></div>
         <div><small>น้ำหนักรวม</small><b id="sKg"></b></div>
       </div>
-      <div class="sub3">น้ำหนักบนหลังคา (แผง + โครงยึด)</div>
-      <div class="row">
+      <div class="sub3 adv">น้ำหนักบนหลังคา (แผง + โครงยึด)</div>
+      <div class="row adv">
         <label class="f" style="grid-column:span 2"><span>ชนิดโครงยึด</span><select id="mType" data-k="roof.mtype"></select></label>
         <label class="f" id="mCustF"><span>โครงยึด (กก./ม²)</span><input type="number" id="rMount" data-k="roof.mount" step="0.5" min="0"></label>
         <div class="f"><span>รวม (กก./ม²)</span><div class="ro" id="wVal"></div></div>
@@ -883,7 +987,7 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
     <!-- inverter / battery / sell-back card -->
     <div class="card sys" id="invBox">
       <h3>อินเวอร์เตอร์ แบตเตอรี่ และการขายไฟ <span class="tag" id="sysTag">On-Grid</span></h3>
-      <div class="row">
+      <div class="row adv">
         <label class="f"><span>อินเวอร์เตอร์ (kW AC)</span><select id="invSel" data-k="inv.kw" data-num></select></label>
         <div class="f"><span>DC/AC · ปกติ 1.1–1.3</span><div class="ro" id="dcac"></div></div>
       </div>
@@ -905,28 +1009,29 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
 
   <div class="col-out" id="results">
     <div class="printonly phd" id="printHead"></div>
+    <div class="sumhead"><h2>สรุปผล <span id="sumName"></span></h2><span class="c-mu" id="sumSub"></span></div>
     <div class="kpis">
       <div class="kpi"><small>ขนาดระบบ</small><b id="kKwp"></b><span id="kN"></span></div>
-      <div class="kpi"><small>ผลิตไฟ</small><b id="kGen"></b><span id="kGenM"></span></div>
-      <div class="kpi hi"><small>ประหยัด/เดือน</small><b id="kSave"></b><span id="kSaveY"></span></div>
+      <div class="kpi"><small>เงินลงทุน</small><b id="kInv"></b><span id="kInvS"></span></div>
+      <div class="kpi hi"><small>ประหยัดค่าไฟ (ปีแรก)</small><b id="kSave"></b><span id="kSaveY"></span></div>
       <div class="kpi"><small>คืนทุน</small><b id="kPay"></b><span id="kCost"></span></div>
     </div>
     <div class="pill" id="roofPill"></div>
-    <div class="charts">
+    <div class="two">
       <div class="card chart">
-        <h3>ใช้ vs ผลิต รายชั่วโมง <small>(วันเฉลี่ย)</small></h3>
-        <div class="legend" id="legend"></div>
-        <div id="chart"></div>
-        <div class="stats" id="flow"></div>
+        <h3 id="bTitle">ค่าไฟรายเดือน: ไม่ติด vs ติดโซลาร์</h3>
+        <div class="legend" id="bLegend"></div>
+        <div id="bChart"></div>
+        <div class="stats" id="bStats"></div>
       </div>
-      <div class="card chart">
-        <h3>รายเดือน <small id="mSub"></small></h3>
-        <div class="legend" id="mLegend"></div>
-        <div id="mChart"></div>
+      <div class="card">
+        <h3>ค่าไฟรายปี <small id="ySub"></small></h3>
+        <div class="tblwrap"><table class="ht yt" id="ytbl"></table></div>
+        <p class="hint" id="yNote"></p>
       </div>
     </div>
     <div class="two">
-      <div class="card"><h3>ค่าไฟและความคุ้มค่า</h3><dl class="kv sm" id="money"></dl>
+      <div class="card"><h3>ความคุ้มค่า</h3><dl class="kv sm" id="money"></dl>
         <div class="bbox" id="battBox" hidden><h4 id="battH">แบตเตอรี่ · แยกคิด</h4><dl class="kv sm" id="battMoney"></dl><p class="note" id="battNote"></p></div></div>
       <div class="card chart">
         <h3>เงินสะสม 25 ปี <small id="cfSub"></small></h3>
@@ -934,12 +1039,28 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
         <div class="stats" id="cfStats"></div>
       </div>
     </div>
-    <div class="two tri">
-      <details class="card tb" id="mCard"><summary><b>ตารางรายเดือน</b></summary><div class="tblwrap"><table class="ht" id="mtbl"></table></div></details>
-      <details class="card tb" id="hCard"><summary><b>ตารางรายชั่วโมง</b></summary><div class="tblwrap"><table class="ht" id="htbl"></table></div></details>
-      <details class="card tb" id="nCard"><summary><b>สมมติฐานการคำนวณ</b></summary><div class="note" id="notes"></div></details>
-    </div>
-    <div class="card" id="brkCard"><h3>ใช้ไฟแยกตามหมวด <small class="c-mu" style="font-weight:400">kWh/วัน</small></h3><div class="brk" id="brk"></div></div>
+    <details class="card tech" id="techCard"><summary><b>รายละเอียดทางเทคนิค</b> <small>กราฟรายชั่วโมง · ผลิตไฟรายเดือน · ตาราง · สมมติฐาน</small></summary>
+      <p class="hint"><span class="nw">ผลิตไฟ <b id="kGen"></b></span> <span class="nw">· <span id="kGenM"></span></span></p>
+      <div class="charts">
+        <div class="card chart">
+          <h3>ใช้ vs ผลิต รายชั่วโมง <small>(วันเฉลี่ย)</small></h3>
+          <div class="legend" id="legend"></div>
+          <div id="chart"></div>
+          <div class="stats" id="flow"></div>
+        </div>
+        <div class="card chart">
+          <h3>ผลิตไฟรายเดือน <small id="mSub"></small></h3>
+          <div class="legend" id="mLegend"></div>
+          <div id="mChart"></div>
+        </div>
+      </div>
+      <div class="two tri">
+        <details class="card tb" id="mCard"><summary><b>ตารางรายเดือน</b></summary><div class="tblwrap"><table class="ht" id="mtbl"></table></div></details>
+        <details class="card tb" id="hCard"><summary><b>ตารางรายชั่วโมง</b></summary><div class="tblwrap"><table class="ht" id="htbl"></table></div></details>
+        <details class="card tb" id="nCard"><summary><b>สมมติฐานการคำนวณ</b></summary><div class="note" id="notes"></div></details>
+      </div>
+      <div class="card" id="brkCard"><h3>ใช้ไฟแยกตามหมวด <small class="c-mu" style="font-weight:400">kWh/วัน</small></h3><div class="brk" id="brk"></div></div>
+    </details>
   </div>
 </div>
 <div class="combo" id="combo" role="listbox" hidden></div>
@@ -948,7 +1069,7 @@ table.ftbl th:first-child,table.ftbl td:first-child{text-align:left}
 (function(){
 'use strict';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const VER='1.5', LS_CASES='solar-cases-v1', LS_V8='solar-v8', LS_V7='solar-v7';
+const VER='1.8', LS_CASES='solar-cases-v1', LS_V8='solar-v8', LS_V7='solar-v7';
 const rng=(a,b)=>{const r=[];for(let i=a;i<b;i++)r.push(i%24);return r;};
 const clone=o=>JSON.parse(JSON.stringify(o));
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1176,19 +1297,16 @@ const A=(g,o)=>Object.assign({id:'d'+(++appSeq)+Math.random().toString(36).slice
 const DBA=(name,o)=>{ const d=APPDB.find(x=>x.n===name); return A(d.g,Object.assign({name:d.n,w:d.w,duty:d.d,hrs:d.h.slice()},o||{})); };
 function spectraApps(){ return [
   A('ac',{name:'ห้องนั่งเล่น 1',code:'CDU 1-1',fl:1,btu:18000,hrs:rng(9,18),lc:'c11'}),
-  A('ac',{name:'ห้องทานอาหาร',code:'CDU 1-2',fl:1,btu:48000,hrs:rng(9,18),lc:'c12'}),
+  A('ac',{name:'ห้องรับประทานอาหาร',code:'CDU 1-2',fl:1,btu:48000,hrs:rng(9,18),lc:'c12'}),
   A('ac',{name:'ห้องนอน 1',code:'CDU 1-3',fl:1,btu:12000,hrs:rng(9,18),lc:'c13'}),
   A('ac',{name:'ห้องนอน 2',code:'CDU 2-1',fl:2,btu:24000,hrs:rng(19,31),lc:'c21'}),
   A('ac',{name:'ห้องนอน 3',code:'CDU 2-2',fl:2,btu:24000,hrs:rng(19,31),lc:'c22'}),
   A('ac',{name:'ห้องนั่งเล่น 2',code:'CDU 2-3',fl:2,btu:36000,hrs:rng(19,31),lc:'c23'}),
   A('ac',{name:'ห้องนอน Master',code:'CDU 2-4',fl:2,btu:48000,hrs:rng(19,31),lc:'c24'}),
   A('ac',{name:'ห้องนอน Master (2)',code:'CDU 2-5',fl:2,btu:24000,hrs:rng(19,31),lc:''}),
-  A('light',{name:'ดาวน์ไลท์ LED 7W ชั้น 1',qty:36,w:7,duty:50,hrs:[6].concat(rng(18,23)),lc:'lt',src:'นับจากแปลนไฟฟ้าแสงสว่าง'}),
-  A('light',{name:'ดาวน์ไลท์ LED 7W ชั้น 2',qty:27,w:7,duty:50,hrs:[6].concat(rng(19,24)),lc:'lt',src:'นับจากแปลนไฟฟ้าแสงสว่าง'}),
-  A('light',{name:'โคมผนัง/หัวเตียง LED 11W',qty:10,w:11,duty:60,hrs:rng(19,23),lc:'lt'}),
-  A('light',{name:'โคมห้อยตกแต่ง',qty:4,w:20,duty:100,hrs:rng(19,22),lc:'lt',src:'ใส่วัตต์หลอด LED จริง'}),
-  A('light',{name:'ไฟสนาม ปักดิน / ภายนอก',qty:12,w:6,duty:100,hrs:rng(18,24),lc:'lt'}),
-  A('light',{name:'LED Strip 6W/ม. (จำนวน = เมตร)',qty:10,w:6,duty:100,hrs:rng(18,23),lc:'lt'}),
+  A('light',{name:'ดาวน์ไลท์ 7W ชั้น 1',qty:36,w:7,duty:50,hrs:[6].concat(rng(18,23)),lc:'lt',src:'แปลนแสงสว่างชั้น 1 · SPECTRA TYPE A rev.2'}),
+  A('light',{name:'ดาวน์ไลท์ 7W ชั้น 2',qty:30,w:7,duty:50,hrs:[6].concat(rng(19,24)),lc:'lt',src:'แปลนแสงสว่างชั้น 2 · SPECTRA TYPE A rev.2'}),
+  A('light',{name:'โคมติดผนังภายนอก 11W',qty:4,w:11,duty:100,hrs:rng(18,23),lc:'lt',src:'แปลนแสงสว่างชั้น 1 (เสาโรงรถ/ระเบียง) · rev.2'}),
   A('plug',{name:'ตู้เย็น 2 ประตู Inverter',qty:1,w:150,duty:35,hrs:rng(0,24),lc:'rc',src:'ฉลากเบอร์ 5: kWh/ปี ÷ 365 = kWh/วัน'}),
   A('plug',{name:'ทีวี LED 55"',qty:2,w:110,duty:100,hrs:rng(19,23),lc:'rc'}),
   A('plug',{name:'Wi-Fi / Router / Standby',qty:1,w:40,duty:100,hrs:rng(0,24),lc:'rc'}),
@@ -1197,14 +1315,13 @@ function spectraApps(){ return [
   A('plug',{name:'เตารีดไอน้ำ',qty:1,w:2000,duty:40,hrs:[20],lc:'rc'}),
   A('plug',{name:'ไมโครเวฟ',qty:1,w:1200,duty:25,hrs:[7,18],lc:'rc'}),
   A('plug',{name:'หม้อหุงข้าว',qty:1,w:700,duty:50,hrs:[17],lc:'rc'}),
-  A('fixed',{name:'เตาไฟฟ้า HOB',qty:2,w:2000,duty:25,hrs:[7,18],lc:'hb'}),
+  A('fixed',{name:'เตาไฟฟ้า HOB',qty:2,w:6000,duty:8,hrs:[7,18],lc:'hb',src:'ตารางโหลด CKT 21, 25 · 6,000 VA/ชุด (ใช้จริงเฉลี่ย 8%)'}),
   A('fixed',{name:'เครื่องดูดควัน Hood',qty:2,w:150,duty:50,hrs:[18],lc:'hd'}),
-  A('fixed',{name:'เครื่องทำน้ำร้อน ห้องน้ำทั่วไป',qty:3,w:4500,duty:12,hrs:[6,7,20,21],lc:'wh'}),
-  A('fixed',{name:'เครื่องทำน้ำร้อน ห้องน้ำ Master (3 เฟส)',qty:1,w:8000,duty:15,hrs:[7,21],lc:'wh'}),
+  A('fixed',{name:'เครื่องทำน้ำร้อน ห้องน้ำทั่วไป',qty:3,w:6000,duty:12,src:'ตารางโหลด CKT 27, 29, 37 · 6,000 VA/ตัว',hrs:[6,7,20,21],lc:'wh'}),
+  A('fixed',{name:'เครื่องทำน้ำร้อน Master (3 เฟส)',qty:1,w:8000,duty:15,hrs:[7,21],lc:'wh',src:'ตารางโหลด CKT 31–35 · 8,000 VA'}),
   A('fixed',{name:'ปั๊มน้ำใช้',qty:1,w:300,duty:30,hrs:[6,7,8,18,19,20,21],lc:'pb'}),
-  A('fixed',{name:'ปั๊มสระว่ายน้ำ',qty:1,w:1500,duty:100,hrs:rng(9,17),on:false,lc:'sw',src:'เปิดถ้ามีสระ'}),
+  A('fixed',{name:'ปั๊มสระว่ายน้ำ',qty:1,w:1500,duty:100,hrs:rng(9,17),lc:'sw',src:'ตารางโหลด CKT 39 · 3,000 VA · ปั๊ม 1.5 kW เดิน 09–17 น.'}),
   A('fixed',{name:'ประตูรั้วอัตโนมัติ',qty:1,w:300,duty:5,hrs:[7,8,17,18],lc:'pr'}),
-  A('fixed',{name:'พัดลมดูดอากาศห้องน้ำ',qty:4,w:25,duty:50,hrs:[6,7,20,21,22],lc:'rc'})
 ];}
 function houseApps(){ return [
   A('ac',{name:'ห้องนั่งเล่น',fl:1,btu:18000,hrs:rng(18,23)}),
@@ -1261,7 +1378,7 @@ function baseState(){ return {
   m2:{by:'bill',bill:2000,units:0,prof:'home',day:31,n:null},
   m3:{n:null},
   ac:{k:0.095,plf:'tou',c:0.65},
-  ev:{on:false,wb:7.4,mode:'solar',start:22,ce:90,cars:[{id:'car1',model:'byd-atto3',name:'',km:40,eff:16,bat:60.5,ac:7,src:'db'}]},
+  ev:{on:false,wb:7.4,mode:'solar',start:22,hrs:[22,23,0,1,2,3],ce:90,cars:[{id:'car1',model:'byd-atto3',name:'',km:40,eff:16,bat:60.5,ac:7,src:'db'}]},
   lcm:{mode:'ckt',va:0},
   lc:[], apps:[]
 };}
@@ -1442,7 +1559,7 @@ function loadApps(kWp,Y){
   if(Y==null) Y=yieldK();
   const house=Array(24).fill(0), grp={ac:0,light:0,plug:0,fixed:0};
   for(const a of S.apps){ for(let h=0;h<24;h++){ const k=appKW(a,h); house[h]+=k; grp[a.g]+=k; } }
-  const ev=Array(24).fill(0); let need=0, fromSun=0;
+  const ev=Array(24).fill(0); let need=0, fromSun=0, short=0;
   if(S.ev.on){
     const pv=pvProf(kWp,Y), avail=pv.map((v,h)=>v-house[h]);
     for(const c of S.ev.cars){
@@ -1451,11 +1568,12 @@ function loadApps(kWp,Y){
       if(S.ev.mode==='solar'){
         for(let h=9;h<16&&rem>1e-6;h++){ const sur=avail[h]; if(sur>=1.4){ const x=Math.min(cap,sur,rem); mine[h]+=x; avail[h]-=x; rem-=x; fromSun+=x; } }
       }
+      if(S.ev.mode==='custom'){ const hs=(S.ev.hrs||[]).slice().sort((a,b)=>a-b), st=hs.find(h=>!hs.includes((h+23)%24))??hs[0]; for(let k=0;k<24&&rem>1e-6;k++){ const h=(st+k)%24; if(!hs.includes(h)) continue; const x=Math.min(cap-mine[h],rem); if(x>0){mine[h]+=x;rem-=x; const sn=Math.max(0,Math.min(x,avail[h])); fromSun+=sn; avail[h]-=sn;} } short+=Math.max(0,rem); rem=0; }
       for(let k=0;k<24&&rem>1e-6;k++){ const h=(S.ev.start+k)%24; const x=Math.min(cap-mine[h],rem); if(x>0){mine[h]+=x;rem-=x;} }
       mine.forEach((v,h)=>ev[h]+=v);
     }
   }
-  return {load:house.map((v,h)=>v+ev[h]), house, ev, need, fromSun, grp};
+  return {load:house.map((v,h)=>v+ev[h]), house, ev, need, fromSun, short, grp};
 }
 function buildLoad(kWp,Y){
   if(Y==null) Y=yieldK();
@@ -1493,10 +1611,11 @@ function finance(o){
   let taxOk=false, tax=0;
   if(tm==='person'){ taxOk= o.kWp<=10 && !!BT[S.bt].res; tax= taxOk? Math.min(pv,200000)*F.taxRate/100 : 0; }
   else if(tm==='corp'){ taxOk=true; tax= pv*F.eqPct/100*0.5*F.taxRate/100; }
-  const cf=[-o.cost];
+  const cf=[-o.cost], sv=[0], gf=[1];
   for(let y=1;y<=N;y++){
     const deg=(1-F.deg1/100)*Math.pow(1-F.deg/100,y-1);
-    let v=o.avoidY*deg*Math.pow(1+g,y-1) + (y<=F.sellYrs? o.expY*deg : 0) - F.om*o.n;
+    const s1=o.avoidY*deg*Math.pow(1+g,y-1) + (y<=F.sellYrs? o.expY*deg : 0); sv.push(s1); gf.push(Math.pow(1+g,y-1));
+    let v=s1 - F.om*o.n;
     if(F.invYr>0&&y===F.invYr) v-=F.invCost*o.inv;
     if(o.bOn&&y===11) v-=S.batt.kwh*S.price.batt;
     if(y===1) v+=tax;
@@ -1506,7 +1625,7 @@ function finance(o){
   let pay=Infinity; for(let y=1;y<=N;y++){ if(cum[y]>=0){ pay=(y-1)+(-cum[y-1])/(cf[y]||1); break; } }
   const npvAt=rt=>cf.reduce((s,v,y)=>s+v/Math.pow(1+rt,y),0);
   let irr=null; if(npvAt(0)>0){ let lo=-0.9,hi=1; for(let i=0;i<80;i++){ const m=(lo+hi)/2; if(npvAt(m)>0) lo=m; else hi=m; } irr=(lo+hi)/2; }
-  return {cf,cum,pay,npv:npvAt(r),irr,tax,taxOk,total:cum[N]};
+  return {cf,cum,pay,npv:npvAt(r),irr,tax,taxOk,total:cum[N],sv,gf};
 }
 
 /* ── bindings ── */
@@ -1532,6 +1651,8 @@ function syncInputs(skip){
   });
   $$('[data-seg]').forEach(seg=>{ const v=String(get(seg.dataset.seg)); seg.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===v)); });
   $$('input[name=evmode]').forEach(r=>r.checked=r.value===S.ev.mode);
+  const eh=S.ev.hrs||[]; $('#evHrs').innerHTML=Array.from({length:24},(_,h)=>`<b data-h="${h}" class="${eh.includes(h)?'on':''}${SH[h]>0?' sun':''}" title="${hh(h)}:00–${hh((h+1)%24)}:00">${h}</b>`).join('');
+  $('#evHrsBox').hidden=S.ev.mode!=='custom'; $('#evStartRow').hidden=S.ev.mode==='custom';
   const t=[90,80,70].includes(+S.thr)?String(S.thr):'c';
   $$('#thrSeg button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
   $('#thrCustF').hidden= t!=='c';
@@ -1600,7 +1721,17 @@ function initStatic(){
     const p=monPSH(); p[i]=v; const avg=dayAvg(p); S.site.psh=+avg.toFixed(2); S.site.shape=p.map(x=>+(x/avg).toFixed(4)); syncInputs(); renderMonths(); recalc(); });
   $('#mReset').addEventListener('click',()=>{ const s=SITES[S.site.preset]; S.site.shape=normShape(MREG[(s&&s.rg)||regionOf(S.site.lat,S.site.lon)]); renderMonths(); recalc(); });
   $('#thrSeg').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; if(b.dataset.t!=='c') S.thr=+b.dataset.t; else if([90,80,70].includes(+S.thr)) S.thr=85; syncInputs(); recalc(); });
-  $$('input[name=evmode]').forEach(r=>r.addEventListener('change',()=>{ S.ev.mode=r.value; recalc(); }));
+  $$('input[name=evmode]').forEach(r=>r.addEventListener('change',()=>{ S.ev.mode=r.value; syncInputs(); recalc(); }));
+  $('#evHrs').addEventListener('click',e=>{ const c=e.target.closest('b'); if(!c) return; const h=+c.dataset.h; const a=S.ev.hrs||(S.ev.hrs=[]); const i=a.indexOf(h); if(i>=0) a.splice(i,1); else a.push(h); c.classList.toggle('on',i<0); recalc(); });
+  // ตัวเลือก BTU: คลิกช่องแล้วเลือกได้ หรือพิมพ์เอง
+  const pop=document.createElement('div'); pop.className='pick'; pop.hidden=true; document.body.appendChild(pop); let pin=null;
+  const closeP=()=>{ pop.hidden=true; pin=null; };
+  document.addEventListener('focusin',e=>{ const t=e.target; if(!t.matches||!t.matches('input[data-pick="btu"]')){ if(!pop.contains(t)) closeP(); return; }
+    pin=t; const r=t.getBoundingClientRect(); pop.innerHTML=BTUS.map(v=>`<button type="button" data-v="${v}"${+t.value===v?' class="on"':''}>${nf(v)}</button>`).join('');
+    pop.style.left=Math.min(r.left,innerWidth-190)+'px'; pop.style.top=(r.bottom+4)+'px'; pop.hidden=false; });
+  pop.addEventListener('mousedown',e=>{ e.preventDefault(); const bt=e.target.closest('button'); if(!bt||!pin) return; pin.value=bt.dataset.v; pin.dispatchEvent(new Event('input',{bubbles:true})); pin.dispatchEvent(new Event('change',{bubbles:true})); const t=pin; closeP(); t.blur(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeP(); });
+  document.addEventListener('scroll',closeP,true);
   // roof planes
   $('#planes').addEventListener('input',e=>{ const f=e.target.dataset.pf; if(!f) return; const i=+e.target.closest('.pl').dataset.i, v=parseFloat(e.target.value); if(!isFinite(v)) return;
     S.roof.planes[i][f]=v; const p=S.roof.planes[i]; e.target.closest('.pl').querySelector('[data-pa]').textContent=f1(p.w*p.l)+' ม²'; recalc(); });
@@ -1647,7 +1778,7 @@ function initCases(){
       let n=0; CS.items[CS.active]=S;
       src.ids.forEach(id=>{ const s=fromSaved(src.items&&src.items[id]); if(!s) return; s.mode=null; const nid=newId(); CS.ids.push(nid); CS.items[nid]=s; n++; });
       if(!n) throw 0; save(); renderCaseSel(); toast(`เพิ่ม ${n} หลังจากไฟล์แล้ว · หลังเดิมยังอยู่ครบ`);
-    }catch(err){ toast('ไฟล์นี้ไม่ใช่ไฟล์สำรองของ Solar Designer'); } });
+    }catch(err){ toast('ไฟล์นี้ไม่ใช่ไฟล์สำรองของแอปนี้'); } });
 }
 
 /* ── appliances (compact rows) ── */
@@ -1655,16 +1786,16 @@ const GROUPS=['ac','light','plug','fixed'];
 const BTUS=[9000,12000,15000,18000,24000,30000,36000,48000,60000];
 function hrsHTML(a){
   let s='<div class="hrs" data-id="'+a.id+'">';
-  for(let h=0;h<24;h++) s+=`<b data-h="${h}" class="${a.hrs.includes(h)?'on':''}${SH[h]>0?' sun':''}" title="${hh(h)}:00"></b>`;
+  for(let h=0;h<24;h++) s+=`<b data-h="${h}" class="${a.hrs.includes(h)?'on':''}${SH[h]>0?' sun':''}" title="${hh(h)}:00–${hh((h+1)%24)}:00">${h}</b>`;
   return s+'</div>';
 }
 function appHTML(a){
   const num=(f,v,st,mn,mx,lbl)=>`<input type="number" data-f="${f}" value="${v}" step="${st}" min="${mn}"${mx!=null?` max="${mx}"`:''} aria-label="${lbl}">`;
   const mid= a.g==='ac'
-    ? `<select data-f="fl" aria-label="ชั้น">${[1,2,3,4].map(k=>`<option value="${k}"${a.fl==k?' selected':''}>${k}</option>`).join('')}</select>${num('qty',a.qty,1,0,null,'จำนวนเครื่อง')}<input type="number" data-f="btu" value="${a.btu}" step="1000" min="0" list="btuList" aria-label="BTU ต่อเครื่อง">`
+    ? `<select data-f="fl" aria-label="ชั้น">${[1,2,3,4].map(k=>`<option value="${k}"${a.fl==k?' selected':''}>${k}</option>`).join('')}</select>${num('qty',a.qty,1,0,null,'จำนวนเครื่อง')}<input type="number" data-f="btu" value="${a.btu}" step="1000" min="0" data-pick="btu" aria-label="BTU ต่อเครื่อง (คลิกเพื่อเลือก หรือพิมพ์เอง)">`
     : `${num('qty',a.qty,1,0,null,'จำนวน')}${num('w',a.w,1,0,null,'วัตต์ต่อชิ้น')}${num('duty',a.duty,5,0,100,'เปอร์เซ็นต์')}`;
   return `<div class="app${a.on?'':' off'}" data-id="${a.id}">
-    <div class="app-r ${a.g==='ac'?'g-ac':'g-std'}"><label class="sw sm" title="เปิด/ปิด"><input type="checkbox" data-f="on"${a.on?' checked':''} aria-label="ใช้งาน"><i></i></label><input class="nm" data-f="name" value="${esc(a.name)}" title="${esc(a.name)}${a.src?' — '+esc(a.src):''}" aria-label="ชื่อ" autocomplete="off">${mid}<button class="x" data-del aria-label="ลบ">×</button></div>
+    <div class="app-r ${a.g==='ac'?'g-ac':'g-std'}"><label class="sw sm" title="เปิด/ปิด"><input type="checkbox" data-f="on"${a.on?' checked':''} aria-label="ใช้งาน"><i></i></label><textarea class="nm" data-f="name" rows="1" title="${esc(a.name)}${a.src?' — '+esc(a.src):''}" aria-label="ชื่อ" autocomplete="off" spellcheck="false">${esc(a.name)}</textarea>${mid}<button class="x" data-del aria-label="ลบ">×</button></div>
     <div class="app-t">${hrsHTML(a)}<span class="kwh" data-kwh></span></div>
   </div>`;
 }
@@ -1686,6 +1817,7 @@ function initApps(){
     else { const v=parseFloat(el.value); if(!isFinite(v)) return; a[f]=v; }
     refreshRow(row,a); recalc();
   });
+  box.addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target.matches('textarea.nm')){ e.preventDefault(); e.target.blur(); } });
   box.addEventListener('change',e=>{ const f=e.target.dataset.f; if(f==='fl'){ const a=findApp(e.target.closest('.app').dataset.id); a.fl=+e.target.value; recalc(); } if(f==='name') renderMap(); });
   box.addEventListener('click',e=>{
     const d=e.target.closest('[data-del]'); if(d){ const id=d.closest('.app').dataset.id; S.apps=S.apps.filter(a=>a.id!==id); renderApps(); recalc(); return; }
@@ -1839,25 +1971,31 @@ function renderLC(){
   if(S.ev.on) rows.push(`<div class="lcr" title="ถ้าแยกมิเตอร์ จะใช้ไฟโซลาร์ไม่ได้"><span class="st s-mu">i</span><span class="nm2">เครื่องชาร์จรถไฟฟ้า</span><span class="ck">ถ้าแยกมิเตอร์ ใช้โซลาร์ไม่ได้</span><span class="va">${f1(S.ev.wb)} kW</span></div>`);
   if(!S.lc.length) rows.unshift(`<p class="hint" style="padding:8px 12px;margin:0">ยังไม่มีตารางโหลด — อัปโหลดไฟล์ หรือเพิ่มวงจรที่ "แก้ไขตารางโหลด"</p>`);
   $('#lcList').innerHTML=rows.join('');
-  $('#lcSum').innerHTML=S.lc.length?`<span class="s-ok">✓ ${ok}</span>${warn?`<span class="s-warn">! ${warn}</span>`:''}${bad?`<span class="s-bad">✗ ${bad}</span>`:''}`:'';
+  $('#lcSum').innerHTML=S.lc.length?`<span class="s-ok">✓ ${ok}</span>${warn?`<span class="s-warn">! ${warn}</span>`:''}${bad?`<span class="s-bad">✗ ${bad}</span>`:''}${(bad||warn)&&!$('#lcCard').open?' <span class="s-bad lcw">มีรายการไม่ตรงกับตารางโหลด — กดเพื่อดู</span>':''}`:'';
 }
 
 /* ── mode switching ── */
 const MODE_T={roof:'จากพื้นที่หลังคา',bill:'จากค่าไฟรายเดือน',load:'จากเครื่องใช้ไฟฟ้า'};
 const MODES={roof:'จากพื้นที่หลังคา',bill:'จากค่าไฟรายเดือน',load:'จากเครื่องใช้ไฟฟ้า'};
-function updateTabs(){ // แท็บบนแสดงเฉพาะ "ตั้งค่า" + วิธีที่เลือก
-  $$('#tabs button').forEach(b=>{ const g=b.dataset.go; b.hidden= g!=='home'&&g!==S.calc; b.classList.toggle('on',(g==='home'&&!S.mode)||g===S.mode); });
+const TABIN={roof:'ข้อมูลหลังคา',bill:'ข้อมูลค่าไฟ',load:'ข้อมูลเครื่องใช้ไฟฟ้า'};
+let PAGE='home';
+function updateTabs(){ // 3 แท็บ: ตั้งค่า | ข้อมูลตามวิธีที่เลือก | สรุปผล
+  $('#tabIn').textContent=TABIN[S.calc]||'ข้อมูล';
+  $$('#tabs button').forEach(b=>{ const g=b.dataset.go; b.hidden= g!=='home'&&!S.calc; b.classList.toggle('on',g===PAGE); });
   $$('#home .mcard').forEach(c=>c.classList.toggle('on',c.dataset.go===S.calc));
-  $('#mHint').innerHTML= S.calc? `<span class="nw">แท็บด้านบนแสดงเฉพาะวิธีที่เลือก</span> <span class="nw">— เปลี่ยนวิธีได้ที่นี่</span><br><span class="nw">ระบบคิดเป็น <b>On-Grid</b></span> <span class="nw">เพิ่มแบตเตอรี่ได้ (Hybrid)</span>`
-    : `<span class="nw">กดเลือก 1 วิธี แล้วแท็บคำนวณจะแสดงด้านบน</span><br><span class="nw">ระบบคิดเป็น <b>On-Grid</b></span> <span class="nw">เพิ่มแบตเตอรี่ได้ (Hybrid)</span>`;
+  $('#mHint').innerHTML= S.calc? `<span class="nw">กรอกข้อมูลในแท็บ "${TABIN[S.calc]}"</span> <span class="nw">แล้วดูผลในแท็บ "สรุปผล"</span><br><span class="nw">ระบบคิดเป็น <b>On-Grid</b></span> <span class="nw">เพิ่มแบตเตอรี่ได้ (Hybrid)</span>`
+    : `<span class="nw">กดเลือก 1 วิธี แล้วแท็บข้อมูลและสรุปผลจะแสดงด้านบน</span><br><span class="nw">ระบบคิดเป็น <b>On-Grid</b></span> <span class="nw">เพิ่มแบตเตอรี่ได้ (Hybrid)</span>`;
 }
-function go(m){
-  if(m==='home'||!(m in MODES)) m=null;
-  if(m) S.calc=m;
+function go(t){
+  if(t in MODES){ S.calc=t; t='in'; }
+  if((t!=='in'&&t!=='sum')||!S.calc) t='home';
+  PAGE=t; const m= t==='home'? null : S.calc;
   S.mode=m; save();
   $('#home').hidden=!!m; $('#work').hidden=!m;
   document.body.classList.toggle('work',!!m);
+  document.body.classList.toggle('p-in',t==='in'); document.body.classList.toggle('p-sum',t==='sum');
   updateTabs();
+  $$('.col-in,.col-out,.pane').forEach(e=>{ e.scrollTop=0; });
   comboClose();
   if(!m){ renderCaseSel(); recalc(); window.scrollTo(0,0); return; }
   $$('.modein').forEach(el=>el.hidden=el.id!=='in-'+m);
@@ -1913,7 +2051,7 @@ function drawMonthly(M,roof){
   $('#mLegend').innerHTML=`<span><i style="background:var(--pv)"></i>ผลิตไฟ</span>`+(roof?'':`<span><i style="background:var(--ld)"></i>ใช้ไฟ</span>`);
 }
 function drawCF(F,F0,FR){
-  const W=cw('#cfChart'),H=140,pl=44,pr=6,pt=14,pb=18, iw=W-pl-pr, ih=H-pt-pb, n=F.cum.length, bw=iw/n;
+  const W=cw('#cfChart'),H=sumH(),pl=44,pr=6,pt=14,pb=18, iw=W-pl-pr, ih=H-pt-pb, n=F.cum.length, bw=iw/n;
   const all=F.cum.concat(F0?F0.cum:[],FR?FR.lo.cum.concat(FR.hi.cum):[]), hi=Math.max(0,...all), lo=Math.min(0,...all), top=niceMax(hi||1), bot=-niceMax(-lo||1), span=top-bot;
   const y=v=>pt+(top-v)/span*ih;
   let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="กราฟเงินสะสม 25 ปี">`;
@@ -1927,6 +2065,39 @@ function drawCF(F,F0,FR){
   $('#cfChart').innerHTML=s+'</svg>';
 }
 const chip=(k,ic,html)=>`<div class="chip ${k}"><span class="ic">${ic}</span><span>${html}</span></div>`;
+
+const sumH=()=> innerWidth>=1020? Math.max(128,Math.min(280,Math.floor((innerHeight-440)/2))) : 140;
+/* ── ค่าไฟ ไม่ติด vs ติดโซลาร์ ── */
+function drawBill(M,F,roof,saveY){
+  const W=cw("#bChart"),H=sumH(),pl=44,pr=6,pt=14,pb=18, iw=W-pl-pr, ih=H-pt-pb, bw=iw/12;
+  const A=roof? M.map(o=>o.save) : M.map(o=>o.before), B=roof? null : M.map(o=>Math.max(0,o.after));
+  const mx=niceMax(Math.max(...A,1)); const y=v=>pt+ih-(v/mx)*ih;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="ค่าไฟรายเดือน">`;
+  for(let i=0;i<=4;i++){ const v=mx*i/4, yy=y(v); s+=`<line class="gl" x1="${pl}" x2="${W-pr}" y1="${yy}" y2="${yy}"/><text class="ax" x="${pl-6}" y="${yy+3.5}" text-anchor="end">${tick(v)}</text>`; }
+  s+=`<text class="ax" x="4" y="${pt-6}">บาท</text>`;
+  M.forEach((o,i)=>{ const x0=pl+i*bw;
+    if(roof){ s+=`<rect x="${x0+bw*.2}" y="${y(A[i])}" width="${bw*.6}" height="${y(0)-y(A[i])}" fill="var(--ex)" opacity=".85" rx="2"><title>${MNAME[i]} ประหยัด ${nf(A[i])} บ.</title></rect>`; }
+    else { s+=`<rect x="${x0+bw*.12}" y="${y(A[i])}" width="${bw*.36}" height="${y(0)-y(A[i])}" fill="var(--im)" opacity=".75" rx="2"><title>${MNAME[i]} ไม่ติดโซลาร์ ${nf(A[i])} บ.</title></rect><rect x="${x0+bw*.52}" y="${y(B[i])}" width="${bw*.36}" height="${y(0)-y(B[i])}" fill="var(--ex)" opacity=".9" rx="2"><title>${MNAME[i]} ติดโซลาร์ ${nf(B[i])} บ.</title></rect>`; }
+    if(W>=420||i%2===0) s+=`<text class="ax" x="${x0+bw/2}" y="${H-4}" text-anchor="middle">${MNAME[i]}</text>`; });
+  $('#bChart').innerHTML=s+'</svg>';
+  $('#bTitle').textContent= roof? 'ค่าไฟที่ประหยัดได้รายเดือน' : 'ค่าไฟรายเดือน: ไม่ติด vs ติดโซลาร์';
+  $('#bLegend').innerHTML= roof? `<span><i style="background:var(--ex)"></i>มูลค่าไฟที่ประหยัด</span>` : `<span><i style="background:var(--im);opacity:.75"></i>ไม่ติดโซลาร์</span><span><i style="background:var(--ex)"></i>ติดโซลาร์</span>`;
+  const bY=roof?0:M.reduce((a,o)=>a+o.before,0), aY=bY-saveY;
+  $('#bStats').innerHTML= roof? `<span class="nw">ปีแรกประหยัด <b class="ex">${nf(saveY)}</b> บ.</span> <span class="nw">· วิธีหลังคาไม่รู้ค่าไฟเดิมของบ้าน</span> <span class="nw">— ใช้วิธีค่าไฟ/เครื่องใช้ไฟฟ้าเพื่อเทียบก่อน–หลัง</span>`
+    : `<span class="nw">ปีแรก: ไม่ติด <b class="im">${nf(bY)}</b> บ.</span> <span class="nw">→ ติดโซลาร์ <b class="ex">${nf(aY)}</b> บ.</span> <span class="nw">· ลดลง <b>${nf(bY>0?saveY/bY*100:0)}%</b></span>`;
+  // ตารางรายปี
+  const yrs=[1,5,10,15,20,25]; let tb, tot=0, totB=0;
+  for(let y=1;y<=25;y++){ tot+=F.sv[y]; totB+=bY*F.gf[y]; }
+  if(roof){
+    let cum=0; const cm={}; for(let y=1;y<=25;y++){ cum+=F.sv[y]; cm[y]=cum; }
+    tb=`<thead><tr><th>ปีที่</th><th>ประหยัดในปีนั้น</th><th>ประหยัดสะสม</th></tr></thead><tbody>`+yrs.map(y=>`<tr><td>${y}</td><td class="c-ex">${nf(F.sv[y])}</td><td>${nf(cm[y])}</td></tr>`).join('')+`</tbody><tfoot><tr><td>รวม 25 ปี</td><td class="c-ex">${nf(tot)}</td><td></td></tr></tfoot>`;
+  } else {
+    tb=`<thead><tr><th>ปีที่</th><th>ไม่ติดโซลาร์</th><th>ติดโซลาร์</th><th>ลดลง</th></tr></thead><tbody>`+yrs.map(y=>{ const b=bY*F.gf[y], a=b-F.sv[y]; return `<tr><td>${y}</td><td class="c-im">${nf(b)}</td><td class="c-ex">${nf(a)}</td><td>${nf(F.sv[y])}</td></tr>`; }).join('')+`</tbody><tfoot><tr><td>รวม 25 ปี</td><td class="c-im">${nf(totB)}</td><td class="c-ex">${nf(totB-tot)}</td><td>${nf(tot)}</td></tr></tfoot>`;
+  }
+  $('#ytbl').innerHTML=tb;
+  $('#ySub').textContent=`(บาท/ปี · ค่าไฟขึ้น ${nf(S.fin.esc,1)}%/ปี)`;
+  $('#yNote').innerHTML=`<span class="nw">คิดแผงเสื่อม ${nf(S.fin.deg1,1)}% ปีแรก และ ${nf(S.fin.deg,1)}%/ปี</span> <span class="nw">· ยังไม่หักค่าดูแลและค่าเปลี่ยนอุปกรณ์</span> <span class="nw">(อยู่ในกรอบความคุ้มค่า)</span>`;
+}
 
 /* ── main recalc ── */
 function recalc(){
@@ -1954,6 +2125,7 @@ function recalc(){
     : tm==='corp'? `<span class="nw">พ.ร.ฎ. 805 · ภาษีลดเพิ่ม = 50% × ค่าอุปกรณ์ × อัตราภาษี</span> <span class="nw">· อุปกรณ์ใหม่เข้าเกณฑ์ พพ. ไม่รวมค่าแรง/แบต</span> <span class="nw">· ห้ามซ้ำ BOI · ถึง 31 ธ.ค. 71</span>`
     : '<span class="nw">ไม่นับสิทธิภาษีในจุดคุ้มทุน</span>';
   $('#scSum').textContent=`· แย่ ${sg(S.fin.scYlo)}% / ${nf(S.fin.scElo,1)}% · ดี ${sg(S.fin.scYhi)}% / ${nf(S.fin.scEhi,1)}%`;
+  $('#advSum').innerHTML=`<span class="nw">ค่าที่ใช้อยู่: แผง ${S.panel.w} W</span> <span class="nw">· ใช้เองอย่างน้อย ${nf(S.thr)}%</span> <span class="nw">· ค่าไฟขึ้น ${nf(S.fin.esc,1)}%/ปี</span> <span class="nw">· ภาษี: ${({none:'ไม่นับ',person:'บุคคล',corp:'นิติบุคคล 1.5 เท่า'})[S.fin.taxMode]}</span>`;
   $('#btnPrint').hidden=!m;
   if(!m){ save(); return; }
   $('#accF').style.visibility= S.ac.plf==='const'?'visible':'hidden';
@@ -2041,7 +2213,7 @@ function recalc(){
     $('#gs-ev').textContent= S.ev.on? `${S.ev.cars.length} คัน · ${f1(A.need)} kWh/วัน`:'ปิด';
     $('#m3tot').textContent=`${f1(T.load)} kWh/วัน · ${nf(T.load*30.4)} หน่วย/เดือน`;
     $('#evstartL').textContent= S.ev.mode==='solar'?'ถ้ายังไม่เต็ม ชาร์จต่อตอน':'เวลาเริ่มชาร์จ';
-    $('#evInfo').innerHTML= S.ev.on ? `<span class="nw">จากโซลาร์ <b>${f1(A.fromSun)}</b> kWh/วัน</span> <span class="nw">· จากการไฟฟ้า <b>${f1(A.need-A.fromSun)}</b> kWh/วัน</span>` : '';
+    $('#evInfo').innerHTML= S.ev.on ? `<span class="nw">จากโซลาร์ <b>${f1(A.fromSun)}</b> kWh/วัน</span> <span class="nw">· จากการไฟฟ้า <b>${f1(A.need-A.fromSun-A.short)}</b> kWh/วัน</span>`+(A.short>0.05?` <span class="nw c-im">· ชั่วโมงที่เลือกชาร์จไม่เต็ม ขาด <b>${f1(A.short)}</b> kWh/วัน</span>`:'') : '';
     refreshCars();
     const items=[['แอร์',gs.ac],['แสงสว่าง',gs.light],['เครื่องใช้ไฟฟ้า',gs.plug],['อุปกรณ์ประจำ',gs.fixed],['รถไฟฟ้า',A.need]].filter(x=>x[1]>0);
     const mxb=Math.max(...items.map(x=>x[1]),1), tot=items.reduce((s,x)=>s+x[1],0);
@@ -2055,6 +2227,7 @@ function recalc(){
   const saveY=sumM('save'), saveM=saveY/12, genY=sumM('pv');
   const pvCost=kWp*1000*S.price.w;
   const F=finance({cost,pvCost,avoidY:sumM('avoid'),expY:sumM('expv'),n,inv,bOn,kWp});
+  const saveY1=F.sv[1], saveM1=saveY1/12; // ปีแรก (รวมแผงเสื่อมปีแรก) ให้ตรงกับตารางรายปีและจุดคุ้มทุน
   // ช่วงคืนทุน: กรณีแย่/ดี = ปรับผลิตไฟ (PR) และอัตราค่าไฟขึ้น
   const scen=(dy,esc)=>{ const pr0=S.site.pr; let Mx; S.site.pr=pr0*(1+dy/100); try{ Mx=monthly(kWp); } finally{ S.site.pr=pr0; }
     const sx=k=>Mx.reduce((s,o)=>s+(o[k]||0),0); return finance({cost,pvCost,avoidY:sx('avoid'),expY:sx('expv'),n,inv,bOn,kWp,esc}); };
@@ -2075,8 +2248,10 @@ function recalc(){
   }
   $('#kKwp').innerHTML=f2(kWp)+' <small>kWp</small>'; $('#kN').textContent=`${n} × ${S.panel.w} W · Inv ${fkw(inv)} kW`;
   $('#kGen').innerHTML=f1(T.pv)+' <small>kWh/วัน</small>'; $('#kGenM').textContent=nf(genY)+' หน่วย/ปี';
-  $('#kSave').innerHTML=nf(saveM)+' <small>บ.</small>'; $('#kSaveY').textContent=nf(saveY)+' บ./ปีแรก';
-  S.last={m,kWp:+kWp.toFixed(2),pay:isFinite(F.pay)?+F.pay.toFixed(1):null,save:Math.round(saveM)};
+  $('#kSave').innerHTML=nf(saveY1)+' <small>บ./ปี</small>'; $('#kSaveY').textContent='≈ '+nf(saveM1)+' บ./เดือน';
+  $('#kInv').innerHTML=nf(cost)+' <small>บ.</small>'; $('#kInvS').textContent= bOn? `รวมแบต ${S.batt.kwh} kWh` : `${nf(S.price.w,2)} บ./W`;
+  $('#sumName').textContent='· '+(S.house.name||''); $('#sumSub').textContent=MODES[m]+(bOn?' · มีแบตเตอรี่':'')+(S.tariff.net?' · ขายไฟคืน':'');
+  S.last={m,kWp:+kWp.toFixed(2),pay:isFinite(F.pay)?+F.pay.toFixed(1):null,save:Math.round(saveM1)};
   $('#kPay').innerHTML= isFinite(F.pay)? f1(F.pay)+' <small>ปี</small>':'> 25 <small>ปี</small>'; $('#kCost').innerHTML='ช่วง <span class="rng">'+rngTxt+'</span> ปี (ดี–แย่)';
 
   const pill=$('#roofPill'), okR=rec<=rmx, pc=rmx>0?Math.min(100,n/rmx*100):100;
@@ -2104,9 +2279,9 @@ function recalc(){
   $('#flow').innerHTML=st.join('');
 
   let mo= m!=='roof'
-    ? `<dt>ค่าไฟเดิม (เฉลี่ย/เดือน)</dt><dd>${nf(sumM('before')/12)} บ.</dd><dt>ค่าไฟหลังติด (เฉลี่ย/เดือน)</dt><dd>${nf(sumM('after')/12)} บ.</dd>`
+    ? `<dt>ค่าไฟเดิม (เฉลี่ย/เดือน)</dt><dd>${nf(sumM('before')/12)} บ.</dd><dt>ค่าไฟหลังติด (เฉลี่ย/เดือน)</dt><dd>${nf((sumM('before')-saveY1)/12)} บ.</dd>`
     : `<dt>มูลค่าไฟที่ใช้เอง/ปี</dt><dd>${nf(sumM('avoid'))} บ.</dd>`+(S.tariff.net?`<dt>ขายคืน/ปี (${f2(S.tariff.sell)} บ.)</dt><dd>${nf(sumM('expv'))} บ.</dd>`:'');
-  mo+=`<dt class="t">ประหยัด / เดือน (ปีแรก)</dt><dd class="t pv">${nf(saveM)} บ.</dd>`;
+  mo+=`<dt class="t">ประหยัด / เดือน (ปีแรก)</dt><dd class="t pv">${nf(saveM1)} บ.</dd>`;
   mo+=`<dt>ลงทุนระบบ (${nf(S.price.w,2)} บ./W)</dt><dd>${nf(kWp*1000*S.price.w)} บ.</dd>`;
   if(S.fin.taxMode==='person') mo+= F.taxOk? `<dt>ลดหย่อนภาษีบุคคล (× ${nf(S.fin.taxRate)}%)</dt><dd class="ex">${nf(F.tax)} บ.</dd>` : `<dt>ลดหย่อนภาษีบุคคล</dt><dd class="im">ไม่เข้าเงื่อนไข (${BT[S.bt].res?'> 10 kWp':'เฉพาะบ้านอยู่อาศัย'})</dd>`;
   if(S.fin.taxMode==='corp') mo+= `<dt>ภาษีลดเพิ่ม นิติบุคคล (หัก 1.5 เท่า)</dt><dd class="ex">${nf(F.tax)} บ.</dd>`;
@@ -2128,6 +2303,9 @@ function recalc(){
       + bk + ` <span class="nw">· ต้องใช้อินเวอร์เตอร์ Hybrid ที่มี Backup</span>`;
   }
   drawCF(F,F0,FR);
+  drawBill(M,F,m==='roof',saveY1);
+  // แถบผลย่อในหน้าข้อมูล
+  $('#isTxt').innerHTML=`<span class="nw">ระบบ <b>${f2(kWp)}</b> kWp (${n} แผง)</span> <span class="nw">· ประหยัด <b>${nf(saveM1)}</b> บ./เดือน</span> <span class="nw">· คืนทุน <b>${isFinite(F.pay)?f1(F.pay):'> 25'}</b> ปี</span> <span class="nw c-mu">(ช่วง ${rngTxt} ปี)</span>`;
   $('#cfSub').textContent=`(ค่าไฟขึ้น ${nf(S.fin.esc,1)}%/ปี · แถบ = ดี–แย่)`;
   const repl=[]; if(S.fin.invYr>0) repl.push(`เปลี่ยนอินเวอร์เตอร์ปีที่ ${S.fin.invYr} ≈ ${nf(S.fin.invCost*inv)} บ.`); if(bOn) repl.push(`เปลี่ยนแบตปีที่ 11`);
   $('#cfStats').innerHTML=`<span class="nw">เงินสะสมปีที่ 25 <b class="${F.total>=0?'ex':'im'}">${nf(F.total)}</b> บ.</span>`+repl.map(t=>`<span class="nw">${t}</span>`).join('')+`<span class="nw">ค่าดูแล ${nf(S.fin.om*n)} บ./ปี</span>`+(F0?`<span class="nw" style="color:var(--bt)">- - เส้นประ = ไม่มีแบต (${nf(F0.total)} บ.)</span>`:'');
@@ -2162,7 +2340,7 @@ function recalc(){
 }
 function fillPrint(c){
   const site=SITES[S.site.preset]||{};
-  $('#printHead').innerHTML=`<div class="t"><b>Solar Designer — สรุปผลการคำนวณ</b><span>Version ${VER} · Publish by Zenconpro</span></div>
+  $('#printHead').innerHTML=`<div class="t"><b>HONOURTH Solar Rooftop Design — สรุปผลการคำนวณ</b><span>Version ${VER} · Publish by Virakharesh</span></div>
   <dl class="pgrid">
     <dt>เคส / โครงการ</dt><dd>${esc(S.house.name)} · ${esc(BT[S.bt].t)} · ${S.house.phase} เฟส</dd>
     <dt>วันที่</dt><dd>${new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})}</dd>
@@ -2399,7 +2577,7 @@ async function decState(s){
 }
 async function shareLink(){
   const url=location.href.split('#')[0]+'#s='+(await encState({c:S}));
-  if(navigator.share&&matchMedia('(pointer:coarse)').matches){ try{ await navigator.share({title:'Solar Designer — '+(S.house.name||''),url}); return; }catch(e){ if(e&&e.name==='AbortError') return; } }
+  if(navigator.share&&matchMedia('(pointer:coarse)').matches){ try{ await navigator.share({title:'HONOURTH Solar Rooftop Design — '+(S.house.name||''),url}); return; }catch(e){ if(e&&e.name==='AbortError') return; } }
   try{ await navigator.clipboard.writeText(url); toast('คัดลอกลิงก์แล้ว — ส่งให้คนอื่นเปิดแล้วจะเห็นค่าชุดนี้'); }
   catch(e){ toast(`<span>คัดลอกลิงก์นี้</span><input readonly value="${esc(url)}" aria-label="ลิงก์แชร์">`,12000); const i=$('#toast input'); if(i){ i.focus(); i.select(); } }
 }
@@ -2409,7 +2587,7 @@ async function checkHash(){
   try{
     const o=await decState(mm[1]); const s=fromSaved(o&&o.c?o.c:o); if(!s) throw new Error('bad');
     const nm=(s.house.name||'บ้าน')+' (จากลิงก์)'; const mode=s.mode;
-    addCase(s,nm); const cm=s.calc||mode; if(cm) go(cm);
+    addCase(s,nm); const cm=s.calc||mode; if(cm){ S.calc=cm; go('sum'); }
     $('#shareMsg').textContent=`เพิ่มบ้าน "${nm}" จากลิงก์แล้ว · บ้านเดิมในเครื่องนี้ยังอยู่ครบ`; $('#shareBanner').hidden=false;
   }catch(e){ toast('ลิงก์แชร์ไม่สมบูรณ์ — เปิดด้วยค่าเดิม',4000); }
 }
@@ -2417,7 +2595,9 @@ function initShare(){
   $('#btnShare').addEventListener('click',()=>{ shareLink().catch(()=>toast('สร้างลิงก์ไม่สำเร็จ')); });
   $('#btnPrint').addEventListener('click',()=>window.print());
   $('#shareClose').addEventListener('click',()=>{ $('#shareBanner').hidden=true; });
-  window.addEventListener('beforeprint',()=>{ $$('#results details').forEach(d=>{ d.dataset.po=d.open?'1':''; d.open=true; }); });
+  window.addEventListener('beforeprint',()=>{ $$('#results details').forEach(d=>{ d.dataset.po=d.open?'1':''; d.open=true; }); if(S.mode) recalc(); });
+  $('#lcCard').addEventListener('toggle',()=>{ if(S.mode==='load') recalc(); });
+  $('#techCard').addEventListener('toggle',()=>{ if($('#techCard').open&&S.mode) recalc(); });
   window.addEventListener('afterprint',()=>{ $$('#results details').forEach(d=>{ d.open=d.dataset.po==='1'; }); });
 }
 
@@ -2429,6 +2609,10 @@ function init(){
   initStatic(); bindAll(); initApps(); initCombo(); initCars(); initSys(); initLC(); initShare(); initCases();
   $$('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
   $('#btnReset').addEventListener('click',function(){ armed(this,()=>{ const nm=S.house.name; const t=tplState(S.tpl); t.house.name=nm; applyState(t); go(null); },'กดอีกครั้งเพื่อคืนค่าหลังนี้'); });
+  // ตั้งค่าขั้นสูง: ซ่อนไว้เป็นค่าเริ่มต้น (จำไว้ในเครื่องนี้)
+  let advOn=false; try{ advOn=localStorage.getItem('hs-adv')==='1'; }catch(e){}
+  const setAdv=v=>{ advOn=v; document.body.classList.toggle('adv-on',v); $$('.advbtn .st').forEach(s=>s.textContent=v?'▾ แสดงอยู่':'▸ ซ่อนอยู่'); try{ localStorage.setItem('hs-adv',v?'1':'0'); }catch(e){} if(S.mode) recalc(); };
+  $$('.advbtn').forEach(b=>b.addEventListener('click',()=>setAdv(!advOn))); setAdv(advOn);
   S.mode=null; // เปิดเว็บเริ่มที่หน้าตั้งค่าเสมอ
   applyState(S);
   loadDoc();
