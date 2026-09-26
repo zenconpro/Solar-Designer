@@ -1,0 +1,13 @@
+{
+  "name": "solar-designer-tests",
+  "private": true,
+  "type": "module",
+  "description": "ชุดทดสอบ HONOURTH Solar Rooftop Design (แยกจากตัวเว็บ เพื่อไม่ให้ Vercel ต้องติดตั้ง Playwright)",
+  "scripts": {
+    "test": "node run.mjs",
+    "update": "node run.mjs --update"
+  },
+  "devDependencies": {
+    "playwright": "1.56.0"
+  }
+}
