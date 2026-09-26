@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="HONOURTH Solar Rooftop Design — คำนวณขนาดระบบโซลาร์ On-Grid ค่าไฟที่ประหยัด และระยะคืนทุน">
-<title>HONOURTH Solar Rooftop Design — Version 1.8</title>
+<title>HONOURTH Solar Rooftop Design — Version 1.8.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -620,7 +620,7 @@ body:not(.adv-on) .adv{display:none!important}
 <body>
 <header class="bar">
   <div class="brand"><img class="logo" src="data:image/png;base64,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" alt="HONOUR THAILAND" width="30" height="38"><div class="bt"><b>HONOURTH Solar Rooftop Design</b><small><span class="case" id="siteLbl"></span></small></div></div>
-  <div class="pub" title="เวอร์ชันและผู้พัฒนา"><b class="ver">Version 1.8</b><span>Publish by <b>Virakharesh</b></span></div>
+  <div class="pub" title="เวอร์ชันและผู้พัฒนา"><b class="ver">Version 1.8.1</b><span>Publish by <b>Virakharesh</b></span></div>
   <nav class="tabs" id="tabs">
     <button data-go="home">ตั้งค่า</button>
     <button data-go="in" hidden id="tabIn">ข้อมูล</button>
@@ -1065,11 +1065,16 @@ body:not(.adv-on) .adv{display:none!important}
 </div>
 <div class="combo" id="combo" role="listbox" hidden></div>
 
+<script src="data/rates.js"></script>
 <script>
 (function(){
 'use strict';
+/* อัตราค่าไฟ ภาษี และเกณฑ์ราชการ อยู่ในไฟล์ data/rates.js (แก้ที่นั่นที่เดียว) */
+const RATES=window.HS_RATES;
+if(!RATES||!RATES.tariff){ document.body.insertAdjacentHTML('afterbegin','<div style="padding:16px;background:#7f1d1d;color:#fff;font:16px sans-serif">โหลดไฟล์อัตราค่าไฟ (data/rates.js) ไม่สำเร็จ — แอปคำนวณไม่ได้</div>'); throw new Error('HS_RATES missing'); }
+{ const b=document.querySelector('[data-seg="fin.taxMode"] [data-v="person"]'); if(b) b.textContent='บุคคล ≤ '+RATES.tax.person.cap.toLocaleString('en-US'); }
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const VER='1.8', LS_CASES='solar-cases-v1', LS_V8='solar-v8', LS_V7='solar-v7';
+const VER='1.8.1', LS_CASES='solar-cases-v1', LS_V8='solar-v8', LS_V7='solar-v7';
 const rng=(a,b)=>{const r=[];for(let i=a;i<b;i++)r.push(i%24);return r;};
 const clone=o=>JSON.parse(JSON.stringify(o));
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1104,22 +1109,16 @@ const normShape=a=>{const m=dayAvg(a);return a.map(v=>+(v/m).toFixed(4));};
 const regionOf=(lat,lon)=> lat<10?'S' : lat>16.5?(lon>101.5?'NE':'N') : lon>102?'NE' : (lon>100.7&&lat<14)?'E':'C';
 
 const METERS={1:[[15,'5(15) A'],[45,'15(45) A'],[100,'30(100) A']],3:[[45,'15(45) A × 3'],[100,'30(100) A × 3'],[150,'50(150) A × 3'],[200,'200 A × 3 (CT)']]};
-const PEA_LIM={1:5,3:10};
+const PEA_LIM=RATES.peaLimitKw, NET_KW=RATES.netBilling.maxKw, VATF=1+RATES.vatPct/100;
 const INV={1:[3,3.6,4,5,6,8,10],3:[5,6,8,10,12,15,17,20,25,30,36,40,50]};
 const DCAC_MAX=1.3;
 
-/* ประเภทผู้ใช้ไฟ กฟภ. แรงดัน < 22 kV — ค่าพลังงานฐาน (ยังไม่รวม Ft/VAT)
-   บ้าน 1.1.2: โครงสร้างใหม่ตั้งแต่บิล ก.ย. 2569 (200 หน่วยแรก 3.00 / 201–400 4.1584 / 401+ 4.3583)
-   TOU และกิจการขนาดเล็ก: อัตรา กฟภ. (ประกาศ พ.ค. 2566) ค่าบริการ 24.62 / 33.29 บ./เดือน */
-const TARIFF={
-  r12:{t:'บ้าน · มิเตอร์ปกติ',code:'1.1.2',cat:'res',svc:24.62,tier:[[200,3.0000],[400,4.1584],[1e9,4.3583]]},
-  r13:{t:'บ้าน · มิเตอร์ TOU',code:'1.2.2',cat:'res',svc:24.62,tou:true},
-  b21:{t:'ร้านค้า/สำนักงาน · มิเตอร์ปกติ',code:'2.1.2',cat:'biz',svc:33.29,tier:[[150,3.2484],[400,4.2218],[1e9,4.4217]]},
-  b22:{t:'ร้านค้า/สำนักงาน · มิเตอร์ TOU',code:'2.2.2',cat:'biz',svc:33.29,tou:true},
-  flat:{t:'ค่าไฟเฉลี่ย (กำหนดเอง)',cat:'flat',flat:true}
-};
-const TOU_ON=5.7982, TOU_OFF=2.6369, WKD=245/365; // On-Peak จ.–ศ. 09–22 น. (≈245 วันทำการ/ปี)
-const isPk=h=>h>=9&&h<22;
+/* ประเภทผู้ใช้ไฟ กฟภ. — ค่าพลังงานฐาน (ยังไม่รวม Ft/VAT) จาก data/rates.js */
+const TARIFF={};
+for(const [k,r] of Object.entries(RATES.tariff)) TARIFF[k]={t:r.label,code:r.code,cat:r.cat,svc:r.svc,tier:r.tier,tou:!!r.tou};
+TARIFF.flat={t:'ค่าไฟเฉลี่ย (กำหนดเอง)',cat:'flat',flat:true};
+const TOU_ON=RATES.tou.on, TOU_OFF=RATES.tou.off, WKD=RATES.tou.weekdays/365; // On-Peak จ.–ศ. (≈ วันทำการ/ปี)
+const isPk=h=>h>=RATES.tou.onFrom&&h<RATES.tou.onTo;
 
 /* ประเภทอาคาร */
 const BT={
@@ -1369,9 +1368,9 @@ function baseState(){ return {
   panel:{w:720,len:2.384,wid:1.303,kg:38.2,gap:7},
   roof:{mode:'area',area:80,planes:[{w:8,l:10}],pct:65,mount:3,mtype:'rail'},
   inv:{kw:0},
-  tariff:{type:'r12',ft:0.1623,buy:4.50,net:false,sell:2.20,lim:5},
-  price:{w:28.5,batt:12000},
-  fin:{esc:1.5,om:80,disc:4,invYr:12,invCost:3500,sellYrs:20,deg1:1.0,deg:0.4,taxRate:20,tax:false,taxMode:'none',eqPct:70,scYlo:-10,scElo:0,scYhi:5,scEhi:3},
+  tariff:{type:'r12',ft:RATES.ft,buy:4.50,net:false,sell:RATES.netBilling.price,lim:RATES.netBilling.maxKw},
+  price:{w:RATES.price.perW,batt:RATES.price.battPerKWh},
+  fin:{esc:1.5,om:80,disc:4,invYr:12,invCost:3500,sellYrs:RATES.netBilling.years,deg1:1.0,deg:0.4,taxRate:20,tax:false,taxMode:'none',eqPct:70,scYlo:-10,scElo:0,scYhi:5,scEhi:3},
   batt:{on:false,kwh:10},
   thr:90,
   m1:{n:null,smode:'check',self:50,prof:'house_home',ck:{base:true,cook:false,wfh:false,wash:false,dryer:false,pump:false,pool:false,fridge2:false,heat:false,ev:false},acN:1,acBtu:12000,acS:9,acE:17},
@@ -1508,11 +1507,11 @@ function billE(E){ // E = kWh รายชั่วโมงของทั้�
   const t=TT(), u=Math.max(0,sum(E));
   if(t.flat) return u*S.tariff.buy;
   const e= t.tou? E.reduce((s,v,h)=>s+Math.max(0,v)*(isPk(h)? WKD*TOU_ON+(1-WKD)*TOU_OFF : TOU_OFF),0) : tierE(u,t.tier);
-  return (t.svc+e+u*S.tariff.ft)*1.07;
+  return (t.svc+e+u*S.tariff.ft)*VATF;
 }
 function rateH(h){ const t=TT(); if(t.flat) return S.tariff.buy;
-  if(t.tou) return ((isPk(h)? WKD*TOU_ON+(1-WKD)*TOU_OFF : TOU_OFF)+S.tariff.ft)*1.07;
-  return (t.tier[t.tier.length-1][1]+S.tariff.ft)*1.07; }
+  if(t.tou) return ((isPk(h)? WKD*TOU_ON+(1-WKD)*TOU_OFF : TOU_OFF)+S.tariff.ft)*VATF;
+  return (t.tier[t.tier.length-1][1]+S.tariff.ft)*VATF; }
 const dayRate=()=>{ let s=0; for(let h=9;h<16;h++) s+=rateH(h); return s/7; };
 
 function simulate(load,kWp,Y){
@@ -1609,8 +1608,8 @@ function finance(o){
   //  บุคคล: ลดหย่อน ≤ 200,000 บ. (แผง ≤ 10 kWp, บ้านอยู่อาศัย) × อัตราภาษี
   //  นิติบุคคล (พ.ร.ฎ. 805): หักรายจ่ายค่าอุปกรณ์ 1.5 เท่า → ส่วนเพิ่ม 0.5 × ค่าอุปกรณ์ที่เข้าเกณฑ์ × อัตราภาษี (ไม่นับค่าเสื่อมปกติ 1.0 เท่า)
   let taxOk=false, tax=0;
-  if(tm==='person'){ taxOk= o.kWp<=10 && !!BT[S.bt].res; tax= taxOk? Math.min(pv,200000)*F.taxRate/100 : 0; }
-  else if(tm==='corp'){ taxOk=true; tax= pv*F.eqPct/100*0.5*F.taxRate/100; }
+  if(tm==='person'){ const P=RATES.tax.person; taxOk= o.kWp<=P.maxKwp && !!BT[S.bt].res; tax= taxOk? Math.min(pv,P.cap)*F.taxRate/100 : 0; }
+  else if(tm==='corp'){ taxOk=true; tax= pv*F.eqPct/100*RATES.tax.corp.extra*F.taxRate/100; }
   const cf=[-o.cost], sv=[0], gf=[1];
   for(let y=1;y<=N;y++){
     const deg=(1-F.deg1/100)*Math.pow(1-F.deg/100,y-1);
@@ -2109,20 +2108,20 @@ function recalc(){
   $('#pWarn').innerHTML= eff>25? chip('warn','!',`ประสิทธิภาพ ${f1(eff)}% สูงเกินจริง (แผงทั่วไป 20–24%) — ตรวจขนาดหรือวัตต์แผง`) : eff<14? chip('warn','!',`ประสิทธิภาพ ${f1(eff)}% ต่ำผิดปกติ — ตรวจขนาดหรือวัตต์แผง`) : '';
   const mtr=(METERS[S.house.phase].find(o=>o[0]==S.house.meter)||[0,''])[1];
   $('#houseChips').innerHTML=chip('info','i',`<span class="nw">มิเตอร์ ${esc(mtr)}</span> <span class="nw">รับโหลดได้ ≈ <b>${nf(kva,1)}</b> kVA</span><br>`+
-    (res? `<span class="nw">เกณฑ์ กฟภ.: ติดได้ ≤ <b>${lim}</b> kW</span> <span class="nw">· ขายคืน ≤ <b>5</b> kW</span>`
+    (res? `<span class="nw">เกณฑ์ กฟภ.: ติดได้ ≤ <b>${lim}</b> kW</span> <span class="nw">· ขายคืน ≤ <b>${NET_KW}</b> kW</span>`
          : `<span class="nw">อาคารกิจการ:</span> <span class="nw">ขนาดที่ขนานไฟได้ ตรวจกับ กฟภ. เขต</span>`));
   $('#tbuyF').hidden=!tt.flat;
-  const tAdd=`<div class="tl"><span class="nw">บวก Ft ${nf(S.tariff.ft,4)}</span> <span class="nw">+ ค่าบริการ ${f2(tt.svc)} บ./เดือน</span> <span class="nw">+ VAT 7%</span></div>`;
+  const tAdd=`<div class="tl"><span class="nw">บวก Ft ${nf(S.tariff.ft,4)}</span> <span class="nw">+ ค่าบริการ ${f2(tt.svc)} บ./เดือน</span> <span class="nw">+ VAT ${RATES.vatPct}%</span></div>`;
   const cell=(l,v)=>`<div><small>${l}</small><b>${f2(v)}</b></div>`;
   $('#tHint').innerHTML= tt.flat? '<div class="tl"><span class="nw">ค่าไฟเฉลี่ย = ยอดเงินในบิล ÷ จำนวนหน่วย</span> <span class="nw">(รวม Ft และ VAT แล้ว)</span></div>'
-    : tt.tou? `<div class="ttl">ราคาตามช่วงเวลา (บาท/หน่วย)</div><div class="tiers t2">${cell('จ.–ศ. 09:00–22:00',TOU_ON)}${cell('ช่วงอื่น และ ส.–อา.',TOU_OFF)}</div>${tAdd}<div class="tl c-mu"><span class="nw">ต้องขอติดมิเตอร์ TOU กับ กฟภ.</span> <span class="nw">(ในบิลเขียนว่า ประเภท ${tt.code})</span></div>`
-    : `<div class="ttl">ยิ่งใช้มาก หน่วยยิ่งแพง (บาท/หน่วย)</div><div class="tiers">${tt.tier.map((x,i)=>cell(i===0? `1–${x[0]} หน่วย` : x[0]>=1e8? `${tt.tier[i-1][0]+1} ขึ้นไป` : `${tt.tier[i-1][0]+1}–${x[0]}`, x[1])).join('')}</div>${tAdd}<div class="tl c-mu"><span class="nw">${tt.cat==='res'?'บ้านส่วนใหญ่ใช้แบบนี้':'ใช้ไฟสูงสุดไม่เกิน 30 kW'}</span> <span class="nw">(ในบิลเขียนว่า ประเภท ${tt.code})</span></div>`;
+    : tt.tou? `<div class="ttl">ราคาตามช่วงเวลา (บาท/หน่วย)</div><div class="tiers t2">${cell('จ.–ศ. 09:00–22:00',TOU_ON)}${cell('ช่วงอื่น และ ส.–อา.',TOU_OFF)}</div>${tAdd}<div class="tl c-mu"><span class="nw">ต้องขอติดมิเตอร์ TOU กับ กฟภ.</span> <span class="nw">(ในบิลเขียนว่า ประเภท ${tt.code})</span> <span class="nw">· อัตรา ณ ${RATES.updatedTH}</span></div>`
+    : `<div class="ttl">ยิ่งใช้มาก หน่วยยิ่งแพง (บาท/หน่วย)</div><div class="tiers">${tt.tier.map((x,i)=>cell(i===0? `1–${x[0]} หน่วย` : x[0]>=1e8? `${tt.tier[i-1][0]+1} ขึ้นไป` : `${tt.tier[i-1][0]+1}–${x[0]}`, x[1])).join('')}</div>${tAdd}<div class="tl c-mu"><span class="nw">${tt.cat==='res'?'บ้านส่วนใหญ่ใช้แบบนี้':'ใช้ไฟสูงสุดไม่เกิน 30 kW'}</span> <span class="nw">(ในบิลเขียนว่า ประเภท ${tt.code})</span> <span class="nw">· อัตรา ณ ${RATES.updatedTH}</span></div>`;
   $('#thrI').style.width=S.thr+'%'; $('#thrA').textContent=nf(S.thr)+'%'; $('#thrB').textContent=nf(100-S.thr)+'%';
   $('#thrDesc').innerHTML=(THR[S.thr]||'กำหนดสัดส่วนเอง')+` · <span class="nw">ไฟที่ใช้เองคุ้ม ≈ <b>${f2(dayRate())}</b> บ./หน่วย</span> <span class="nw">ขายคืนได้ <b>${f2(S.tariff.sell)}</b> บ.</span>`;
   const tm=S.fin.taxMode, sg=v=>(v>0?'+':v<0?'−':'')+nf(Math.abs(v),v%1?1:0);
   $('#eqF').hidden= tm!=='corp';
-  $('#taxHint').innerHTML= tm==='person'? `<span class="nw">ลดหย่อน ≤ 200,000 บ. · แผง ≤ 10 kWp · บ้านอยู่อาศัย</span> <span class="nw">· e-Tax Invoice · ขนานไฟแล้ว · ถึง 31 ธ.ค. 71</span>`
-    : tm==='corp'? `<span class="nw">พ.ร.ฎ. 805 · ภาษีลดเพิ่ม = 50% × ค่าอุปกรณ์ × อัตราภาษี</span> <span class="nw">· อุปกรณ์ใหม่เข้าเกณฑ์ พพ. ไม่รวมค่าแรง/แบต</span> <span class="nw">· ห้ามซ้ำ BOI · ถึง 31 ธ.ค. 71</span>`
+  $('#taxHint').innerHTML= tm==='person'? `<span class="nw">ลดหย่อน ≤ ${nf(RATES.tax.person.cap)} บ. · แผง ≤ ${RATES.tax.person.maxKwp} kWp · บ้านอยู่อาศัย</span> <span class="nw">· e-Tax Invoice · ขนานไฟแล้ว · ถึง ${RATES.tax.person.until}</span>`
+    : tm==='corp'? `<span class="nw">พ.ร.ฎ. 805 · ภาษีลดเพิ่ม = 50% × ค่าอุปกรณ์ × อัตราภาษี</span> <span class="nw">· อุปกรณ์ใหม่เข้าเกณฑ์ พพ. ไม่รวมค่าแรง/แบต</span> <span class="nw">· ห้ามซ้ำ BOI · ถึง ${RATES.tax.corp.until}</span>`
     : '<span class="nw">ไม่นับสิทธิภาษีในจุดคุ้มทุน</span>';
   $('#scSum').textContent=`· แย่ ${sg(S.fin.scYlo)}% / ${nf(S.fin.scElo,1)}% · ดี ${sg(S.fin.scYhi)}% / ${nf(S.fin.scEhi,1)}%`;
   $('#advSum').innerHTML=`<span class="nw">ค่าที่ใช้อยู่: แผง ${S.panel.w} W</span> <span class="nw">· ใช้เองอย่างน้อย ${nf(S.thr)}%</span> <span class="nw">· ค่าไฟขึ้น ${nf(S.fin.esc,1)}%/ปี</span> <span class="nw">· ภาษี: ${({none:'ไม่นับ',person:'บุคคล',corp:'นิติบุคคล 1.5 เท่า'})[S.fin.taxMode]}</span>`;
@@ -2176,10 +2175,10 @@ function recalc(){
   const usedA=n*pArea()*(1+S.panel.gap/100), totKg=n*S.panel.kg+usedA*S.roof.mount;
   $('#sKwp').textContent=f2(kWp)+' kWp'; $('#sArea').textContent=f1(usedA)+' ม²'; $('#sKg').textContent=nf(totKg)+' กก.';
   const pkg=S.panel.kg/pArea(), wLocal=pkg+S.roof.mount;
-  const wv=$('#wVal'); wv.textContent=f1(wLocal); wv.className='ro '+(wLocal<=20?'ok':'bad');
-  $('#wChips').innerHTML= (wLocal<=20
-    ? chip('ok','✓',`<span class="nw">แผง ${f1(pkg)} + โครงยึด ${f1(S.roof.mount)} = <b>${f1(wLocal)}</b> กก./ม² ≤ 20</span> <span class="nw">→ ไม่ถือเป็นการดัดแปลงอาคาร</span> <span class="nw">(กฎกระทรวง ฉบับที่ 72 พ.ศ. 2568)</span>`)
-    : chip('bad','✗',`<span class="nw">แผง ${f1(pkg)} + โครงยึด ${f1(S.roof.mount)} = <b>${f1(wLocal)}</b> กก./ม² เกิน 20</span> <span class="nw">→ ถือเป็นการดัดแปลงอาคาร ต้องขออนุญาตและมีวิศวกรรับรอง</span>`));
+  const wv=$('#wVal'); wv.textContent=f1(wLocal); const WMAX=RATES.roofWeight.maxKgPerM2; wv.className='ro '+(wLocal<=WMAX?'ok':'bad');
+  $('#wChips').innerHTML= (wLocal<=WMAX
+    ? chip('ok','✓',`<span class="nw">แผง ${f1(pkg)} + โครงยึด ${f1(S.roof.mount)} = <b>${f1(wLocal)}</b> กก./ม² ≤ ${WMAX}</span> <span class="nw">→ ไม่ถือเป็นการดัดแปลงอาคาร</span> <span class="nw">(${RATES.roofWeight.law})</span>`)
+    : chip('bad','✗',`<span class="nw">แผง ${f1(pkg)} + โครงยึด ${f1(S.roof.mount)} = <b>${f1(wLocal)}</b> กก./ม² เกิน ${WMAX}</span> <span class="nw">→ ถือเป็นการดัดแปลงอาคาร ต้องขออนุญาตและมีวิศวกรรับรอง</span>`));
 
   // inverter card
   const tag=$('#sysTag'); tag.textContent=bOn?'Hybrid · มีแบต':'On-Grid'; tag.classList.toggle('hy',bOn);
@@ -2189,14 +2188,14 @@ function recalc(){
   if(ratio>DCAC_MAX) ic.push(chip(ratio>1.5?'bad':'warn','!',`DC/AC ${f2(ratio)} — แผงถูกตัดยอดช่วงแดดจัด${T.clip>0.05?` ≈ ${f1(T.clip)} kWh/วัน`:''}`));
   else if(ratio<0.9) ic.push(chip('warn','!',`DC/AC ${f2(ratio)} — อินเวอร์เตอร์ใหญ่เกินแผง`));
   // เกณฑ์ กฟภ. + ขายไฟภาคประชาชน (รวมเป็นกล่องเดียวเมื่อเตือนเรื่องเดียวกัน เพื่อไม่ให้ต้องเลื่อนจอ)
-  const one=S.house.phase==1&&(kWp>5||inv>5), over=!one&&res&&kWp>lim, netOn=S.tariff.net, netBig=netOn&&res&&inv>5, netOk=netOn&&res&&inv<=5;
-  if(one) ic.push(chip('bad','✗',`<span class="nw">ไฟ 1 เฟส ติดโซลาร์ได้ ≤ 5 kW</span> <span class="nw">— ระบบนี้ต้องใช้ไฟ 3 เฟส</span>`));
-  else if(over&&netBig) ic.push(chip('warn','!',`<span class="nw">${f2(kWp)} kWp เกินเกณฑ์ กฟภ. ${lim} kW / ขายคืน 5 kW</span> <span class="nw">— หารือ กฟภ. เขต หรือจำกัดกำลังส่งออก</span>`));
+  const one=S.house.phase==1&&(kWp>PEA_LIM[1]||inv>PEA_LIM[1]), over=!one&&res&&kWp>lim, netOn=S.tariff.net, netBig=netOn&&res&&inv>NET_KW, netOk=netOn&&res&&inv<=NET_KW;
+  if(one) ic.push(chip('bad','✗',`<span class="nw">ไฟ 1 เฟส ติดโซลาร์ได้ ≤ ${PEA_LIM[1]} kW</span> <span class="nw">— ระบบนี้ต้องใช้ไฟ 3 เฟส</span>`));
+  else if(over&&netBig) ic.push(chip('warn','!',`<span class="nw">${f2(kWp)} kWp เกินเกณฑ์ กฟภ. ${lim} kW / ขายคืน ${NET_KW} kW</span> <span class="nw">— หารือ กฟภ. เขต หรือจำกัดกำลังส่งออก</span>`));
   else if(over) ic.push(chip('warn','!',`<span class="nw">${f2(kWp)} kWp เกินเกณฑ์ทั่วไป กฟภ. (${lim} kW)</span> <span class="nw">— หารือ กฟภ. เขต หรือตั้ง Zero Export</span>`));
-  else if(res&&netOk) ic.push(chip('ok','✓',`<span class="nw">${f2(kWp)} kWp อยู่ในเกณฑ์ กฟภ. (≤ ${lim} kW)</span> <span class="nw">และเข้าเงื่อนไขขายไฟภาคประชาชน</span> <span class="nw">(≤ 5 kW · ${f2(S.tariff.sell)} บ./หน่วย · ${nf(S.fin.sellYrs)} ปี)</span>`));
+  else if(res&&netOk) ic.push(chip('ok','✓',`<span class="nw">${f2(kWp)} kWp อยู่ในเกณฑ์ กฟภ. (≤ ${lim} kW)</span> <span class="nw">และเข้าเงื่อนไขขายไฟภาคประชาชน</span> <span class="nw">(≤ ${NET_KW} kW · ${f2(S.tariff.sell)} บ./หน่วย · ${nf(S.fin.sellYrs)} ปี)</span>`));
   else if(res) ic.push(chip('ok','✓',`<span class="nw">${f2(kWp)} kWp อยู่ในเกณฑ์ทั่วไป กฟภ.</span> <span class="nw">(บ้าน ${S.house.phase} เฟส ≤ ${lim} kW)</span>`));
   if(netOn&&!res) ic.push(chip('warn','!',`<span class="nw">โซลาร์ภาคประชาชนรับซื้อเฉพาะบ้านอยู่อาศัย</span> <span class="nw">— อาคารกิจการตรวจเงื่อนไขกับ กฟภ.</span>`));
-  else if(netBig&&!over) ic.push(chip('warn','!',`<span class="nw">ภาคประชาชนเสนอขายได้ ≤ 5 kW ต่อมิเตอร์</span> <span class="nw">— อินเวอร์เตอร์ ${fkw(inv)} kW ต้องจำกัดกำลังส่งออก/ยืนยันกับ กฟภ.</span>`));
+  else if(netBig&&!over) ic.push(chip('warn','!',`<span class="nw">ภาคประชาชนเสนอขายได้ ≤ ${NET_KW} kW ต่อมิเตอร์</span> <span class="nw">— อินเวอร์เตอร์ ${fkw(inv)} kW ต้องจำกัดกำลังส่งออก/ยืนยันกับ กฟภ.</span>`));
   $('#invChips').innerHTML=ic.join('');
   $('#battHint').hidden=!S.batt.on; $('#battHint').innerHTML= S.batt.on? `<span class="nw">ลงทุนแบตเพิ่ม ≈ <b>${nf(S.batt.kwh*S.price.batt)}</b> บ.</span> <span class="nw">(${nf(S.price.batt)} บ./kWh)</span>`:''; $('#bkwhF').classList.toggle('off',!S.batt.on);
   if(m==='roof') $('#ckRes').textContent=nf(T.self*100)+'%';
@@ -2352,7 +2351,7 @@ function fillPrint(c){
     <dt>ค่าไฟ</dt><dd>${esc(TT().t)}${TT().code?' (ประเภท '+TT().code+')':''} · Ft ${S.tariff.ft} · ${S.tariff.net?'ขายคืน '+f2(S.tariff.sell)+' บ. ≤ '+S.tariff.lim+' kW':'ไม่ขายคืน'}</dd>
     <dt>สมมติฐาน 25 ปี</dt><dd>ค่าไฟขึ้น ${S.fin.esc}%/ปี · เสื่อมปีแรก ${S.fin.deg1}% ต่อปี ${S.fin.deg}% · ค่าดูแล ${S.fin.om} บ./แผง/ปี · คิดลด ${S.fin.disc}%</dd>
     <dt>ช่วงคืนทุน</dt><dd>${c.rngTxt} ปี (แย่: ผลิต ${S.fin.scYlo}% ค่าไฟขึ้น ${S.fin.scElo}%/ปี · ดี: ผลิต +${S.fin.scYhi}% ค่าไฟขึ้น ${S.fin.scEhi}%/ปี)</dd>
-    <dt>สิทธิภาษี</dt><dd>${S.fin.taxMode==='corp'?'นิติบุคคล หักรายจ่าย 1.5 เท่า (พ.ร.ฎ. 805) ค่าอุปกรณ์ '+S.fin.eqPct+'% × อัตราภาษี '+S.fin.taxRate+'% = '+nf(c.F.tax)+' บ.':S.fin.taxMode==='person'?(c.F.taxOk?'บุคคล ลดหย่อน ≤ 200,000 บ. × '+S.fin.taxRate+'% = '+nf(c.F.tax)+' บ.':'บุคคล — ไม่เข้าเงื่อนไข'):'ไม่นับ'}</dd>
+    <dt>สิทธิภาษี</dt><dd>${S.fin.taxMode==='corp'?'นิติบุคคล หักรายจ่าย 1.5 เท่า (พ.ร.ฎ. 805) ค่าอุปกรณ์ '+S.fin.eqPct+'% × อัตราภาษี '+S.fin.taxRate+'% = '+nf(c.F.tax)+' บ.':S.fin.taxMode==='person'?(c.F.taxOk?'บุคคล ลดหย่อน ≤ '+nf(RATES.tax.person.cap)+' บ. × '+S.fin.taxRate+'% = '+nf(c.F.tax)+' บ.':'บุคคล — ไม่เข้าเงื่อนไข'):'ไม่นับ'}</dd>
   </dl>`;
 }
 /* ── load schedule: import / attach ── */
@@ -2619,6 +2618,69 @@ function init(){
   checkHash();
   window.addEventListener('hashchange',checkHash);
 }
+
+/* ── โหมดตรวจสูตร ──
+   เปิดเว็บด้วย ?debug=1 → มี window.HS_DEBUG ให้เรียกฟังก์ชันคำนวณจริงของแอป
+   ใช้โดยชุดทดสอบ (tests/) และตัวอย่างในเอกสาร docs/FORMULAS.md — ผู้ใช้ทั่วไปไม่เห็น */
+function formulaChecks(){ // ตรวจสูตรแต่ละขั้นเทียบการคำนวณมือ (ตัวอย่างเดียวกับ docs/FORMULAS.md) — ใช้บ้าน SPECTRA ค่าตั้งต้น
+  const S0=S, C=[], add=(name,app,hand,tol)=>C.push({name,app:+(+app).toFixed(6),hand:+(+hand).toFixed(6),tol});
+  S=tplState('spectra'); S.mode='bill';
+  try{
+    // ขั้น 1 หลังคา
+    add('1.1 พื้นที่แผง 1 แผง = 2.384 × 1.303', pArea(), 2.384*1.303);
+    add('1.2 วางแผงได้สูงสุด = ⌊177.9 × 65% ÷ (3.106 × 1.07)⌋', roofMax(), Math.floor(177.9*0.65/(2.384*1.303*1.07)));
+    add('1.3 น้ำหนัก = 38.2 ÷ 3.106 + 3', S.panel.kg/pArea()+S.roof.mount, 38.2/(2.384*1.303)+3);
+    add('1.4 มิเตอร์ 3 เฟส 100 A = 0.4 × √3 × 100 kVA', meterKVA(), 0.4*Math.sqrt(3)*100);
+    // ขั้น 2 ผลิตไฟ
+    add('2.1 ผลิตไฟต่อ kWp ต่อวัน = 5.0 × 0.78', yieldK(), 5.0*0.78);
+    let sh=0; for(let h=6;h<18;h++) sh+=Math.sin(Math.PI*(h+.5-6)/12);
+    add('2.2 ผลิตไฟ 12:00–13:00 (12.24 kWp)', pvProf(12.24,yieldK())[12], 12.24*3.9*Math.sin(Math.PI*6.5/12)/sh);
+    add('2.3 แดดเดือน ม.ค. = 5.0 × 1.1189', monPSH()[0], 5.0*1.1189, 0.001);
+    add('2.4 อินเวอร์เตอร์อัตโนมัติ 12.24 kWp 3 เฟส (DC/AC ≤ 1.3)', invAuto(12.24), 10);
+    // ขั้น 3 ค่าไฟ
+    add('3.1 ค่าพลังงาน 500 หน่วย = 200×3 + 200×4.1584 + 100×4.3583', tierE(500,TARIFF.r12.tier), 200*3+200*4.1584+100*4.3583);
+    add('3.2 ค่าไฟ 500 หน่วย = (24.62 + ค่าพลังงาน + 500×0.1623) × 1.07', billE(Array(24).fill(500/24)), (24.62+200*3+200*4.1584+100*4.3583+500*0.1623)*1.07);
+    add('3.3 บิล 21,657 บ. ย้อนเป็นหน่วย', unitsOfBill(21657), (21657/1.07-24.62-200*3-200*4.1584+400*4.3583)/(4.3583+0.1623), 0.01);
+    add('3.4 ค่าไฟที่ประหยัดได้ต่อหน่วย (ขั้นสูงสุด) = (4.3583 + 0.1623) × 1.07', rateH(12), (4.3583+0.1623)*1.07);
+    S.tariff.type='r13';
+    add('3.5 TOU On-Peak เฉลี่ย = (245/365×5.7982 + 120/365×2.6369 + Ft) × 1.07', rateH(12), (245/365*5.7982+120/365*2.6369+0.1623)*1.07);
+    add('3.6 TOU Off-Peak = (2.6369 + 0.1623) × 1.07', rateH(23), (2.6369+0.1623)*1.07);
+    S.tariff.type='r12';
+    // ขั้น 4 การใช้ไฟ
+    const u=unitsOfBill(21657);
+    add('4.1 ใช้ไฟต่อวัน = หน่วย/เดือน ÷ 30.4', sum(loadBill().load), u/30.4);
+    add('4.2 สัดส่วนกลางวัน 07–17 น. = 31%', billShape().slice(7,17).reduce((a,b)=>a+b,0), 0.31);
+    const cdu=S.apps.find(a=>a.code==='CDU 1-2');
+    add('4.3 แอร์ 48,000 BTU 09–18 น. = 4.56 × (0.95 + 0.55 + 0.65×6 + 0.55)', appDay(cdu), 48000*0.095/1000*(0.95+0.55+0.65*6+0.55));
+    add('4.4 น้ำร้อน 3 × 6,000 W × 12% × 4 ชม.', appDay(S.apps.find(a=>/ห้องน้ำทั่วไป/.test(a.name))), 3*6*0.12*4);
+    add('4.5 รถ EV 40 กม. × 16 kWh/100 กม. ÷ 90%', carNeed(S.ev.cars[0]), 40*16/100/0.9);
+    // ขั้น 5 จำลองรายชั่วโมง + ขนาดแนะนำ
+    add('5.1 แนะนำ 17 แผง (ใช้เอง ≥ 90%)', recommend(), 17);
+    const R=simulate(loadBill().load,12.24);
+    add('5.2 ใช้เอง = ใช้ตรง ÷ ผลิตได้ (ไม่มีขาย/แบต)', R.T.self, R.T.direct/R.T.pv);
+    // ขั้น 6 ความคุ้มค่า
+    const F=finance({cost:100000,pvCost:100000,avoidY:20000,expY:0,n:10,inv:5,bOn:false,kWp:5});
+    add('6.1 เงินสดปีที่ 1 = 20,000 × 0.99 − 80 × 10', F.cf[1], 20000*0.99-800);
+    add('6.2 เงินสดปีที่ 2 = 20,000 × 0.99 × 0.996 × 1.015 − 800', F.cf[2], 20000*0.99*0.996*1.015-800);
+    add('6.3 เงินสดปีที่ 12 (เปลี่ยน Inv. 3,500 × 5 kW)', F.cf[12], 20000*0.99*Math.pow(0.996,11)*Math.pow(1.015,11)-800-3500*5);
+    let k=0; while(F.cum[k+1]<0) k++;
+    add('6.4 คืนทุน = ปีสุดท้ายที่ติดลบ + ยอดติดลบ ÷ เงินสดปีถัดไป', F.pay, k+(-F.cum[k])/F.cf[k+1]);
+    let npv=0; F.cf.forEach((v,y)=>{ npv+=v/Math.pow(1.04,y); });
+    add('6.5 NPV คิดลด 4%', F.npv, npv, 0.01);
+    S.fin.taxMode='person';
+    add('6.6 ภาษีบุคคล 9.36 kWp = min(266,760, 200,000) × 20%', finance({cost:266760,pvCost:266760,avoidY:0,expY:0,n:13,inv:8,bOn:false,kWp:9.36}).tax, 200000*0.2);
+    S.fin.taxMode='corp';
+    add('6.7 ภาษีนิติบุคคล = 266,760 × 70% × 0.5 × 20%', finance({cost:266760,pvCost:266760,avoidY:0,expY:0,n:13,inv:8,bOn:false,kWp:9.36}).tax, 266760*0.7*0.5*0.2);
+  } finally { S=S0; }
+  return C;
+}
+if(/[?&]debug=1(&|$)/.test(location.search)) window.HS_DEBUG={
+  RATES, TARIFF, SH, PLF, get S(){ return S; },
+  setMode:m=>{ S.mode=m; }, tierE, billE, rateH, dayRate, billShape, unitsOfBill, billOfUnits, loadBill, loadApps, ckLoad, acDayKW, appKW, appDay,
+  pvProf, simulate, monthly, finance, recommend, roofArea, roofUse, roofMax, pArea, kwpOf, invAuto, invKW, meterKVA, yieldK, monPSH, carNeed,
+  formulaChecks
+};
+
 init();
 })();
 </script>

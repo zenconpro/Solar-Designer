@@ -1,8 +1,8 @@
 {
   "name": "solar-designer",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "private": true,
-  "description": "Solar Designer — static web app (HTML/CSS/JS, no framework)",
+  "description": "HONOURTH Solar Rooftop Design — static web app (HTML/CSS/JS, no framework)",
   "scripts": {
     "build": "node scripts/build.mjs",
     "start": "npx --yes serve dist -l 3000"
