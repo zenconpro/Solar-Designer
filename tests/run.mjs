@@ -11,7 +11,7 @@
 // สิ่งที่ตรวจ
 //   ก. ตัวเลขผลลัพธ์ 18 กรณี ต้องตรงกับค่าอ้างอิง (golden.json) ทุกตัวอักษร
 //   ข. สูตรแต่ละขั้น (ค่าไฟขั้นบันได, TOU, ผลิตไฟ, คืนทุน ฯลฯ) เทียบกับการคำนวณมือในเอกสาร docs/FORMULAS.md
-//   ค. ไม่มี error ในหน้าเว็บ, หน้าไม่ล้นแนวนอน, แถบสรุปด้านขวาไม่ทับเนื้อหา (จอ 1568×744)
+//   ค. ไม่มี error ในหน้าเว็บ, หน้าไม่ล้นแนวนอน, แถบสรุปด้านขวาไม่ทับเนื้อหา, เลื่อนทีละคอลัมน์ถึงท้าย, กดปุ่มแล้วหน้าไม่ขยับ (จอ 1568×744)
 // ------------------------------------------------------------
 import { chromium } from 'playwright';
 import http from 'node:http';
@@ -136,13 +136,33 @@ for (const [label, w, h] of [['จอ 1568×744', 1568, 744], ['มือถื�
   if (w === 1568) {
     const ol = await pg.evaluate(() => { const a = document.querySelector('#home').getBoundingClientRect(), b = document.querySelector('#side').getBoundingClientRect(); return a.right - b.left; });
     check('ค. หน้าเว็บ', `${label} · แถบสรุปด้านขวาไม่ทับเนื้อหา`, ol <= 0, `ทับ ${ol} px`);
+    // เลื่อนทีละคอลัมน์ และเลื่อนถึงท้ายคอลัมน์ได้ทุกคอลัมน์ (ทั้ง 3 หน้า)
+    const cols = async sel => pg.evaluate(sel => [...document.querySelectorAll(sel)].filter(e => e.offsetWidth).map(e => { const r = e.getBoundingClientRect(), o = getComputedStyle(e).overflowY; return (o === 'auto' || o === 'scroll') && r.bottom <= innerHeight + 1 ? '' : (e.id || e.className) + ' ' + o + ' ล่าง ' + Math.round(r.bottom); }).filter(Boolean), sel);
+    check('ค. หน้าเว็บ', `${label} · บ้านและระบบ เลื่อนทีละคอลัมน์ถึงท้าย`, !(await cols('#home .hcol')).length, (await cols('#home .hcol')).join(', '));
+    // หน้าคงที่: กดแบต/ขายไฟ/เลือกแบบ แล้วตำแหน่งการ์ดไม่ขยับ
+    const pos = () => pg.evaluate(() => [...document.querySelectorAll('#home .card, #side .card, #home [id], #side [id]')].filter(e => e.offsetWidth).map(e => { const r = e.getBoundingClientRect(); return [Math.round(r.top), Math.round(r.height), Math.round(r.left)].join(','); }).join(' '));
+    for (const [nm, sel] of [['แบตเตอรี่', 'label.tog:has(#bon)'], ['ขายไฟคืน', 'label.tog:has(#tnet)'], ['เลือกแบบคืนทุนเร็ว', '#sdPlans [data-plan="pay"]']]) {
+      await pg.locator(sel).first().scrollIntoViewIfNeeded(); await pg.waitForTimeout(80);
+      const a = await pos(); await pg.click(sel); await pg.waitForTimeout(150); const b = await pos();
+      check('ค. หน้าเว็บ', `${label} · กด${nm} หน้าไม่ขยับ`, a === b, 'ตำแหน่งเปลี่ยน');
+    }
   }
   await pg.click('#tabs button[data-go="in"]');
   await pg.waitForTimeout(80);
   check('ค. หน้าเว็บ', `${label} · เครื่องใช้ไฟฟ้า ไม่ล้นแนวนอน`, (await sw()) <= 0, `ล้น ${await sw()} px`);
+  if (w === 1568) {
+    const bad = await pg.evaluate(() => [...document.querySelectorAll('#in-load .pane')].map(e => { const r = e.getBoundingClientRect(), o = getComputedStyle(e).overflowY; return (o === 'auto' || o === 'scroll') && r.bottom <= innerHeight + 1 ? '' : 'pane ' + o; }).filter(Boolean));
+    check('ค. หน้าเว็บ', `${label} · เครื่องใช้ไฟฟ้า เลื่อนทีละคอลัมน์ถึงท้าย`, !bad.length, bad.join(', '));
+    const last = await pg.evaluate(() => { const p = [...document.querySelectorAll('#in-load .pane')].pop(); return p.lastElementChild && p.lastElementChild.dataset.grp; });
+    check('ค. หน้าเว็บ', `${label} · รถไฟฟ้าอยู่ท้ายสุด`, last === 'ev', `ท้ายสุดคือ ${last}`);
+  }
   await pg.click('#tabs button[data-go="sum"]');
   await pg.waitForTimeout(80);
   check('ค. หน้าเว็บ', `${label} · สรุปผล ไม่ล้นแนวนอน`, (await sw()) <= 0, `ล้น ${await sw()} px`);
+  if (w === 1568) {
+    const bad = await pg.evaluate(() => [...document.querySelectorAll('.sumcol')].map(e => { const r = e.getBoundingClientRect(), o = getComputedStyle(e).overflowY; return (o === 'auto' || o === 'scroll') && r.bottom <= innerHeight + 1 ? '' : e.id + ' ' + o; }).filter(Boolean));
+    check('ค. หน้าเว็บ', `${label} · สรุปผล เลื่อนทีละคอลัมน์ถึงท้าย`, !bad.length, bad.join(', '));
+  }
   await pg.close();
 }
 check('ค. หน้าเว็บ', 'ไม่มี error ใน console', !errs.length, errs.join(' | '));
