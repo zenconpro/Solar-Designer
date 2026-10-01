@@ -44,7 +44,6 @@ num(R.tou.on, 0.5, 15, 'tou.on'); num(R.tou.off, 0.5, 15, 'tou.off');
 num(R.tou.onFrom, 0, 23, 'tou.onFrom'); num(R.tou.onTo, 1, 24, 'tou.onTo'); num(R.tou.weekdays, 200, 262, 'tou.weekdays');
 if (R.tou.onTo <= R.tou.onFrom) fail('data/rates.js: tou.onTo ต้องมากกว่า onFrom');
 num(R.netBilling.price, 0, 10, 'netBilling.price'); num(R.netBilling.maxKw, 1, 100, 'netBilling.maxKw'); num(R.netBilling.years, 1, 30, 'netBilling.years');
-num(R.peaLimitKw[1], 1, 100, 'peaLimitKw[1]'); num(R.peaLimitKw[3], 1, 1000, 'peaLimitKw[3]');
 num(R.tax.person.cap, 0, 1e7, 'tax.person.cap'); num(R.tax.person.maxKwp, 0, 1000, 'tax.person.maxKwp'); num(R.tax.corp.extra, 0, 2, 'tax.corp.extra');
 num(R.roofWeight.maxKgPerM2, 1, 200, 'roofWeight.maxKgPerM2');
 num(R.price.perW, 1, 200, 'price.perW'); num(R.price.battPerKWh, 100, 100000, 'price.battPerKWh');
