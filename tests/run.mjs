@@ -9,9 +9,9 @@
 //      npm run update          → บันทึกค่าอ้างอิงใหม่ (ใช้เมื่อ "ตั้งใจ" เปลี่ยนสูตร/อัตรา/ข้อความ แล้วตรวจความถูกต้องแล้ว)
 //
 // สิ่งที่ตรวจ
-//   ก. ตัวเลขผลลัพธ์ 16 กรณี ต้องตรงกับค่าอ้างอิง (golden.json) ทุกตัวอักษร
+//   ก. ตัวเลขผลลัพธ์ 18 กรณี ต้องตรงกับค่าอ้างอิง (golden.json) ทุกตัวอักษร
 //   ข. สูตรแต่ละขั้น (ค่าไฟขั้นบันได, TOU, ผลิตไฟ, คืนทุน ฯลฯ) เทียบกับการคำนวณมือในเอกสาร docs/FORMULAS.md
-//   ค. ไม่มี error ในหน้าเว็บ, หน้าไม่ล้นแนวนอน, หน้าตั้งค่าไม่ต้องเลื่อน (จอ 1568×744)
+//   ค. ไม่มี error ในหน้าเว็บ, หน้าไม่ล้นแนวนอน, แถบสรุปด้านขวาไม่ทับเนื้อหา (จอ 1568×744)
 // ------------------------------------------------------------
 import { chromium } from 'playwright';
 import http from 'node:http';
@@ -44,26 +44,29 @@ const URL0 = `http://127.0.0.1:${server.address().port}/`;
 
 // ── กรณีทดสอบ (ข้อมูลบ้านบางส่วน ที่เหลือใช้ค่าตั้งต้นของแม่แบบ) ──
 const SCEN = {
-  spectra_roof:        { tpl: 'spectra', calc: 'roof' },
-  spectra_bill:        { tpl: 'spectra', calc: 'bill' },
-  spectra_load:        { tpl: 'spectra', calc: 'load' },
-  spectra_bill_batt:   { tpl: 'spectra', calc: 'bill', batt: { on: true } },
-  spectra_load_batt:   { tpl: 'spectra', calc: 'load', batt: { on: true } },
-  spectra_load_tou:    { tpl: 'spectra', calc: 'load', tariff: { type: 'r13' } },
-  spectra_bill_net:    { tpl: 'spectra', calc: 'bill', tariff: { net: true } },
-  spectra_bill13:      { tpl: 'spectra', calc: 'bill', m2: { n: 13 } },
-  spectra_bill13_pers: { tpl: 'spectra', calc: 'bill', m2: { n: 13 }, fin: { taxMode: 'person' } },
-  spectra_bill13_corp: { tpl: 'spectra', calc: 'bill', m2: { n: 13 }, fin: { taxMode: 'corp' } },
-  spectra_load_evcust: { tpl: 'spectra', calc: 'load', ev: { mode: 'custom' } },
-  house_bill:          { tpl: 'house', calc: 'bill' },
-  house_flat_bill:     { tpl: 'house', calc: 'bill', tariff: { type: 'flat', buy: 4.5 } },
-  town_load:           { tpl: 'townhome', calc: 'load' },
-  shop_bill:           { tpl: 'shop', calc: 'bill' },
-  office_roof:         { tpl: 'office', calc: 'roof' },
+  // v2.0: คำนวณจากเครื่องใช้ไฟฟ้าอย่างเดียว · plan = max (ใช้โซลาร์มากที่สุด) | pay (คืนทุนเร็วที่สุด) | custom
+  spectra_max:         { tpl: 'spectra' },
+  spectra_pay:         { tpl: 'spectra', plan: 'pay' },
+  spectra_17_nobatt:   { tpl: 'spectra', plan: 'custom', m3: { n: 17 }, batt: { on: false } },
+  spectra_24_batt14:   { tpl: 'spectra', plan: 'custom', m3: { n: 24 }, batt: { on: true, kwh: 14 } },
+  spectra_tou:         { tpl: 'spectra', tariff: { type: 'r13' } },
+  spectra_net:         { tpl: 'spectra', plan: 'custom', m3: { n: 17 }, batt: { on: false }, tariff: { net: true } },
+  spectra_13_pers:     { tpl: 'spectra', plan: 'custom', m3: { n: 13 }, batt: { on: false }, fin: { taxMode: 'person' } },
+  spectra_13_corp:     { tpl: 'spectra', plan: 'custom', m3: { n: 13 }, batt: { on: false }, fin: { taxMode: 'corp' } },
+  spectra_ev_fixed:    { tpl: 'spectra', plan: 'custom', m3: { n: 17 }, batt: { on: true, kwh: 14 }, ev: { mode: 'fixed' } },
+  spectra_ev_custom:   { tpl: 'spectra', ev: { mode: 'custom' } },
+  spectra_ev_toumeter: { tpl: 'spectra', ev: { meter: 'tou' } },
+  spectra_ac_inv3:     { tpl: 'spectra', ac: { cls: 'inv3', seer: 22, lf: 'tou' } },
+  spectra_ac_legacy:   { tpl: 'spectra', ac: { k: 0.095, plf: 'const', c: 0.5 } },
+  house:               { tpl: 'house' },
+  house_flat:          { tpl: 'house', tariff: { type: 'flat', buy: 4.5 } },
+  town:                { tpl: 'townhome' },
+  shop:                { tpl: 'shop' },
+  office:              { tpl: 'office' },
 };
 // ช่องที่เก็บค่า (id ของ element ในหน้าเว็บ)
 const IDS = ['kKwp', 'kN', 'kInv', 'kInvS', 'kSave', 'kSaveY', 'kPay', 'kCost', 'kGen', 'kGenM', 'roofPill', 'bStats', 'ytbl', 'money', 'battBox',
-  'recTxt', 'roofSum', 'wChips', 'invChips', 'm2derived', 'm3tot', 'evInfo', 'tHint', 'houseChips'];
+  'recTxt', 'roofSum', 'wChips', 'invChips', 'm3tot', 'evInfo', 'acHint', 'tHint', 'houseChips', 'sdKpis', 'sdCov', 'sumPlans'];
 
 const results = []; // {group, name, ok, msg}
 const check = (group, name, ok, msg = '') => results.push({ group, name, ok: !!ok, msg });
@@ -79,6 +82,7 @@ const newPage = async (w = 1568, h = 744) => {
 };
 const loadCase = async (pg, st, q = '') => {
   await pg.goto(URL0 + q);
+  await pg.waitForTimeout(400); // รอให้แอปบันทึกรอบแรกเสร็จก่อน (ตอนรีเฟรชแอปบันทึกค้างทันที)
   await pg.evaluate(st => { localStorage.clear(); localStorage.setItem('solar-cases-v1', JSON.stringify({ v: 1, active: 't', ids: ['t'], items: { t: Object.assign({ v: 9 }, st) } })); }, st);
   await pg.reload();
   await pg.waitForSelector('#tabs');
@@ -113,7 +117,7 @@ if (UPDATE) { writeFileSync(GOLD, JSON.stringify(now, null, 1) + '\n'); console.
 // ── ข. สูตรแต่ละขั้น (เรียกฟังก์ชันจริงของแอปผ่าน ?debug=1) ──
 {
   const pg = await newPage();
-  await loadCase(pg, { tpl: 'spectra', calc: 'bill' }, '?debug=1');
+  await loadCase(pg, { tpl: 'spectra' }, '?debug=1');
   const hasDbg = await pg.evaluate(() => !!window.HS_DEBUG);
   check('ข. สูตร', 'เปิดโหมดตรวจสูตร (?debug=1)', hasDbg, 'ไม่พบ window.HS_DEBUG');
   if (hasDbg) {
@@ -126,22 +130,19 @@ if (UPDATE) { writeFileSync(GOLD, JSON.stringify(now, null, 1) + '\n'); console.
 // ── ค. หน้าเว็บ: error / ล้นจอ ──
 for (const [label, w, h] of [['จอ 1568×744', 1568, 744], ['มือถือ 390×844', 390, 844]]) {
   const pg = await newPage(w, h);
-  await loadCase(pg, { tpl: 'spectra', calc: 'load' });
+  await loadCase(pg, { tpl: 'spectra' });
   const sw = () => pg.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-  check('ค. หน้าเว็บ', `${label} · หน้าตั้งค่า ไม่ล้นแนวนอน`, (await sw()) <= 0, `ล้น ${await sw()} px`);
+  check('ค. หน้าเว็บ', `${label} · บ้านและระบบ ไม่ล้นแนวนอน`, (await sw()) <= 0, `ล้น ${await sw()} px`);
   if (w === 1568) {
-    const ov = await pg.evaluate(() => [...document.querySelectorAll('#home .hcol')].map(c => c.scrollHeight - c.clientHeight).filter(v => v > 0));
-    check('ค. หน้าเว็บ', `${label} · หน้าตั้งค่า ไม่ต้องเลื่อน (ขั้นสูงซ่อน)`, !ov.length, `คอลัมน์ล้น ${ov.join(',')} px`);
+    const ol = await pg.evaluate(() => { const a = document.querySelector('#home').getBoundingClientRect(), b = document.querySelector('#side').getBoundingClientRect(); return a.right - b.left; });
+    check('ค. หน้าเว็บ', `${label} · แถบสรุปด้านขวาไม่ทับเนื้อหา`, ol <= 0, `ทับ ${ol} px`);
   }
-  for (const m of ['roof', 'bill', 'load']) {
-    await pg.click('#tabs button[data-go="home"]');
-    await pg.click(`#home .mcard[data-go="${m}"]`);
-    await pg.waitForTimeout(80);
-    check('ค. หน้าเว็บ', `${label} · ข้อมูล${m} ไม่ล้นแนวนอน`, (await sw()) <= 0, `ล้น ${await sw()} px`);
-    await pg.click('#tabs button[data-go="sum"]');
-    await pg.waitForTimeout(80);
-    check('ค. หน้าเว็บ', `${label} · สรุปผล(${m}) ไม่ล้นแนวนอน`, (await sw()) <= 0, `ล้น ${await sw()} px`);
-  }
+  await pg.click('#tabs button[data-go="in"]');
+  await pg.waitForTimeout(80);
+  check('ค. หน้าเว็บ', `${label} · เครื่องใช้ไฟฟ้า ไม่ล้นแนวนอน`, (await sw()) <= 0, `ล้น ${await sw()} px`);
+  await pg.click('#tabs button[data-go="sum"]');
+  await pg.waitForTimeout(80);
+  check('ค. หน้าเว็บ', `${label} · สรุปผล ไม่ล้นแนวนอน`, (await sw()) <= 0, `ล้น ${await sw()} px`);
   await pg.close();
 }
 check('ค. หน้าเว็บ', 'ไม่มี error ใน console', !errs.length, errs.join(' | '));
