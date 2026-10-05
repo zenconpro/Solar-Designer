@@ -12,6 +12,7 @@
 //   ก. ตัวเลขผลลัพธ์ 18 กรณี ต้องตรงกับค่าอ้างอิง (golden.json) ทุกตัวอักษร
 //   ข. สูตรแต่ละขั้น (ค่าไฟขั้นบันได, TOU, ผลิตไฟ, คืนทุน ฯลฯ) เทียบกับการคำนวณมือในเอกสาร docs/FORMULAS.md
 //   ค. ไม่มี error ในหน้าเว็บ, หน้าไม่ล้นแนวนอน, แถบสรุปด้านขวาไม่ทับเนื้อหา, เลื่อนทีละคอลัมน์ถึงท้าย, กดปุ่มแล้วหน้าไม่ขยับ (จอ 1568×744)
+//      v2.2: บ้านและระบบไม่ต้องเลื่อน · แถบหัวไม่ขยับเมื่อเปลี่ยนหน้า · หน้าสรุปผลไม่มีแถบขวา · ไม่มีการ์ดเทียบ 2 แบบ
 // ------------------------------------------------------------
 import { chromium } from 'playwright';
 import http from 'node:http';
@@ -66,7 +67,7 @@ const SCEN = {
 };
 // ช่องที่เก็บค่า (id ของ element ในหน้าเว็บ)
 const IDS = ['kKwp', 'kN', 'kInv', 'kInvS', 'kSave', 'kSaveY', 'kPay', 'kCost', 'kGen', 'kGenM', 'roofPill', 'bStats', 'ytbl', 'money', 'battBox',
-  'recTxt', 'roofSum', 'wChips', 'invChips', 'm3tot', 'evInfo', 'acHint', 'tHint', 'houseChips', 'sdKpis', 'sdCov', 'sumPlans'];
+  'recTxt', 'roofSum', 'wChips', 'invChips', 'm3tot', 'evInfo', 'acHint', 'tHint', 'houseChips', 'sdKpis', 'sdCov'];
 
 const results = []; // {group, name, ok, msg}
 const check = (group, name, ok, msg = '') => results.push({ group, name, ok: !!ok, msg });
@@ -87,11 +88,12 @@ const loadCase = async (pg, st, q = '') => {
   await pg.reload();
   await pg.waitForSelector('#tabs');
 };
-const grab = pg => pg.evaluate(ids => {
+const SIDE_IDS = ['sdKpis', 'sdCov']; // แถบขวาซ่อนในหน้าสรุปผล (v2.2) → เก็บค่าจากหน้าบ้านและระบบ
+const grab = (pg, ids = IDS) => pg.evaluate(ids => {
   const o = {};
   for (const id of ids) { const e = document.getElementById(id); if (!e || e.hidden) continue; const t = (e.innerText.trim() ? e.innerText : e.textContent).replace(/[ \u00a0]+/g, ' ').replace(/\s*[\t\n]+\s*/g, ' ¦ ').trim(); if (t) o[id] = t; }
   return o;
-}, IDS);
+}, ids);
 
 // ── ก. ตัวเลขผลลัพธ์เทียบค่าอ้างอิง ──
 const gold = existsSync(GOLD) ? JSON.parse(readFileSync(GOLD, 'utf8')) : {};
@@ -100,9 +102,10 @@ const now = {};
   const pg = await newPage();
   for (const [name, st] of Object.entries(SCEN)) {
     await loadCase(pg, st);
+    const side = await grab(pg, SIDE_IDS);
     await pg.click('#tabs button[data-go="sum"]');
     await pg.waitForTimeout(120);
-    now[name] = await grab(pg);
+    now[name] = Object.assign(await grab(pg, IDS.filter(k => !SIDE_IDS.includes(k))), side);
     if (!UPDATE) {
       const g = gold[name];
       if (!g) { check('ก. ผลลัพธ์', name, false, 'ไม่มีค่าอ้างอิง — รัน npm run update'); continue; }
@@ -139,9 +142,19 @@ for (const [label, w, h] of [['จอ 1568×744', 1568, 744], ['มือถื�
     // เลื่อนทีละคอลัมน์ และเลื่อนถึงท้ายคอลัมน์ได้ทุกคอลัมน์ (ทั้ง 3 หน้า)
     const cols = async sel => pg.evaluate(sel => [...document.querySelectorAll(sel)].filter(e => e.offsetWidth).map(e => { const r = e.getBoundingClientRect(), o = getComputedStyle(e).overflowY; return (o === 'auto' || o === 'scroll') && r.bottom <= innerHeight + 1 ? '' : (e.id || e.className) + ' ' + o + ' ล่าง ' + Math.round(r.bottom); }).filter(Boolean), sel);
     check('ค. หน้าเว็บ', `${label} · บ้านและระบบ เลื่อนทีละคอลัมน์ถึงท้าย`, !(await cols('#home .hcol')).length, (await cols('#home .hcol')).join(', '));
-    // หน้าคงที่: กดแบต/ขายไฟ/เลือกแบบ แล้วตำแหน่งการ์ดไม่ขยับ
+    const fit = await pg.evaluate(() => [...document.querySelectorAll('#home .hcol')].map(e => e.scrollHeight - e.clientHeight).filter(d => d > 1));
+    check('ค. หน้าเว็บ', `${label} · บ้านและระบบ ไม่ต้องเลื่อน (ทุกคอลัมน์พอดีจอ)`, !fit.length, `เกิน ${fit.join(', ')} px`);
+    const sdw = await pg.evaluate(() => Math.round(document.querySelector('#side').getBoundingClientRect().width));
+    check('ค. หน้าเว็บ', `${label} · แถบสรุปด้านขวากว้าง ≥ 400 px`, sdw >= 400, `กว้าง ${sdw} px`);
+    check('ค. หน้าเว็บ', `${label} · ไม่มีการ์ดเทียบ 2 แบบ`, !(await pg.evaluate(() => document.body.innerText.includes('เทียบ 2 แบบ'))), 'ยังพบข้อความ');
+    // แถบหัว (แท็บ + ปุ่ม) อยู่ตำแหน่งเดิมทุกหน้า
+    const bar = () => pg.evaluate(() => ['#tabs', '#btnShare', '#btnPrint'].map(q => { const e = document.querySelector(q), r = e.getBoundingClientRect(); return e.offsetWidth ? [Math.round(r.left), Math.round(r.top), Math.round(r.width)].join(',') : 'ซ่อน'; }).join(' '));
+    const bars = [];
+    for (const t of ['home', 'in', 'sum', 'home']) { await pg.click(`#tabs button[data-go="${t}"]`); await pg.waitForTimeout(80); bars.push(await bar()); }
+    check('ค. หน้าเว็บ', `${label} · แถบหัวไม่ขยับเมื่อเปลี่ยนหน้า`, bars.every(b => b === bars[0] && !b.includes('ซ่อน')), bars.join(' | '));
+    // หน้าคงที่: กดแบต/ขายไฟ/ค่าแนะนำ แล้วตำแหน่งการ์ดไม่ขยับ
     const pos = () => pg.evaluate(() => [...document.querySelectorAll('#home .card, #side .card, #home [id], #side [id]')].filter(e => e.offsetWidth).map(e => { const r = e.getBoundingClientRect(); return [Math.round(r.top), Math.round(r.height), Math.round(r.left)].join(','); }).join(' '));
-    for (const [nm, sel] of [['แบตเตอรี่', 'label.tog:has(#bon)'], ['ขายไฟคืน', 'label.tog:has(#tnet)'], ['เลือกแบบคืนทุนเร็ว', '#sdPlans [data-plan="pay"]']]) {
+    for (const [nm, sel] of [['แบตเตอรี่', 'label.tog:has(#bon)'], ['ขายไฟคืน', 'label.tog:has(#tnet)'], ['ค่าแนะนำ', '#btnRec']]) {
       await pg.locator(sel).first().scrollIntoViewIfNeeded(); await pg.waitForTimeout(80);
       const a = await pos(); await pg.click(sel); await pg.waitForTimeout(150); const b = await pos();
       check('ค. หน้าเว็บ', `${label} · กด${nm} หน้าไม่ขยับ`, a === b, 'ตำแหน่งเปลี่ยน');
@@ -162,6 +175,8 @@ for (const [label, w, h] of [['จอ 1568×744', 1568, 744], ['มือถื�
   if (w === 1568) {
     const bad = await pg.evaluate(() => [...document.querySelectorAll('.sumcol')].map(e => { const r = e.getBoundingClientRect(), o = getComputedStyle(e).overflowY; return (o === 'auto' || o === 'scroll') && r.bottom <= innerHeight + 1 ? '' : e.id + ' ' + o; }).filter(Boolean));
     check('ค. หน้าเว็บ', `${label} · สรุปผล เลื่อนทีละคอลัมน์ถึงท้าย`, !bad.length, bad.join(', '));
+    const sd = await pg.evaluate(() => { const s = document.querySelector('#side'), w = document.querySelector('#work').getBoundingClientRect(); return [s.offsetWidth, Math.round(innerWidth - w.right)]; });
+    check('ค. หน้าเว็บ', `${label} · สรุปผล ไม่มีแถบขวา ใช้เต็มจอ`, sd[0] === 0 && sd[1] <= 20, `แถบ ${sd[0]} px · ขอบขวาเหลือ ${sd[1]} px`);
   }
   await pg.close();
 }
