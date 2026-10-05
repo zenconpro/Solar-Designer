@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="HONOURTH Solar Rooftop Design — คำนวณขนาดระบบโซลาร์ On-Grid ค่าไฟที่ประหยัด และระยะคืนทุน">
-<title>HONOURTH Solar Rooftop Design — Version 2.1.0</title>
+<title>HONOURTH Solar Rooftop Design — Version 2.2.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -738,12 +738,33 @@ body.work.p-sum .side{display:none}
 #invBox .optgrid .inl input{width:50px;-moz-appearance:textfield;appearance:textfield;padding:4px 6px}
 #invBox .optgrid .inl input::-webkit-inner-spin-button,#invBox .optgrid .inl input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 @media print{ .sumcols{display:block} .sumcol{height:auto!important;overflow:visible!important} .sumcol>*+*{margin-top:8px} }
+
+/* ══ v2.2: แถบสรุปกว้าง 420 px · หน้าสรุปผลไม่มีแถบขวา (3 คอลัมน์) · ปุ่มบนแถบหัวคงที่ทุกหน้า ══ */
+.sd-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+table.ftbl{font-size:11px} table.ftbl th{white-space:normal;line-height:1.2;vertical-align:bottom} table.ftbl th,table.ftbl td{padding:2px 3px}
+#wBox .row{margin-top:0}
+@media(min-width:1200px){
+  #home,body:not(.work) #home,#work,body.work #work,.banner{margin-right:420px!important}
+  .side,body.work.p-sum .side{width:420px}
+  body.work.p-sum .side{display:none!important}
+  body.work.p-sum #work{margin-right:0!important}
+}
+@media screen and (min-width:1440px) and (min-height:560px){
+  #home,body:not(.work) #home,body.work #work{right:420px!important;margin-right:0!important}
+  body.work.p-sum #work{right:0!important}
+  body.work.p-in #in-load>.mode-title{display:none!important}
+  #home .hcol{padding-bottom:4px!important}
+  body.work.p-in #in-load{grid-template-rows:minmax(0,1fr)!important}
+  .sumcols{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+.sys .rec{background:none!important;padding:0 2px!important;margin-top:6px!important;min-height:24px}
+.sys .rec .btn.sm{padding:1px 8px}
 </style>
 </head>
 <body>
 <header class="bar">
   <div class="brand"><img class="logo" src="data:image/png;base64,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" alt="HONOUR THAILAND" width="30" height="38"><div class="bt"><b>HONOURTH Solar Rooftop Design</b><small><span class="case" id="siteLbl"></span></small></div></div>
-  <div class="pub" title="เวอร์ชันและผู้พัฒนา"><b class="ver">Version 2.1.0</b><span>Publish by <b>Virakharesh</b></span></div>
+  <div class="pub" title="เวอร์ชันและผู้พัฒนา"><b class="ver">Version 2.2.0</b><span>Publish by <b>Virakharesh</b></span></div>
   <nav class="tabs" id="tabs">
     <button data-go="home">บ้านและระบบ</button>
     <button data-go="in" hidden id="tabIn">เครื่องใช้ไฟฟ้า</button>
@@ -822,10 +843,10 @@ body.work.p-sum .side{display:none}
         <label class="f"><span>PR กำหนดเอง (0.5–1.0)</span><input type="number" id="pr" data-k="site.pr" step="0.01" min="0.5" max="1"></label>
       </div>
       <p class="hint">ผลิตได้ <b id="yieldTxt"></b> kWh/kWp/วัน · <a href="https://re.jrc.ec.europa.eu/pvg_tools/en/" target="_blank" rel="noopener">เช็กกับ PVGIS</a></p>
-      <p class="hint" style="margin-top:0">ช่วง PR: 78–85% = ปกติ · 70–77% = เริ่มเสื่อม · ต่ำกว่า 70% = ผิดปกติ ตรวจสอบระบบ</p>
-      <details class="msub"><summary>แดดรายเดือน (PSH kWh/ม²/วัน)</summary>
+      <details class="msub"><summary>แดดรายเดือน (PSH) · ช่วง PR</summary>
         <div class="mgrid" id="mGrid"></div>
         <p class="hint">ค่าเริ่มต้นตามภูมิภาค (NASA) แก้เป็นค่า PVGIS รายเดือนได้ · <button class="linkbtn" id="mReset">คืนค่าภูมิภาค</button></p>
+      <p class="hint" style="margin-top:4px">ช่วง PR: 78–85% = ปกติ · 70–77% = เริ่มเสื่อม · ต่ำกว่า 70% = ผิดปกติ ตรวจสอบระบบ</p>
       </details>
     </div>
 
@@ -853,17 +874,29 @@ body.work.p-sum .side{display:none}
           <label class="f"><span>เผื่อช่องว่าง/ราง (%)</span><input type="number" id="pgap" data-k="panel.gap" step="1" min="0" max="50"></label>
         </div>
       </div>
-      <p class="hint" id="panelHint" style="margin-top:4px"></p>
-      <p class="hint" style="margin-top:0">ช่องว่าง 7% = กรอบแผง ~3% + ระยะยึดโครงราง ~4% · เหมาะสำหรับติดตั้งใกล้ชิดบนหลังคาลาดเอียง</p>
+      <p class="hint" id="panelHint" style="margin-top:4px" title="ช่องว่าง 7% = กรอบแผง ~3% + ระยะยึดโครงราง ~4% · เหมาะสำหรับติดตั้งใกล้ชิดบนหลังคาลาดเอียง"></p>
       <div class="chips" id="pWarn"></div>
     </div>
 
-    <div class="card">
-      <h3>ราคาระบบโดยประมาณ</h3>
-      <div class="row">
-        <label class="f"><span>แผง+Inv.+ติดตั้ง (บ./W)</span><input type="number" id="cw" data-k="price.w" step="0.5"></label>
-        <label class="f"><span>แบตเตอรี่ (บ./kWh)</span><input type="number" id="cb" data-k="price.batt" step="500"></label>
+    <div class="card sys" id="invBox">
+      <h3 class="h3tag"><span>อินเวอร์เตอร์ · แบต · ขายไฟ</span><span class="tag" id="sysTag">On-Grid</span></h3>
+      <div class="row adv">
+        <label class="f"><span>อินเวอร์เตอร์ (kW AC)</span><select id="invSel" data-k="inv.kw" data-num></select></label>
+        <div class="f"><span>DC/AC · ปกติ 1.1–1.3</span><div class="ro" id="dcac"></div></div>
       </div>
+      <div class="optgrid">
+        <div class="optrow" id="battRow">
+          <label class="tog"><span class="sw"><input type="checkbox" id="bon" data-k="batt.on"><i></i></span>เพิ่มแบตเตอรี่</label>
+          <label class="inl" id="bkwhF"><span>ความจุ</span><input type="number" id="bkwh" data-k="batt.kwh" min="1" step="1"><span>kWh</span></label>
+          <span class="hint ohint" id="battHint"></span>
+        </div>
+        <div class="optrow">
+          <label class="tog"><span class="sw"><input type="checkbox" id="tnet" data-k="tariff.net"><i></i></span>ขายไฟคืน</label>
+          <label class="inl" id="tsellF" title="ราคาขายไฟคืน"><input type="number" id="tsell" data-k="tariff.sell" step="0.01"><span>บ./หน่วย</span></label>
+          <label class="inl" id="tlimF" title="เพดานกำลังขายคืน"><span>≤</span><input type="number" id="tlim" data-k="tariff.lim" step="0.5" min="0"><span>kW</span></label>
+        </div>
+      </div>
+      <div class="chips" id="invChips"></div>
     </div>
   </div>
 
@@ -895,7 +928,10 @@ body.work.p-sum .side{display:none}
         <div><small>พื้นที่แผง</small><b id="sArea"></b></div>
         <div><small>น้ำหนักรวม</small><b id="sKg"></b></div>
       </div>
-      <div class="sub3 adv">น้ำหนักบนหลังคา (แผง + โครงยึด)</div>
+    </div>
+
+    <div class="card" id="wBox">
+      <h3>น้ำหนักบนหลังคา <small class="c-mu" style="font-weight:400">แผง + โครงยึด</small></h3>
       <div class="row adv">
         <label class="f" style="grid-column:span 2"><span>ชนิดโครงยึด</span><select id="mType" data-k="roof.mtype"></select></label>
         <label class="f" id="mCustF"><span>โครงยึด (กก./ม²)</span><input type="number" id="rMount" data-k="roof.mount" step="0.5" min="0"></label>
@@ -903,27 +939,14 @@ body.work.p-sum .side{display:none}
       </div>
       <div class="chips" id="wChips"></div>
     </div>
-
-    <div class="card sys" id="invBox">
-      <h3 class="h3tag"><span>อินเวอร์เตอร์ · แบต · ขายไฟ</span><span class="tag" id="sysTag">On-Grid</span></h3>
-      <div class="row adv">
-        <label class="f"><span>อินเวอร์เตอร์ (kW AC)</span><select id="invSel" data-k="inv.kw" data-num></select></label>
-        <div class="f"><span>DC/AC · ปกติ 1.1–1.3</span><div class="ro" id="dcac"></div></div>
+    <div class="card">
+      <h3>ราคาระบบโดยประมาณ</h3>
+      <div class="row">
+        <label class="f"><span>แผง+Inv.+ติดตั้ง (บ./W)</span><input type="number" id="cw" data-k="price.w" step="0.5"></label>
+        <label class="f"><span>แบตเตอรี่ (บ./kWh)</span><input type="number" id="cb" data-k="price.batt" step="500"></label>
       </div>
-      <div class="optgrid">
-        <div class="optrow" id="battRow">
-          <label class="tog"><span class="sw"><input type="checkbox" id="bon" data-k="batt.on"><i></i></span>เพิ่มแบตเตอรี่</label>
-          <label class="inl" id="bkwhF"><span>ความจุ</span><input type="number" id="bkwh" data-k="batt.kwh" min="1" step="1"><span>kWh</span></label>
-          <span class="hint ohint" id="battHint"></span>
-        </div>
-        <div class="optrow">
-          <label class="tog"><span class="sw"><input type="checkbox" id="tnet" data-k="tariff.net"><i></i></span>ขายไฟคืน</label>
-          <label class="inl" id="tsellF" title="ราคาขายไฟคืน"><input type="number" id="tsell" data-k="tariff.sell" step="0.01"><span>บ./หน่วย</span></label>
-          <label class="inl" id="tlimF" title="เพดานกำลังขายคืน"><span>≤</span><input type="number" id="tlim" data-k="tariff.lim" step="0.5" min="0"><span>kW</span></label>
-        </div>
-      </div>
-      <div class="chips" id="invChips"></div>
     </div>
+
   </div>
 </section>
 
@@ -1039,7 +1062,6 @@ body.work.p-sum .side{display:none}
       <div class="kpi"><small>คืนทุน</small><b id="kPay"></b><span id="kCost"></span></div>
     </div>
     <div class="pill" id="roofPill"></div>
-    <div class="card plancard"><h3>เทียบ 2 แบบ <small>ใช้โซลาร์มากที่สุด vs คืนทุนเร็วที่สุด</small></h3><div id="sumPlans" class="plans2"></div></div>
       <div class="card chart">
         <h3 id="bTitle">ค่าไฟรายเดือน: ไม่ติด vs ติดโซลาร์</h3>
         <div class="legend" id="bLegend"></div>
@@ -1060,6 +1082,8 @@ body.work.p-sum .side{display:none}
         <div id="cfChart"></div>
         <div class="stats" id="cfStats"></div>
       </div>
+      </div>
+      <div class="sumcol" id="sumT">
     <section class="card tech" id="techCard"><h3>รายละเอียดทางเทคนิค <small>กราฟรายชั่วโมง · ผลิตไฟรายเดือน · ตาราง</small></h3>
       <p class="hint"><span class="nw">ผลิตไฟ <b id="kGen"></b></span> <span class="nw">· <span id="kGenM"></span></span></p>
       <div class="charts">
@@ -1093,7 +1117,6 @@ body.work.p-sum .side{display:none}
     <div class="sd-cov" id="sdCov"></div>
     <div class="sd-go"><button class="btn sm" data-go="sum">ดูสรุปผลทั้งหมด →</button></div>
   </div>
-  <div class="card sd-plans"><h3>เทียบ 2 แบบ <small>กดเพื่อเลือกใช้</small></h3><div id="sdPlans"></div></div>
     <div class="card hcard sd-houses">
       <h3>บ้านที่บันทึกไว้ <small id="hsCnt"></small></h3>
       <div class="hlist" id="hList" role="list"></div>
@@ -1122,7 +1145,7 @@ const RATES=window.HS_RATES;
 if(!RATES||!RATES.tariff){ document.body.insertAdjacentHTML('afterbegin','<div style="padding:16px;background:#7f1d1d;color:#fff;font:16px sans-serif">โหลดไฟล์อัตราค่าไฟ (data/rates.js) ไม่สำเร็จ — แอปคำนวณไม่ได้</div>'); throw new Error('HS_RATES missing'); }
 { const b=document.querySelector('[data-seg="fin.taxMode"] [data-v="person"]'); if(b) b.textContent='บุคคล ≤ '+RATES.tax.person.cap.toLocaleString('en-US'); }
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const VER='2.1.0', LS_CASES='solar-cases-v1', LS_V8='solar-v8', LS_V7='solar-v7';
+const VER='2.2.0', LS_CASES='solar-cases-v1', LS_V8='solar-v8', LS_V7='solar-v7';
 const rng=(a,b)=>{const r=[];for(let i=a;i<b;i++)r.push(i%24);return r;};
 const clone=o=>JSON.parse(JSON.stringify(o));
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1901,7 +1924,7 @@ function initStatic(){
     sel.value= isDb? String(w) : 'custom';
     $('#panelCustom').hidden= sel.value!=='custom';
     const p=S.panel;
-    $('#panelHint').textContent= `${p.w} W · ${p.len}×${p.wid} ม. (${f1(p.len*p.wid)} ม²) · ${p.kg} กก./แผง`;
+    $('#panelHint').textContent= `${p.w} W · ${p.len}×${p.wid} ม. (${f1(p.len*p.wid)} ม²) · ${p.kg} กก./แผง · เผื่อช่องว่าง/ราง ${nf(S.panel.gap)}%`;
   }
   $('#pshSel').addEventListener('change',()=>{
     const v=$('#pshSel').value;
@@ -2306,7 +2329,6 @@ function recalc(){
     : tm==='corp'? `<span class="nw">พ.ร.ฎ. 805 · ภาษีลดเพิ่ม = 50% × ค่าอุปกรณ์ × อัตราภาษี</span> <span class="nw">· อุปกรณ์ใหม่เข้าเกณฑ์ พพ. ไม่รวมค่าแรง/แบต</span> <span class="nw">· ห้ามซ้ำ BOI · ถึง ${RATES.tax.corp.until}</span>`
     : '<span class="nw">ไม่นับสิทธิภาษีในจุดคุ้มทุน</span>';
   $('#scSum').textContent=`· แย่ ${sg(S.fin.scYlo)}% / ${nf(S.fin.scElo,1)}% · ดี ${sg(S.fin.scYhi)}% / ${nf(S.fin.scEhi,1)}%`;
-  $('#btnPrint').hidden= PAGE==='home';
   $('#acSeerF').style.visibility= S.ac.cls==='custom'?'':'hidden';
   $('#acHint').innerHTML=`<span class="nw">ใช้ SEER <b>${nf(acSeer(),1)}</b></span> <span class="nw">· แอร์ 12,000 BTU เปิดเต็มที่ ≈ <b>${f2(acKW(12000,1))}</b> kW</span><br>`+(S.ac.lf==='tou'?'<span class="nw">ภาระตามเวลา: ชั่วโมงแรกที่เปิด 95% (ดึงห้องให้เย็น)</span> <span class="nw">· 11–17 น. 65% · 09–11 / 17–20 น. 55%</span> <span class="nw">· 06–09 น. 45% · 20–23 น. 42% · 23–06 น. 30%</span>':'<span class="nw">ชั่วโมงแรกที่เปิด 95% (ดึงห้องให้เย็น) ชั่วโมงต่อไปตามค่าที่เลือก</span>');
   $('#rAreaRow').hidden=S.roof.mode!=='area'; $('#rDims').hidden=S.roof.mode!=='dims';
@@ -2494,7 +2516,7 @@ function recalc(){
   drawCF(F,F0,FR);
   drawBill(M,F,m==='roof',saveY1);
   // แถบผลย่อในหน้าข้อมูล
-  // แถบสรุปด้านขวา + การ์ดเทียบ 2 แบบ
+  // แถบสรุปด้านขวา
   const cov=T.load>0? 1-T.imp/T.load : 0;
   $('#sdName').textContent=S.house.name||'';
   $('#sdPlanTag').textContent=PLAN_T[S.plan];
@@ -2506,13 +2528,6 @@ function recalc(){
     +tile('คืนทุน',isFinite(F.pay)?`${f1(F.pay)} <small>ปี</small>`:'> 25 <small>ปี</small>',`ช่วง ${rngTxt} ปี`)
     +tile('ใช้ไฟ',`${f1(T.load)} <small>kWh/วัน</small>`,`ผลิต ${f1(T.pv)} kWh/วัน`);
   $('#sdCov').innerHTML=`<div class="cvh"><span>โซลาร์${bOn?'+แบต':''}แทนไฟหลวง</span><b>${nf(cov*100)}%</b></div><div class="cvbar"><i style="width:${Math.min(100,cov*100)}%"></i></div><div class="cvs"><span class="nw">ยังซื้อไฟหลวง <b class="c-im">${f1(T.imp)}</b> kWh/วัน</span>${T.cur>0.05?` <span class="nw">· ไฟเหลือทิ้ง <b>${f1(T.cur)}</b></span>`:''}</div>`;
-  const pyr0=v=>isFinite(v)&&v<=25? f1(v)+' ปี':'> 25 ปี';
-  const pcard=(k,e,desc)=> !e? '' : `<button class="pc${S.plan===k?' on':''}" data-plan="${k}" type="button"><div class="pc-h"><b>${PLAN_T[k]}</b><span>${S.plan===k?'✓ ใช้อยู่':'ใช้แบบนี้'}</span></div>`
-    +`<div class="pc-r"><span>แผง</span><b>${e.n} แผง · ${f2(e.kWp)} kWp</b></div><div class="pc-r"><span>แบตเตอรี่</span><b>${e.B>0? nf(e.B)+' kWh':'ไม่มี'}</b></div>`
-    +`<div class="pc-r"><span>โซลาร์แทนไฟหลวง</span><b>${nf(e.cov*100)}%</b></div><div class="pc-r"><span>ลงทุน</span><b>${nf(e.cost)} บ.</b></div>`
-    +`<div class="pc-r"><span>ประหยัด</span><b>${nf(e.saveM)} บ./เดือน</b></div><div class="pc-r"><span>คืนทุน</span><b>${pyr0(e.pay)}</b></div><small>${desc}</small></button>`;
-  const pcs=pcard('max',P.max,'เพิ่มแผงจนไฟหลวงไม่ลดลงอีก + แบตเก็บไฟส่วนเกินไว้ใช้กลางคืน')+pcard('pay',P.pay,'ไม่มีแบต · จำนวนแผงที่คืนทุนเร็วที่สุด');
-  $('#sdPlans').innerHTML=pcs; $('#sumPlans').innerHTML=pcs;
   $('#isTxt').innerHTML=$('#hsTxt').innerHTML=`<span class="nw">แทนไฟหลวง <b>${nf(cov*100)}%</b></span> · `+`<span class="nw">ระบบ <b>${f2(kWp)}</b> kWp (${n} แผง)</span> <span class="nw">· ประหยัด <b>${nf(saveM1)}</b> บ./เดือน</span> <span class="nw">· คืนทุน <b>${isFinite(F.pay)?f1(F.pay):'> 25'}</b> ปี</span> <span class="nw c-mu">(ช่วง ${rngTxt} ปี)</span>`;
   $('#cfSub').textContent=`(ค่าไฟขึ้น ${nf(S.fin.esc,1)}%/ปี · แถบ = ดี–แย่)`;
   const repl=[]; if(S.fin.invYr>0) repl.push(`เปลี่ยนอินเวอร์เตอร์ปีที่ ${S.fin.invYr} ≈ ${nf(S.fin.invCost*inv)} บ.`); if(bOn) repl.push(`เปลี่ยนแบตปีที่ 11`);
@@ -2796,7 +2811,7 @@ async function checkHash(){
 }
 function initShare(){
   $('#btnShare').addEventListener('click',()=>{ shareLink().catch(()=>toast('สร้างลิงก์ไม่สำเร็จ')); });
-  $('#btnPrint').addEventListener('click',()=>window.print());
+  $('#btnPrint').addEventListener('click',()=>{ if(PAGE!=='sum'){ go('sum'); setTimeout(()=>window.print(),350); } else window.print(); });
   $('#shareClose').addEventListener('click',()=>{ $('#shareBanner').hidden=true; });
   window.addEventListener('beforeprint',()=>{ $$('#results details').forEach(d=>{ d.dataset.po=d.open?'1':''; d.open=true; }); if(S.mode) recalc(); });
   window.addEventListener('afterprint',()=>{ $$('#results details').forEach(d=>{ d.open=d.dataset.po==='1'; }); });
